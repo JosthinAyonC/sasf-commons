@@ -169,7 +169,7 @@ export interface Column {
 export interface TableProps {
   columns: Column[];
   data: Array<Record<string, string | number>>; // Permite datos que sean strings o números.
-  updateTable: (page: number, pageSize: number) => void;
+  updateTable: (_page: number, _pageSize: number) => void;
   registersTotal: number;
   title?: string;
   isLoadingData?: boolean;
