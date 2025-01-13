@@ -21,6 +21,45 @@ module.exports = {
         light: '#2C7A7B',
         dark: '#319795',
       },
+      success: {
+        light: '#38A169',
+        dark: '#48BB78',
+      },
+      focus: {
+        light: '#4299E1',
+        dark: '#63B3ED',
+      },
+      placeholder: {
+        light: '#CBD5E0',
+        dark: '#A0AEC0',
+      },
+      border: {
+        light: '#CBD5E0',
+        dark: '#FFFFFF',
+      },
+      highlight: {
+        light: '#FFF5F5',
+        dark: '#FED7D7',
+      },
+      error: '#E53E3E',
+      warning: '#D69E2E',
+      info: '#3182CE',
+      disabled: '#A0AEC0',
+      neutral: {
+        100: '#F7FAFC', // Blanco roto
+        200: '#EDF2F7', // Gris muy claro
+        300: '#E2E8F0', // Gris claro
+        400: '#CBD5E0', // Gris
+        500: '#A0AEC0', // Gris intermedio
+        600: '#718096', // Gris oscuro
+        700: '#4A5568', // Gris muy oscuro
+        800: '#2D3748', // Negro suave
+        900: '#1A202C', // Negro intenso
+      },
+      gradient: {
+        start: '#4A90E2',
+        end: '#90CDF4',
+      },
     },
     extend: {},
   },
@@ -30,16 +69,32 @@ module.exports = {
         ':root': {
           '--primary': theme('colors.primary.light'),
           '--secondary': theme('colors.secondary.light'),
-          '--font-color': theme('colors.font.light'),
+          '--font': theme('colors.font.light'),
           '--hover': theme('colors.hover.light'),
-          '--bg-color': theme('colors.background.light'),
+          '--bg': theme('colors.background.light'),
+          '--destructive': theme('colors.destructive'),
+          '--warning': theme('colors.warning'),
+          '--success': theme('colors.success'),
+          '--info': theme('colors.info'),
+          '--focus': theme('colors.focus.light'),
+          '--highlight': theme('colors.highlight.light'),
+          '--placeholder': theme('colors.placeholder.light'),
+          '--border': theme('colors.border.light'),
         },
         '.dark': {
           '--primary': theme('colors.primary.dark'),
           '--secondary': theme('colors.secondary.dark'),
-          '--font-color': theme('colors.font.dark'),
+          '--font': theme('colors.font.dark'),
           '--hover': theme('colors.hover.dark'),
-          '--bg-color': theme('colors.background.dark'),
+          '--bg': theme('colors.background.dark'),
+          '--destructive': theme('colors.destructive'),
+          '--warning': theme('colors.warning'),
+          '--success': theme('colors.success'),
+          '--info': theme('colors.info'),
+          '--focus': theme('colors.focus.dark'),
+          '--highlight': theme('colors.highlight.dark'),
+          '--placeholder': theme('colors.placeholder.dark'),
+          '--border': theme('colors.border.dark'),
         },
       });
     },
