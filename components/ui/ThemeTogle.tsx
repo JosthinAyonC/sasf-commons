@@ -1,7 +1,7 @@
 import { faCloudSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { useTheme } from '~/provider/ThemeContext';
+import { useTheme } from '~/provider/ThemeProvider';
 
 const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
