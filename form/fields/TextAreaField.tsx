@@ -1,5 +1,6 @@
 import React from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
+
 import { TextFieldProps } from './types';
 
 export const TextAreaField = <T extends FieldValues>({
@@ -40,11 +41,7 @@ export const TextAreaField = <T extends FieldValues>({
           error ? 'border-[var(--error)]' : ''
         } ${inputClassName}`}
       />
-      {error && (
-        <span className={`text-[var(--error)] mt-1 block ${errorClassName}`}>
-          {error.message}
-        </span>
-      )}
+      {error && <span className={`text-[var(--error)] mt-1 block ${errorClassName}`}>{error.message}</span>}
     </div>
   );
 };

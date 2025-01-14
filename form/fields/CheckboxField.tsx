@@ -1,6 +1,7 @@
-import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
-import { CheckboxFieldProps } from './types';
 import React from 'react';
+import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
+
+import { CheckboxFieldProps } from './types';
 
 export const CheckboxField = <T extends FieldValues>({
   label,

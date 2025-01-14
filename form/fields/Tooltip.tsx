@@ -19,4 +19,3 @@ const Tooltip: React.FC<TooltipProps> = ({ message, className }) => {
 };
 
 export default Tooltip;
-

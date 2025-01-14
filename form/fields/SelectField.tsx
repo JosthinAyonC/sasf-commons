@@ -1,6 +1,7 @@
-import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
-import { SelectFieldProps } from './types';
 import React from 'react';
+import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
+
+import { SelectFieldProps } from './types';
 
 export const SelectField = <T extends FieldValues>({
   label,
@@ -16,7 +17,6 @@ export const SelectField = <T extends FieldValues>({
   } = useFormContext();
 
   const error = errors[name] as FieldError | undefined;
-  
 
   return (
     <div>
@@ -30,9 +30,7 @@ export const SelectField = <T extends FieldValues>({
         {...register(name)}
         className={`border border-[var(--border)] bg-[var(--bg)] text-[var(--font)] rounded-md p-2 w-full focus:border-[var(--primary)] ${selectClassName}`}
       >
-        <option value="">
-          {(options?.length ?? 0) > 0 ? 'Selecciona una opción' : 'No se encontraron opciones para mostrar'}
-        </option>
+        <option value="">{(options?.length ?? 0) > 0 ? 'Selecciona una opción' : 'No se encontraron opciones para mostrar'}</option>
         {options &&
           options.map((option) => (
             <option key={option.value} value={option.value}>

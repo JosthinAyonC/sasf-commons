@@ -1,7 +1,8 @@
-import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
 import React, { useState } from 'react';
-import { NumberFieldProps } from './types';
+import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
+
 import Tooltip from './Tooltip';
+import { NumberFieldProps } from './types';
 
 export const NumberField = <T extends FieldValues>({
   label,
@@ -42,10 +43,7 @@ export const NumberField = <T extends FieldValues>({
   return (
     <div className="relative">
       {label && (
-        <label
-          htmlFor={name as string}
-          className={`${labelClassName} block text-[var(--font)]`}
-        >
+        <label htmlFor={name as string} className={`${labelClassName} block text-[var(--font)]`}>
           {label}
         </label>
       )}
@@ -67,11 +65,7 @@ export const NumberField = <T extends FieldValues>({
         autoComplete="off"
       />
       <Tooltip message={tooltipMessage || ''} />
-      {error && (
-        <span className={`text-[var(--error)] ${errorClassName}`}>
-          {error.message}
-        </span>
-      )}
+      {error && <span className={`text-[var(--error)] ${errorClassName}`}>{error.message}</span>}
     </div>
   );
 };

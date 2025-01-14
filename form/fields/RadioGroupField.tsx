@@ -1,5 +1,6 @@
 import React from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
+
 import RadioButton from './RadioButton';
 import { RadioGroupProps } from './types';
 
@@ -35,11 +36,7 @@ const RadioGroupField = <T extends FieldValues>({
           />
         ))}
       </div>
-      {error && (
-        <span className={`text-[var(--error)] mt-2 ${errorClassName}`}>
-          {error.message}
-        </span>
-      )}
+      {error && <span className={`text-[var(--error)] mt-2 ${errorClassName}`}>{error.message}</span>}
     </div>
   );
 };
