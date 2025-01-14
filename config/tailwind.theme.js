@@ -92,7 +92,7 @@ module.exports = {
           '--highlight': theme('colors.highlight.light'),
           '--placeholder': theme('colors.placeholder.light'),
           '--border': theme('colors.border.light'),
-        },
+        }, 
         '.dark': {
           '--primary': theme('colors.primary.dark'),
           '--secondary': theme('colors.secondary.dark'),
