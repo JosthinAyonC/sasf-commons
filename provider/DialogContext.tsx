@@ -41,9 +41,5 @@ export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return dialogOrder.indexOf(keyId);
   };
 
-  return (
-    <DialogContext.Provider value={{ openDialog, closeDialog, getDialogOrder }}>
-      {children}
-    </DialogContext.Provider>
-  );
+  return <DialogContext.Provider value={{ openDialog, closeDialog, getDialogOrder }}>{children}</DialogContext.Provider>;
 };
