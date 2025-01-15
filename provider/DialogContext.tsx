@@ -2,9 +2,9 @@ import React, { createContext, useContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 interface DialogContextProps {
-  openDialog: (keyId: string, value: string) => void;
-  closeDialog: (keyId: string) => void;
-  getDialogOrder: (keyId: string) => number;
+  openDialog: (_keyId: string, _value: string) => void;
+  closeDialog: (_keyId: string) => void;
+  getDialogOrder: (_keyId: string) => number;
 }
 
 const DialogContext = createContext<DialogContextProps | undefined>(undefined);

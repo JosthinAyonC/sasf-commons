@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
+import Tooltip from '~/components/ui/Tooltip';
 
-import Tooltip from './Tooltip';
 import { NumberFieldProps } from './types';
 
 export const NumberField = <T extends FieldValues>({
@@ -27,16 +27,32 @@ export const NumberField = <T extends FieldValues>({
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    const regex = /^\d*\.?\d*$/; // Permitir solo números y punto decimal.
+
+    // Regex para permitir solo números, `.` y `,`.
+    const regex = /^[\d.,]*$/;
 
     if (!regex.test(value)) {
-      setTooltipMessage('En este campo solo se pueden ingresar números');
+      setTooltipMessage('En este campo solo se pueden ingresar números, "." o ","');
+      event.currentTarget.value = value.slice(0, -1);
       event.preventDefault();
-    } else {
-      setTooltipMessage(null);
-      if (onChange) {
-        onChange(Number(value));
-      }
+      return;
+    }
+
+    // Reemplazar `,` con `.` para interpretarlo como número.
+    const normalizedValue = value.replace(',', '.');
+
+    // Verificar si el valor convertido es un número válido.
+    if (isNaN(Number(normalizedValue))) {
+      setTooltipMessage('Por favor ingrese un número válido');
+      event.preventDefault();
+      return;
+    }
+
+    setTooltipMessage(null);
+
+    // Llamar al callback `onChange` si existe.
+    if (onChange) {
+      onChange(Number(normalizedValue));
     }
   };
 

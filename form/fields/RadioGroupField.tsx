@@ -4,7 +4,7 @@ import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
 import RadioButton from './RadioButton';
 import { RadioGroupProps } from './types';
 
-const RadioGroupField = <T extends FieldValues>({
+export const RadioGroupField = <T extends FieldValues>({
   name,
   options,
   required = false,
@@ -40,5 +40,3 @@ const RadioGroupField = <T extends FieldValues>({
     </div>
   );
 };
-
-export default RadioGroupField;
