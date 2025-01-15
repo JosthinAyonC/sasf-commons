@@ -24,7 +24,7 @@ export const TextAreaField = <T extends FieldValues>({
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={name as string} className={`${labelClassName} block text-[var(--font)]`}>
+        <label htmlFor={name as string} className={`text-[var(--font)] ${labelClassName} block text-[var(--font)]`}>
           {label}
         </label>
       )}

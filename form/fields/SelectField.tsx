@@ -21,7 +21,7 @@ export const SelectField = <T extends FieldValues>({
   return (
     <div>
       {label && (
-        <label htmlFor={name as string} className={`${labelClassName} block`}>
+        <label htmlFor={name as string} className={`text-[var(--font)] ${labelClassName} block`}>
           {label}
         </label>
       )}

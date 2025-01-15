@@ -21,7 +21,7 @@ const RadioGroupField = <T extends FieldValues>({
   const error = errors[name] as FieldError | undefined;
 
   return (
-    <div className={`flex flex-col justify-center my-4 ${groupClassName}`}>
+    <div className={`flex flex-col justify-center my-4 gap-4 ${groupClassName}`}>
       <div className="flex gap-4">
         {options.map((option) => (
           <RadioButton
