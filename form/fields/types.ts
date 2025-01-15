@@ -175,3 +175,13 @@ export interface TableProps {
   isLoadingData?: boolean;
   titleClassName?: string;
 }
+
+export interface RadioButtonProps {
+  name: string;
+  value: string | number;
+  label: string;
+  defaultChecked?: boolean;
+  isRequired?: boolean;
+  optionClassName?: string;
+  optionLabelClassName?: string;
+}
