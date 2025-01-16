@@ -80,7 +80,7 @@ export const NumberField = <T extends FieldValues>({
             ${inputClassName}`}
         autoComplete="off"
       />
-      <Tooltip message={tooltipMessage || ''} />
+      <Tooltip message={tooltipMessage || ''} variant="danger" />
       {error && <span className={`text-[var(--error)] ${errorClassName}`}>{error.message}</span>}
     </div>
   );
