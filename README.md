@@ -1,60 +1,465 @@
 # SASF Commons
 
-Este repositorio centraliza recursos compartidos y reutilizables para proyectos desarrollados bajo el ecosistema de micro frontends. Aquí encontrarás componentes primitivos, configuraciones, hooks personalizados, y utilidades que facilitan el desarrollo y aseguran la consistencia entre los proyectos.
-
-## 📂 Contenido
-
-### 1. **Componentes Primitivos**
-- **Elementos Base**: Componentes fundamentales como:
-  - `Button`
-  - `Input`
-  - `Select`
-  - `Checkbox`
-  - `RadioButton`
-  - Otros diseñados para ser simples, accesibles y altamente reutilizables.
-- **Controlado con Storybook**: Todos los componentes primitivos cuentan con documentación y ejemplos interactivos en Storybook para facilitar su uso, personalización y garantizar consistencia visual.
-
-### 2. **Componentes Reutilizables**
-- **UI Más Compleja**: Componentes que combinan primitivos para casos de uso más avanzados:
-  - **Modales**: Ventanas modales estándar y personalizables.
-  - **Tablas**: Componentes dinámicos para manejar datos tabulares.
-  - **Notificaciones**: Componentes para mostrar alertas y mensajes al usuario.
-
-### 3. **Providers**
-- **Gestión de Estado Global**: Providers para compartir datos o configuraciones globales entre micro frontends.
-- **Autenticación y Autorización**: Configuración estándar para manejar usuarios, roles y accesos.
-- **Temas y Configuración Visual**: Providers para alternar entre temas (noche y día) y controlar estilos de forma dinámica.
-
-### 4. **Hooks Personalizados**
-- **Manejo de Formularios**: Hooks para integrarse con librerías como `React Hook Form` o manejar validaciones personalizadas.
-- **Peticiones HTTP**: Hooks como `useFetch` o `useAxios` para simplificar la interacción con APIs.
-- **Estado Global**: Hooks para gestionar estados compartidos en micro frontends.
-- **Temas Dinámicos**: Hooks para alternar entre modos (oscuro y claro) y manejar temas personalizados.
-
-### 5. **Configuraciones Comunes**
-- **Estilos y Temas**:
-  - Paleta de colores centralizada para garantizar consistencia visual.
-  - Configuración compartida para TailwindCSS, incluyendo temas oscuros y personalizados.
-  - Variables CSS globales para temas y estilos reutilizables.
-- **Linting y Formateo**: Configuraciones estándar de ESLint y Prettier para mantener la calidad y consistencia del código.
-- **Configuraciones para Storybook**: Plantillas y configuraciones básicas para facilitar la integración de Storybook en proyectos.
-
-### 6. **Formularios**
-- **Primitivos**: Elementos esenciales como `Input`, `Checkbox`, y `Select`, diseñados para máxima flexibilidad.
-- **Estilo Reutilizable**: Formularios diseñados para adaptarse a cualquier tema o esquema visual.
-
-### 7. **Funciones Útiles**
-- **Manejo de Fechas**: Funciones para formateo, cálculo y manipulación de fechas.
-- **Utilidades de Strings**: Funciones para operaciones comunes con cadenas de texto (capitalización, truncado, etc.).
-- **Validaciones Generales**: Validadores estándar como emails, números de teléfono, contraseñas, etc.
-- **Conversión de Datos**: Funciones para transformar datos en formatos reutilizables.
+## Secciones
+- [Descripción General](#descripción-general)
+- [Estructura del Submódulo](#estructura-del-submódulo)
+- [Dependencias Necesarias](#dependencias-necesarias)
+- [Uso de Componentes](#uso-de-componentes)
+- [Uso de Hooks](#uso-de-hooks)
+- [Manejo de Formularios](#manejo-de-formularios)
 
 ---
 
-## 🚀 Cómo Usarlo
+## Descripción General
+Este submódulo contiene recursos compartidos entre los distintos micro frontends de la aplicación. Está diseñado para centralizar componentes, configuraciones, hooks, y demás elementos reutilizables, garantizando consistencia en el desarrollo de toda la aplicación.
 
-### 1. **Clonar el repositorio como submódulo**
-Si estás utilizando este repositorio en un proyecto, agrégalo como submódulo:
+**Importante:** Los recursos incluidos en este submódulo son generales para la aplicación completa. Es importante no realizar modificaciones a menos que sea absolutamente necesario. Para crear nuevos elementos, es completamente válido agregar nuevas funcionalidades. Si necesitas modificar algo existente, por favor contacta con:
 
+- **Nombre:** Josthin Ayon  
+- **Correo:** [josthin.ayon@sasf.net](mailto:josthin.ayon@sasf.net)
+
+---
+
+## Estructura del Submódulo
+El submódulo está organizado de la siguiente manera:
+
+```plaintext
+sasf-commons/
+├── components/        # Componentes reutilizables de forma global para la aplicación
+├── guard/             # Componentes que manejan la autorización de páginas
+├── provider/          # Contextos globales de la aplicación
+├── store/             # Almacén global con Redux
+└── utils/             # Pantallas útiles y funciones reutilizables
+```
+
+### Descripción de Carpetas
+
+#### **1. components/**
+Contiene componentes reutilizables que pueden ser usados de manera global en la aplicación. Estos componentes están diseñados para ser altamente configurables y flexibles.
+
+#### **2. config/**
+Incluye archivos de configuración que son necesarios para el funcionamiento global de la aplicación. Por ejemplo, configuraciones de temas, error handling.
+
+#### **3. form/**
+Componentes diseñados para formularios. Utiliza **React Hook Form** y está personalizado con estilos globales definidos a través de variables de entorno. Estos componentes permiten la creación de formularios consistentes en toda la aplicación.
+
+#### **4. guard/**
+Proporciona componentes que manejan la autorización y protección de páginas. Estos garantizan que los usuarios tengan los permisos necesarios antes de acceder a ciertas áreas de la aplicación.
+
+#### **5. hooks/**
+Incluye hooks reutilizables que facilitan el desarrollo y aseguran que las funcionalidades compartidas se implementen de manera uniforme.
+
+#### **6. provider/**
+Contextos globales de la aplicación que encapsulan funcionalidades y permiten la propagación de datos entre diferentes partes de la aplicación.
+
+#### **7. store/**
+El almacén global de la aplicación basado en **Redux**, centralizando el estado global y sus acciones.
+
+#### **8. utils/**
+Incluye pantallas útiles, funciones de utilidad y módulos `.ts` que contienen lógica reutilizable para diferentes propósitos dentro de la aplicación.
+
+---
+
+## Dependencias Necesarias
+Este submódulo requiere las siguientes dependencias para funcionar correctamente. Asegúrate de instalarlas antes de usar el submódulo en tu proyecto.
+Ejecuta el siguiente comando para instalar las dependencias necesarias:
+### Dependencias de Producción
 ```bash
-git submodule add <<URL>> src/sasf-commons/
+npm install react react-dom react-hook-form @emotion/is-prop-valid framer-motion @fortawesome/react-fontawesome react-redux tailwindcss react-router-dom @fortawesome/free-solid-svg-icons
+```
+### Dependencias de Desarrollo
+Si necesitas trabajar en el submódulo, instala las dependencias de desarrollo con:
+```bash
+npm install --save-dev @types/react @types/react-dom @types/react-redux @types/react-router-dom typescript eslint eslint-plugin-react eslint-plugin-react-hooks prettier tailwindcss autoprefixer
+```
+*Nota importante:* Si implementas nuevos componentes que instalen dependencias nuevas, modifica este readme.
+
+---
+## Uso de Componentes
+
+### **ModalProvider**
+**Tipo de Componente:** Provider
+
+**Descripción:** Este componente envuelve una pantalla que utiliza el hook `useDialog` para manejar modales basados en parámetros de consulta (query params). Permite levantar modales e incluso manejar modales anidados.
+
+**Ejemplo de uso:**
+```tsx
+import { ModalProvider } from '~/providers/ModalProvider';
+
+<ModalProvider keyId="modalKey" content={YourModalComponent}>
+  <YourPageComponent />
+</ModalProvider>
+```
+
+---
+
+### **ThemeProvider**
+**Tipo de Componente:** Provider
+
+**Descripción:** Este componente permite alternar entre los temas de la aplicación (modo claro y modo oscuro). Funciona con la configuración de Tailwind y utiliza variables de entorno para distinguir entre ambos modos. El tema seleccionado se guarda en `localStorage` y se aplica automáticamente al cargar la página.
+
+**Ejemplo de uso:**
+```tsx
+import { ThemeProvider } from '~/providers/ThemeProvider';
+
+<ThemeProvider>
+  <YourAppComponent />
+</ThemeProvider>
+```
+
+**Nota:** Utiliza el hook `useTheme` para acceder al tema actual y la función de alternancia:
+```tsx
+import { useTheme } from '~/components/ThemeProvider';
+
+const { theme, toggleTheme } = useTheme();
+```
+
+### **Dialog**
+**Tipo de Componente:** UI / Modal
+
+**Descripción:** Este componente se utiliza para crear diálogos modales que son altamente configurables y responsivos. Funciona en conjunto con `ModalProvider` y aprovecha el contexto global para manejar su orden de superposición (zIndex) y su estado de cierre.
+
+**Props Principales:**
+- `children`: Contenido del diálogo.
+- `keyId`: Identificador único del diálogo.
+- `closeable`: Define si el diálogo puede cerrarse.
+- `onCloseAction`: Función opcional que se ejecuta al cerrar el diálogo.
+- `closeIconClassName`: Clase CSS para personalizar el icono de cierre.
+- `contentClassName`: Clase CSS para personalizar el contenido del diálogo.
+
+**Ejemplo de uso:**
+```tsx
+import { Dialog } from '~/components/Dialog';
+
+<Dialog keyId="exampleDialog" closeable={true} title="Ejemplo de Diálogo">
+  <p>Este es el contenido del diálogo.</p>
+</Dialog>
+```
+
+---
+
+### **Tooltip**
+**Tipo de Componente:** UI / Tooltip
+
+**Descripción:** Este componente se utiliza para mostrar información adicional cuando el usuario interactúa con un elemento. Es altamente configurable y soporta diferentes posiciones y variantes de estilo.
+
+**Props Principales:**
+- `message`: Mensaje que se muestra en el tooltip.
+- `className`: Clases CSS opcionales para personalizar el estilo.
+- `variant`: Define el estilo del tooltip (`danger`, `warning`, `info`, `success`).
+- `position`: Posición del tooltip (`top`, `bottom`, `left`, `right`).
+- `showIndicator`: Muestra un indicador (flecha) que apunta al elemento relacionado.
+
+**Ejemplo de uso:**
+```tsx
+import Tooltip from '~/components/Tooltip';
+
+<Tooltip message="Texto del tooltip" position="top" variant="info" />
+```
+
+---
+
+### **PrivateRoute**
+**Tipo de Componente:** Guard
+
+**Descripción:** Este componente asegura que solo los usuarios autenticados y con el rol adecuado puedan acceder a ciertas rutas. Si no se cumplen los requisitos, redirige a páginas de inicio de sesión o no autorizado.
+
+**Props Principales:**
+- `children`: Elementos renderizados si el acceso es válido.
+- `requiredRole`: Rol necesario para acceder a la ruta (`ADMIN`, `USER`, `MAINTAINER`).
+
+**Ejemplo de uso:**
+```tsx
+import PrivateRoute from '~/components/PrivateRoute';
+
+<PrivateRoute requiredRole="ADMIN">
+  <AdminDashboard />
+</PrivateRoute>
+```
+
+---
+
+## Uso de Hooks
+
+### **useDebounce**
+**Descripción:** Este hook permite aplicar un retraso controlado (debounce) a un valor. Es útil para optimizar tareas como búsquedas o eventos que se disparan continuamente.
+
+**Ejemplo de uso:**
+```typescript
+import useDebounce from '~/hooks/useDebounce';
+
+const debouncedValue = useDebounce(inputValue, 500);
+```
+
+---
+
+### **useMediaQuery**
+**Descripción:** Este hook verifica si una consulta de medios CSS (`media query`) se cumple, devolviendo un valor booleano.
+
+**Ejemplo de uso:**
+```typescript
+import { useMediaQuery } from '~/hooks/useMediaQuery';
+
+const isMobile = useMediaQuery('(max-width: 768px)');
+```
+
+---
+
+### **useMutation**
+**Descripción:** Este hook se utiliza para realizar peticiones HTTP tipo `POST`, `PUT` o `PATCH` con integración de Redux para autenticación.
+
+**Ejemplo de uso:**
+```typescript
+import useMutation from '~/hooks/useMutation';
+
+const { mutate, data, loading, error } = useMutation('/api/resource', 'POST');
+
+mutate({ key: 'value' });
+```
+
+---
+
+### **useQuery**
+**Descripción:** Este hook realiza peticiones HTTP tipo `GET` con soporte para parámetros de consulta y autenticación mediante Redux.
+
+**Ejemplo de uso:**
+```typescript
+import useQuery from '~/hooks/useQuery';
+
+const { data, loading, error, refetch } = useQuery('/api/resource', {}, { param: 'value' });
+```
+
+---
+
+### **useDialog**
+**Descripción:** Este hook se utiliza para manejar diálogos en la aplicación mediante parámetros de consulta en la URL. Permite abrir, cerrar y obtener el orden de los diálogos.
+
+**Ejemplo de uso:**
+```typescript
+import { useDialog } from '~/hooks/useDialog';
+
+const { openDialog, closeDialog, getDialogOrder } = useDialog();
+
+openDialog('dialogKey', 'dialogValue');
+closeDialog('dialogKey');
+const order = getDialogOrder('dialogKey');
+```
+
+---
+
+## Manejo de Formularios
+
+### **Form**
+**Tipo de Componente:** Provider / Form Wrapper
+
+**Descripción:** Este componente actúa como un envoltorio (`wrapper`) para formularios basados en `React Hook Form`. Proporciona una configuración centralizada y un manejo uniforme del estado del formulario.
+
+**Props Principales:**
+- `onSubmit`: Función que se ejecuta al enviar el formulario.
+- `className`: Clase CSS opcional para el formulario.
+- `children`: Campos y elementos del formulario.
+- `methods`: Configuración del formulario, valores iniciales, tipos de eventos.
+
+**Ejemplo de uso:**
+```tsx
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { TextField, FormState } from '~/form/fields';
+import { Form } from '~/form/Form';
+
+export const FormUse = () => {
+  const methods = useForm<FormState>({
+    mode: 'onChange',
+    defaultValues: { name: 'Valor por defecto' },
+  });
+
+  const onSubmit = (data: FormState) => {
+    console.log(data);
+  };
+
+  return (
+    <Form<FormState> onSubmit={onSubmit} methods={methods} className="space-y-4">
+      <TextField name="name" label="Name" isRequired placeholder="Enter your name" />
+      <button type="submit">Submit</button>
+    </Form>
+  );
+};
+
+```
+
+### **Campos Primitivos en Formularios**
+**Componente:** TextField
+
+**Descripción:** Los componentes en `form/fields` son campos reutilizables diseñados para integrarse con `React Hook Form` y el componente `Form`. Incluyen validaciones comunes como campos obligatorios, longitudes máximas/mínimas, y patrones personalizados.
+
+### **TextField**
+**Descripción:** Campo de texto genérico para entradas como nombres, correos electrónicos o contraseñas. Admite validaciones específicas como correos electrónicos y contraseñas seguras.
+
+**Props Principales:**
+- `label`: Etiqueta del campo.
+- `name`: Nombre del campo.
+- `isRequired`: Define si el campo es obligatorio.
+- `minLength`: Longitud mínima permitida.
+- `maxLength`: Longitud máxima permitida.
+- `validateEmail`: Valida si el texto ingresado es un correo electrónico.
+- `validatePassword`: Valida si el texto cumple con un formato de contraseña segura.
+
+**Ejemplo de uso:**
+```tsx
+import { TextField } from '~/form/fields';
+
+<TextField
+  name="email"
+  label="Correo Electrónico"
+  isRequired
+  validateEmail
+  placeholder="Ingrese su correo electrónico"
+/>
+```
+
+---
+
+### **TextAreaField**
+**Descripción:** Campo de texto para entradas más largas, como descripciones o comentarios.
+
+**Props Principales:**
+- `label`: Etiqueta del campo.
+- `name`: Nombre del campo.
+- `isRequired`: Define si el campo es obligatorio.
+- `placeholder`: Texto de marcador de posición.
+
+**Ejemplo de uso:**
+```tsx
+import { TextAreaField } from '~/form/fields';
+
+<TextAreaField
+  name="description"
+  label="Descripción"
+  isRequired
+  placeholder="Escriba aquí su descripción"
+/>
+```
+
+---
+
+### **SelectField**
+**Descripción:** Campo desplegable para seleccionar una opción de una lista.
+
+**Props Principales:**
+- `label`: Etiqueta del campo.
+- `name`: Nombre del campo.
+- `options`: Lista de opciones con `label` y `value`.
+
+**Ejemplo de uso:**
+```tsx
+import { SelectField } from '~/form/fields';
+
+const options = [
+  { label: 'Opción 1', value: '1' },
+  { label: 'Opción 2', value: '2' },
+];
+
+<SelectField
+  name="selection"
+  label="Seleccione una opción"
+  options={options}
+/>
+```
+
+---
+
+### **RadioGroupField**
+**Descripción:** Grupo de botones de opción para seleccionar una sola opción.
+
+**Props Principales:**
+- `name`: Nombre del grupo de botones.
+- `options`: Lista de opciones con `label` y `value`.
+- `required`: Define si es obligatorio seleccionar una opción.
+
+**Ejemplo de uso:**
+```tsx
+import { RadioGroupField } from '~/form/fields';
+
+const options = [
+  { label: 'Masculino', value: 'male' },
+  { label: 'Femenino', value: 'female' },
+];
+
+<RadioGroupField
+  name="gender"
+  options={options}
+  required
+/>
+```
+
+---
+
+### **NumberField**
+**Descripción:** Campo para la entrada de números con validaciones personalizadas.
+
+**Props Principales:**
+- `label`: Etiqueta del campo.
+- `name`: Nombre del campo.
+- `min`: Valor mínimo permitido.
+- `max`: Valor máximo permitido.
+- `isRequired`: Define si el campo es obligatorio.
+
+**Ejemplo de uso:**
+```tsx
+import { NumberField } from '~/form/fields';
+
+<NumberField
+  name="age"
+  label="Edad"
+  isRequired
+  min={18}
+  max={99}
+  placeholder="Ingrese su edad"
+/>
+```
+
+---
+
+### **CheckboxField**
+**Descripción:** Campo para opciones que pueden ser seleccionadas o deseleccionadas.
+
+**Props Principales:**
+- `label`: Etiqueta del checkbox.
+- `name`: Nombre del campo.
+- `defaultChecked`: Define si el checkbox está seleccionado por defecto.
+
+**Ejemplo de uso:**
+```tsx
+import { CheckboxField } from '~/form/fields';
+
+<CheckboxField
+  name="terms"
+  label="Acepto los términos y condiciones"
+  defaultChecked
+/>
+```
+
+---
+
+### **Button**
+**Descripción:** Botón reutilizable para formularios o acciones generales.
+
+**Props Principales:**
+- `type`: Define el tipo del botón (`button`, `submit`, `reset`).
+- `variant`: Variante visual del botón (`outline`, `primary`, etc.).
+
+**Ejemplo de uso:**
+```tsx
+import { Button } from '~/form/fields';
+
+<Button type="submit" variant="primary">
+  Enviar
+</Button>
+```
+
+---
+
+Estos componentes aseguran una experiencia de usuario consistente y facilitan la implementación de formularios accesibles y responsivos.
+
+
+---
