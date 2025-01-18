@@ -1,21 +1,13 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-interface DialogContextProps {
+export interface DialogContextProps {
   openDialog: (_keyId: string, _value: string) => void;
   closeDialog: (_keyId: string) => void;
   getDialogOrder: (_keyId: string) => number;
 }
 
-const DialogContext = createContext<DialogContextProps | undefined>(undefined);
-
-export const useDialog = () => {
-  const context = useContext(DialogContext);
-  if (!context) {
-    throw new Error('useDialog must be used within a DialogProvider');
-  }
-  return context;
-};
+export const DialogContext = createContext<DialogContextProps | undefined>(undefined);
 
 export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -2,8 +2,7 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
-import { useMediaQuery } from '~/hooks/useMediQuery';
-import { useDialog } from '~/provider/DialogContext';
+import { useDialog, useMediaQuery } from '~/hooks';
 
 interface DialogProps {
   children: React.ReactNode;

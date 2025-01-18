@@ -244,8 +244,46 @@ openDialog('dialogKey', 'dialogValue');
 closeDialog('dialogKey');
 const order = getDialogOrder('dialogKey');
 ```
+### **useToast**
 
----
+**Descripción**  
+El hook `useToast` permite mostrar notificaciones (toasts) personalizables con variantes (`success`, `warning`, `info`, `danger`) y un tiempo de duración opcional.  
+Es ideal para proporcionar retroalimentación visual al usuario, como mensajes de éxito, advertencias, errores o información.
+
+**Parámetros**
+
+1. **message** (`string`): El mensaje que se mostrará en el toast.
+2. **variant** (`"success" | "warning" | "info" | "danger"`): La variante del toast, que define el estilo y el ícono mostrado.
+3. **timeout** *(opcional)* (`number`): Tiempo en milisegundos que el toast estará visible. Por defecto, es `5000` ms.
+
+**Ejemplo de uso**
+```typescript
+import { useToast } from '~/provider/ToastContext';
+
+const MyComponent = () => {
+  const { addToast } = useToast();
+
+  const showSuccessToast = () => {
+    addToast("Operación completada con éxito", "success");
+  };
+
+  const showErrorToast = () => {
+    addToast("Ocurrió un error inesperado", "danger", 7000);
+  };
+
+  return (
+    <div>
+      <button onClick={showSuccessToast}>Mostrar Éxito</button>
+      <button onClick={showErrorToast}>Mostrar Error</button>
+    </div>
+  );
+};
+
+export default MyComponent;
+```
+**Notas**
+- El hook debe ser utilizado dentro del componente `<ToastProvider>`.
+- Los toasts desaparecen automáticamente después del tiempo definido por `timeout`, pero también pueden ser eliminados manualmente.
 
 ## Manejo de Formularios
 
