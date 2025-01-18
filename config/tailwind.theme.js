@@ -7,7 +7,7 @@ module.exports = {
       colors: {
         background: {
           light: '#ffffff',
-          dark: '#1a202c',
+          dark: '#181818',
         },
         font: {
           light: '#000000',
@@ -15,15 +15,15 @@ module.exports = {
         },
         primary: {
           light: '#4A90E2',
-          dark: '#90CDF4',
+          dark: '#262626',
         },
         secondary: {
           light: '#F56565',
-          dark: '#FC8181',
+          dark: '#5581CA',
         },
         hover: {
-          light: '#2C7A7B',
-          dark: '#319795',
+          light: '#D83957',
+          dark: '#324564',
         },
         success: {
           light: '#38A169',

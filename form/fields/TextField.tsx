@@ -60,7 +60,7 @@ export const TextField = <T extends FieldValues>({
                 : undefined,
         })}
         className={`border border-[var(--border)] rounded-md p-2 w-full 
-          focus:outline-none focus:border-[var(--primary)] placeholder:text-[var(--placeholder)] 
+          focus:outline-none focus:border-[var(--focus)] placeholder:text-[var(--placeholder)] 
           bg-[var(--bg)] text-[var(--font)] 
           ${inputClassName}`}
         autoComplete="off"

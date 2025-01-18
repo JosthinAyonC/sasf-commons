@@ -17,8 +17,8 @@ export const Button: React.FC<ButtonProps> = ({ variant, type = 'button', href, 
   const baseClass = `px-6 py-2 font-bold rounded-lg transition duration-300 focus:outline-none focus:ring-2`;
   const variantClass =
     variant === 'outline'
-      ? 'border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--hover)]'
-      : 'bg-[var(--primary)] text-white hover:bg-[var(--hover)]';
+      ? 'border border-[var(--border)] text-[var(--font)] hover:bg-[var(--hover)]'
+      : 'bg-[var(--secondary)] text-white hover:bg-[var(--hover)]';
   const disabledClass = disabled ? 'opacity-50 cursor-not-allowed' : '';
 
   return (
