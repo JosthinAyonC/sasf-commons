@@ -182,7 +182,6 @@ export interface DropdownFieldProps<T extends FieldValues> extends UseController
   className?: string;
   isRequired?: boolean;
   labelClassName?: string;
-  selectClassName?: string;
   errorClassName?: string;
   containerClassName?: string;
   label?: string;

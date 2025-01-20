@@ -1,10 +1,76 @@
 import React from 'react';
 import { FieldValues, useController } from 'react-hook-form';
-import Select, { MultiValue, SingleValue } from 'react-select';
+import Select, { MultiValue, SingleValue, StylesConfig } from 'react-select';
 
 import { DropdownFieldProps, Option } from './types';
 
-// TODO: PERSONALIZAR ESTILOS
+const customStyles: StylesConfig<Option> = {
+  control: (styles) => ({
+    ...styles,
+    backgroundColor: 'var(--bg)',
+    borderColor: 'var(--border)',
+    borderWidth: '1px',
+    color: 'var(--font)',
+    boxShadow: 'none',
+    borderRadius: '8px',
+    '&:hover': {
+      borderColor: 'var(--hover)',
+    },
+  }),
+  input: (styles) => ({
+    ...styles,
+    color: 'var(--font)',
+  }),
+  option: (styles, { isFocused, isSelected }) => ({
+    ...styles,
+    backgroundColor: isSelected ? 'var(--secondary)' : isFocused ? 'var(--hover)' : 'var(--bg)',
+    color: isSelected ? 'var(--font)' : 'var(--font)',
+    cursor: 'pointer',
+    '&:active': {
+      backgroundColor: 'var(--secondary)',
+    },
+  }),
+  placeholder: (styles) => ({
+    ...styles,
+    color: 'var(--placeholder)',
+  }),
+  singleValue: (styles) => ({
+    ...styles,
+    color: 'var(--font)',
+  }),
+  multiValue: (styles) => ({
+    ...styles,
+    backgroundColor: 'var(--highlight)',
+  }),
+  multiValueLabel: (styles) => ({
+    ...styles,
+    color: 'var(--font)',
+  }),
+  multiValueRemove: (styles) => ({
+    ...styles,
+    color: 'var(--error)',
+    ':hover': {
+      backgroundColor: 'var(--hover)',
+      color: 'var(--font)',
+    },
+  }),
+  menu: (styles) => ({
+    ...styles,
+    backgroundColor: 'var(--bg)',
+    border: '1px solid var(--border)',
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    marginTop: '4px',
+    zIndex: 10,
+  }),
+  menuList: (styles) => ({
+    ...styles,
+    backgroundColor: 'var(--bg)',
+    borderRadius: '8px',
+    padding: '0',
+  }),
+};
+
 export const DropdownField = <T extends FieldValues>({
   label,
   name,
@@ -14,7 +80,6 @@ export const DropdownField = <T extends FieldValues>({
   placeholder = 'Seleccione...',
   isClearable = false,
   labelClassName,
-  selectClassName,
   errorClassName,
   containerClassName,
   isRequired = false,
@@ -57,7 +122,7 @@ export const DropdownField = <T extends FieldValues>({
         value={isMulti ? options.filter((opt) => value?.includes(opt.value)) : options.find((opt) => opt.value === value)}
         onChange={handleChange}
         classNamePrefix="react-select"
-        className={`border rounded-md focus:border-[var(--primary)] ${selectClassName}`}
+        styles={customStyles}
         ref={ref}
       />
       {error && <span className={`text-[var(--error)] text-sm mt-1 ${errorClassName}`}>{error.message}</span>}
