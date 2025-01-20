@@ -1,4 +1,4 @@
-import { Control, FieldError, FieldValues, Path, RegisterOptions, UseFormRegister } from 'react-hook-form';
+import { FieldError, FieldValues, Path, RegisterOptions, UseControllerProps, UseFormRegister } from 'react-hook-form';
 
 /*
  * Interfaz del estado del componente Form.
@@ -37,11 +37,8 @@ export interface TextFieldProps<T extends FieldValues> {
 export interface DatePickerFieldProps<T extends FieldValues> {
   label?: string;
   name: Path<T>;
-  register: UseFormRegister<T>;
-  error?: FieldError;
   minDate?: Date;
   maxDate?: Date;
-  control: Control;
   labelClassName?: string;
   inputClassName?: string;
   errorClassName?: string;
@@ -50,7 +47,6 @@ export interface DatePickerFieldProps<T extends FieldValues> {
   defaultValue?: Date;
   yearUpRange?: number;
   yearDownRange?: number;
-  setValue: (_name: Path<T>, _value: string) => void;
 }
 
 /*
@@ -99,19 +95,6 @@ export interface SelectFieldProps<T extends FieldValues> {
   options?: { label: string; value: number | string }[];
   register: UseFormRegister<T>;
   error?: FieldError;
-}
-
-/*
- * Interfaz de las propiedades del componente NominasSelectField.
- */
-export interface NominasSelectFieldProps<T extends FieldValues> {
-  label: string;
-  name: Path<T>;
-  labelClassName?: string;
-  selectClassName?: string;
-  errorClassName?: string;
-  register: UseFormRegister<T>;
-  errors?: FieldError;
 }
 
 /*
@@ -184,4 +167,23 @@ export interface RadioButtonProps {
   isRequired?: boolean;
   optionClassName?: string;
   optionLabelClassName?: string;
+}
+
+export interface Option {
+  label: string;
+  value: string | number;
+}
+
+export interface DropdownFieldProps<T extends FieldValues> extends UseControllerProps<T> {
+  options: Option[];
+  isMulti?: boolean;
+  placeholder?: string;
+  isClearable?: boolean;
+  className?: string;
+  isRequired?: boolean;
+  labelClassName?: string;
+  selectClassName?: string;
+  errorClassName?: string;
+  containerClassName?: string;
+  label?: string;
 }

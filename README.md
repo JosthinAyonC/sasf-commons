@@ -65,7 +65,7 @@ Este submódulo requiere las siguientes dependencias para funcionar correctament
 Ejecuta el siguiente comando para instalar las dependencias necesarias:
 ### Dependencias de Producción
 ```bash
-npm install react react-dom react-hook-form @emotion/is-prop-valid framer-motion @fortawesome/react-fontawesome react-redux tailwindcss react-router-dom @fortawesome/free-solid-svg-icons
+npm install react react-dom react-hook-form @emotion/is-prop-valid framer-motion @fortawesome/react-fontawesome react-redux tailwindcss react-router-dom @fortawesome/free-solid-svg-icons react-datepicker
 ```
 ### Dependencias de Desarrollo
 Si necesitas trabajar en el submódulo, instala las dependencias de desarrollo con:
@@ -493,6 +493,33 @@ import { Button } from '~/form/fields';
 <Button type="submit" variant="primary">
   Enviar
 </Button>
+```
+
+---
+### **DatePickerField**
+**Descripción:** Componente personalizado para fechas. El value que atrapa es en formato TimeStamp.
+
+**Props más relevantes:**
+- `label`: Label que acompaña el field.
+- `name`: Nombre del campo.
+- `minDate`: Fecha mínima para seleccionar.
+- `maxDate`: Fecha máxima para seleccionar.
+- `defaultValue`: Fecha por defecto a mostrarse.
+- `yearUpRange`: Rango de años a mostrarse hacía arriba, por ejemplo, si hoy es 2025, y se pone de rango 50, mostrará opciones hasta 2075.
+- `yearDownRange`: Rango de años a mostrarse hacía abajo, por ejemplo, si hoy es 2025, y se pone de rango 50, mostrará opciones hasta 1975.
+
+**Ejemplo de uso:**
+```tsx
+import { DatePickerField } from '~/form/fields';
+
+<DatePickerField
+  name="date"
+  defaultValue={new Date()}
+  maxDate={new Date()} 
+  minDate={new Date("2024-11-14")}
+  yearDownRange={10}
+  yearUpRange={10}
+/>
 ```
 
 ---

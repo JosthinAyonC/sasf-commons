@@ -2,7 +2,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'Arial', 'sans-serif'], // Define Poppins como fuente principal
+        sans: ['Poppins', 'Arial', 'sans-serif'],
       },
       colors: {
         background: {
@@ -22,24 +22,24 @@ module.exports = {
           dark: '#5581CA',
         },
         hover: {
-          light: '#D83957',
-          dark: '#324564',
+          light: '#ff7676',
+          dark: '#4A5568',
         },
         success: {
           light: '#38A169',
           dark: '#48BB78',
         },
         focus: {
-          light: '#4299E1',
+          light: '#3182CE',
           dark: '#63B3ED',
         },
         placeholder: {
-          light: '#CBD5E0',
-          dark: '#A0AEC0',
+          light: '#A0AEC0',
+          dark: '#718096',
         },
         border: {
           light: '#CBD5E0',
-          dark: '#FFFFFF',
+          dark: '#4A5568',
         },
         highlight: {
           light: '#FFF5F5',
@@ -51,11 +51,11 @@ module.exports = {
         },
         warning: {
           light: '#D69E2E',
-          dark: '#F6AD55',
+          dark: '#ECC94B',
         },
         info: {
           light: '#3182CE',
-          dark: '#63B3ED',
+          dark: '#4299E1',
         },
         neutral: {
           100: '#F7FAFC',
