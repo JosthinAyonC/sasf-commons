@@ -8,7 +8,7 @@ const NotFoundScreen: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen text-[var(--font)] bg-[var(--bg)]">
       {/* Icono */}
-      <div className="w-64 h-64 w bg-[var(--bg)] rounded-full shadow-xl mb-6">
+      <div className="flex justify-center items-center w-80 h-80 w bg-[var(--bg)] rounded-full shadow-xl mb-6">
         <svg width="675" height="607" viewBox="0 0 675 607" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_0_1)">
             <path
@@ -513,7 +513,7 @@ const NotFoundScreen: React.FC = () => {
       </div>
 
       {/* Título */}
-      <h1 className="text-4xl font-extrabold text-[var(--font)] mb-4">¡OOPS! TE HAS PERDIDO...</h1>
+      <h1 className="text-center text-4xl font-extrabold text-[var(--font)] mb-4">¡OOPS! TE HAS PERDIDO...</h1>
 
       {/* Descripción */}
       <p className="text-lg text-center text-[var(--font)]">Parece que la página que buscas se fue de vacaciones o nunca existió.</p>
