@@ -18,19 +18,21 @@ function useMutation<T, U = Record<string, unknown>>(url: string, method: 'POST'
   const token = useSelector((state: RootState) => state.auth.token);
 
   const mutate = useCallback(
-    async (body: U, headers?: Record<string, string>) => {
+    async (body: U | URLSearchParams, headers?: Record<string, string>) => {
       setLoading(true);
       setError(null);
 
       try {
+        const isFormUrlEncoded = body instanceof URLSearchParams;
+
         const response = await fetch(url, {
           method,
           headers: {
-            'Content-Type': 'application/json',
+            ...(isFormUrlEncoded ? { 'Content-Type': 'application/x-www-form-urlencoded' } : { 'Content-Type': 'application/json' }),
             Authorization: token ? `Bearer ${token}` : '',
             ...headers,
           },
-          body: JSON.stringify(body),
+          body: isFormUrlEncoded ? body.toString() : JSON.stringify(body),
         });
 
         if (!response.ok) {
