@@ -13,7 +13,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, requiredRole }) =
   const { isAuthenticated, roles } = useSelector((state: RootState) => state.auth);
 
   if (!isAuthenticated) {
-    // TODO: Cambiar ruta de login cuando se implementé el login
     return <Navigate to="/auth/login" />;
   }
 

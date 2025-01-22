@@ -17,6 +17,7 @@ export interface TextFieldProps<T extends FieldValues> {
   labelClassName?: string;
   inputClassName?: string;
   errorClassName?: string;
+  className?: string;
   disabled?: boolean;
   register: UseFormRegister<T>;
   minLength?: number;
@@ -131,7 +132,7 @@ export interface ComboboxFieldProps<T extends FieldValues> {
 }
 
 export interface ButtonProps {
-  variant: 'outline' | 'primary';
+  variant?: 'outline' | 'primary';
   type?: 'button' | 'submit' | 'reset';
   href?: string;
   onClick?: () => void;

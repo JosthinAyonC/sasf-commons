@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ButtonProps } from './types';
 
-export const Button: React.FC<ButtonProps> = ({ variant, className, type = 'button', href, onClick, children, disabled, ...props }) => {
+export const Button: React.FC<ButtonProps> = ({ variant = 'primary', className, type = 'button', href, onClick, children, disabled, ...props }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {

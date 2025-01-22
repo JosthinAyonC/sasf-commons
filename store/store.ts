@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import authSlice from './slices/authSlice';
+import microappslices from '../../state/MicroAppStore';
 
 // https://hernandezmarquina.medium.com/crea-un-estado-persistente-con-redux-persist-redux-toolkit-en-react-native-4b1a7f0b5059
 const persistConfig = {
@@ -11,8 +11,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  // Add your reducers here
-  auth: authSlice,
+  ...microappslices,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
