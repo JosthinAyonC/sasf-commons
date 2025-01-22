@@ -19,7 +19,7 @@ export const Button: React.FC<ButtonProps> = ({ variant = 'primary', className, 
     variant === 'outline'
       ? 'border border-[var(--border)] text-[var(--font)] hover:bg-[var(--hover)]'
       : 'bg-[var(--secondary)] text-white hover:bg-[var(--hover)]';
-  const disabledClass = disabled ? 'opacity-50 cursor-not-allowed' : '';
+  const disabledClass = disabled ? 'opacity-60 cursor-not-allowed' : '';
 
   return (
     <button type={type} className={`${baseClass} ${variantClass} ${disabledClass} ${className}`} onClick={handleClick} disabled={disabled} {...props}>

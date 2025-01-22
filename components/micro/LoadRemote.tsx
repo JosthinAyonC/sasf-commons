@@ -60,7 +60,7 @@ const LoadRemote: React.FC<LoadRemoteProps> = ({ remoteUrl, scope, module, loadi
   }
 
   if (!RemoteComponent) {
-    return <>{loading || <Loader />}</>;
+    return <>{loading || <Loader className="text-[var(--secondary)]" />}</>;
   }
 
   return <RemoteComponent />;

@@ -2,6 +2,7 @@ import { faEye, faEyeSlash, faLock, faUser } from '@fortawesome/free-solid-svg-i
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import { Loader } from '~/components/ui/Loader';
 import { Form } from '~/form/Form';
 import { Button, FormState, TextField } from '~/form/fields';
 import { useMediaQuery } from '~/hooks/useMediaQuery';
@@ -11,6 +12,7 @@ type LoginPageUiProps = {
   methods?: UseFormReturn<FormState>;
   imageUrl?: string;
   tittle?: string;
+  isLoading?: boolean;
 };
 
 /**
@@ -25,6 +27,7 @@ const LoginPageUi = ({
   methods,
   imageUrl = 'https://img.freepik.com/foto-gratis/ejecutivos-gran-sonrisa_1098-3180.jpg?semt=ais_incoming',
   tittle = 'PROYECTO BASE',
+  isLoading = false,
 }: LoginPageUiProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -87,8 +90,8 @@ const LoginPageUi = ({
           </div>
 
           {/* Botón de login */}
-          <Button variant="primary" type="submit" className="w-full font-bold py-3">
-            INGRESAR
+          <Button variant="primary" type="submit" className="w-full font-bold py-3" disabled={isLoading}>
+            {isLoading ? <Loader className="text-[var(--primary)]" /> : 'INGRESAR'}
           </Button>
         </Form>
       </div>
