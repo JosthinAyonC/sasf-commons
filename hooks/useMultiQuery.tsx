@@ -71,7 +71,7 @@ export const useMultiQuery = ({ urls, options }: UseMultiQueryOptions) => {
     return () => {
       isCancelled = true;
     };
-  }, [options, token]);
+  }, [options, token, JSON.stringify(urls)]);
 
   return { results, loading, errors };
 };
