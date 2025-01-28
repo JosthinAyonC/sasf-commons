@@ -48,7 +48,7 @@ function useMutation<T, U = Record<string, unknown>>(url: string, method: 'POST'
         } else {
           setError('An unknown error occurred.');
         }
-        throw err;
+        return null;
       } finally {
         setLoading(false);
       }
