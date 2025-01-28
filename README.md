@@ -177,6 +177,88 @@ import PrivateRoute from '~/components/PrivateRoute';
 </PrivateRoute>
 ```
 
+## Documentación para los componentes `QueryTable` y `Table`
+
+### Componente QueryTable
+
+#### Descripción General
+El componente `QueryTable` es una tabla reutilizable con paginación, filtrado y capacidad de obtención de datos desde el servidor. Integra `@tanstack/react-table` y admite Redux para manejar tokens de autenticación.
+
+#### Props
+| Propiedad          | Tipo                                  | Valor por Defecto | Descripción                                                                                 |
+|--------------------|---------------------------------------|-------------------|---------------------------------------------------------------------------------------------|
+| `columns`          | `ColumnDef<T>[]`                     | **Requerido**     | Define la estructura y configuración de las columnas de la tabla.                           |
+| `fetchUrl`         | `string`                             | **Requerido**     | La URL para obtener los datos de la tabla.                                                  |
+| `queryParams`      | `Record<string, string | number | boolean>` | `{}`               | Parámetros adicionales de consulta a incluir en la petición.                                |
+| `filterKey`        | `string`                             | `'filter'`        | Clave del parámetro de consulta para el filtrado global.                                    |
+| `pageKey`          | `string`                             | `'page'`          | Clave del parámetro de consulta para la paginación.                                         |
+| `sizeKey`          | `string`                             | `'size'`          | Clave del parámetro de consulta para el tamaño de página.                                   |
+| `responseDataKey`  | `string`                             | `'content'`       | Clave en la respuesta del servidor que contiene los datos de la tabla.                      |
+| `debounceDelay`    | `number`                             | `300`             | Tiempo en milisegundos para aplicar un retraso controlado al filtro global.                 |
+| `showOptions`      | `boolean`                            | `true`            | Define si se deben mostrar los controles de paginación.                                     |
+| `searchable`       | `boolean`                            | `true`            | Define si se habilita el campo de búsqueda global.                                          |
+| `onSelectAction`   | `(row: T) => void`                   | `undefined`       | Función opcional que se ejecuta al seleccionar una fila, pasando los datos de la fila.      |
+
+#### Ejemplo de Uso
+```tsx
+<QueryTable
+  columns={columns}
+  fetchUrl="http://api.example.com/data"
+  queryParams={{ status: 'active' }}
+  onSelectAction={(row) => console.log('Fila seleccionada:', row)}
+/>
+```
+
+---
+
+### Componente Table
+
+#### Descripción General
+El componente `Table` es una tabla simple para manejar datos en el cliente. Utiliza `@tanstack/react-table` para la renderización y admite paginación y filtrado global.
+
+#### Props
+| Propiedad  | Tipo              | Descripción                                                 |
+|------------|-------------------|-------------------------------------------------------------|
+| `data`     | `T[]`             | Datos que se mostrarán en la tabla.                         |
+| `columns`  | `ColumnDef<T>[]`  | Define la estructura y configuración de las columnas.       |
+
+#### Ejemplo de Uso
+```tsx
+<Table
+  data={[
+    { id: 1, name: 'Juan', age: 25 },
+    { id: 2, name: 'María', age: 30 },
+  ]}
+  columns={[
+    {
+      header: 'ID',
+      accessorKey: 'id',
+    },
+    {
+      header: 'Nombre',
+      accessorKey: 'name',
+    },
+    {
+      header: 'Edad',
+      accessorKey: 'age',
+    },
+  ]}
+/>
+```
+
+### Funcionalidades
+- **Campo de búsqueda global:** Permite buscar datos en todas las columnas.
+- **Paginación:** Controla la cantidad de datos mostrados por página.
+
+### Controles de Paginación
+- Navegación entre páginas: Botones para ir a la primera, anterior, siguiente y última página.
+- Selección de tamaño de página: Dropdown para definir cuántas filas mostrar por página.
+
+---
+
+Ambos componentes aseguran flexibilidad y consistencia al manejar tablas en React.
+
+
 ---
 
 ## Uso de Hooks

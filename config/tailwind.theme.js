@@ -25,6 +25,10 @@ module.exports = {
           light: '#ff7676',
           dark: '#4A5568',
         },
+        hover2: {
+          light: '#fed9d9',
+          dark: '#2b3340',
+        },
         success: {
           light: '#38A169',
           dark: '#48BB78',
@@ -92,6 +96,7 @@ module.exports = {
           '--highlight': theme('colors.highlight.light'),
           '--placeholder': theme('colors.placeholder.light'),
           '--border': theme('colors.border.light'),
+          '--hover2': theme('colors.hover2.light'),
         },
         '.dark': {
           '--primary': theme('colors.primary.dark'),
@@ -107,6 +112,7 @@ module.exports = {
           '--highlight': theme('colors.highlight.dark'),
           '--placeholder': theme('colors.placeholder.dark'),
           '--border': theme('colors.border.dark'),
+          '--hover2': theme('colors.hover2.dark'),
         },
       });
     },
