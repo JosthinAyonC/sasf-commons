@@ -25,10 +25,17 @@ interface TableProps<T extends object> {
   onSelectAction?: (_row: T) => void;
   onDeleteAction?: (_row: T) => void;
   statusAccessor?: string;
-  onStatusChange?: (_row: T, newStatus: 'A' | 'I') => void;
+  onStatusChange?: (_row: T, _newStatus: 'A' | 'I') => void;
   onNewAction?: () => void;
+  onDeleteMassiveAction?: (_row: T[]) => void;
 }
 
+/**
+ * Este componente es una tabla que se conecta a un endpoint para obtener los datos a mostrar.
+ * funciona para cruds sencillos, para tablas más complejas que mapeen relaciones
+ * Lo recomendado es instalar prime react y usar sus componentes
+ * Mapeando su lógica dentro del mismo componente.
+ */
 const QueryTable = <T extends object>({
   columns,
   fetchUrl,
@@ -47,6 +54,7 @@ const QueryTable = <T extends object>({
   statusAccessor,
   onStatusChange,
   onNewAction,
+  onDeleteMassiveAction,
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -59,6 +67,12 @@ const QueryTable = <T extends object>({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [overlayData, setOverlayData] = useState<{ row: T; buttonRect: DOMRect } | null>(null);
+  const [selectedRows, setSelectedRows] = useState<T[]>([]);
+  const [showMassDeleteConfirmation, setShowMassDeleteConfirmation] = useState(false);
+
+  const handleRowSelection = (row: T) => {
+    setSelectedRows((prevSelected) => (prevSelected.includes(row) ? prevSelected.filter((selected) => selected !== row) : [...prevSelected, row]));
+  };
 
   const token = useSelector((state: RootState) => state.auth.token);
 
@@ -148,6 +162,44 @@ const QueryTable = <T extends object>({
     onStatusChange(row, newStatus as 'A' | 'I');
   };
 
+  // TODO: implementar diseño para seleccionar todos los registros
+  // const handleSelectAll = () => {
+  //   setSelectedRows(selectedRows.length === table.getRowModel().rows.length ? [] : table.getRowModel().rows.map((row) => row.original));
+  // };
+
+  // Eliminar registros seleccionados
+  const confirmMassDelete = () => {
+    if (onDeleteMassiveAction) {
+      onDeleteMassiveAction(selectedRows);
+    }
+    setSelectedRows([]);
+    setShowMassDeleteConfirmation(false);
+  };
+
+  const selectionColumn: ColumnDef<T> = {
+    id: 'selection',
+    header: () => (
+      <div className="flex items-center justify-center space-x-2">
+        <button
+          onClick={() => setShowMassDeleteConfirmation(true)}
+          className={`p-2 rounded-md bg-[var(--hover2)] text-[var(font)] hover:text-[var(--error)] ${selectedRows.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          title="Eliminar seleccionados"
+          disabled={selectedRows.length === 0}
+        >
+          <FaTrashAlt className="lg" />
+        </button>
+      </div>
+    ),
+    cell: ({ row }) => (
+      <input
+        type="checkbox"
+        checked={selectedRows.includes(row.original)}
+        onChange={() => handleRowSelection(row.original)}
+        className="border border-[var(--border)] accent-[var(--secondary)] rounded-sm focus:ring-[var(--focus)] focus:outline-none bg-[var(--bg)] text-[var(--primary)] cursor-pointer scale-150"
+      />
+    ),
+  };
+
   const actionColumn: ColumnDef<T> = {
     id: 'actions',
     header: () => 'Acciones',
@@ -174,7 +226,7 @@ const QueryTable = <T extends object>({
     ),
   };
 
-  const tableColumns = [actionColumn, ...columns];
+  const tableColumns = [selectionColumn, actionColumn, ...columns];
 
   const table = useReactTable<T>({
     data: Array.isArray(fetchedData?.[responseDataKey]) ? (fetchedData?.[responseDataKey] as T[]) : [],
@@ -193,12 +245,12 @@ const QueryTable = <T extends object>({
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-hidden p-2">
       {/* Encabezado con búsqueda y botón de agregar */}
-      <div className="flex justify-between items-center mb-4 px-4 py-2 bg-[var(--bg)] border-b border-[var(--border)] rounded-t-lg">
-        <h1 className="text-2xl font-bold text-[var(--font)]">{title}</h1>
+      <div className="flex flex-wrap justify-between items-center mb-4 px-4 py-2 bg-[var(--bg)] border-b border-[var(--border)] rounded-t-lg">
+        <p className="text-lg font-bold text-[var(--font)] break-words">{title}</p>
         {searchable && (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 w-full sm:w-auto mt-2 sm:mt-0">
             <div className="relative flex items-center border border-[var(--border)] rounded bg-[var(--bg)] focus-within:ring focus-within:border-[var(--highlight)]">
               <span className="px-3 text-[var(--placeholder)]">
                 <FaFilter />
@@ -208,7 +260,7 @@ const QueryTable = <T extends object>({
                 value={globalFilter ?? ''}
                 onChange={(e) => setGlobalFilter(e.target.value)}
                 placeholder="Buscar..."
-                className="flex-1 p-2 bg-transparent text-[var(--font)] placeholder-[var(--placeholder)] focus:outline-none"
+                className="flex-1 p-2 bg-transparent text-[var(--font)] placeholder-[var(--placeholder)] focus:outline-none w-[25%]"
               />
             </div>
             {onNewAction && (
@@ -220,14 +272,14 @@ const QueryTable = <T extends object>({
         )}
       </div>
 
-      {/* Tabla */}
-      <div className="overflow-x-auto rounded-xl">
+      {/* Tabla con scroll horizontal */}
+      <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
         <table className="min-w-full text-center bg-[var(--bg)] text-[var(--font)]">
           <thead className="border-b bg-[var(--secondary)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-6 py-4 text-sm font-medium border-[var(--border)]">
+                  <th key={header.id} className="px-4 py-2 text-sm font-medium border-[var(--border)]">
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
@@ -238,7 +290,7 @@ const QueryTable = <T extends object>({
             {loading ? (
               <tr className="border-b border-[var(--border)]">
                 <td colSpan={tableColumns.length} className="text-center py-4">
-                  <Loader />
+                  <Loader className="text-[var(--secondary)]" />
                 </td>
               </tr>
             ) : table.getRowModel().rows.length === 0 ? (
@@ -277,51 +329,49 @@ const QueryTable = <T extends object>({
 
       {/* Controles de paginación */}
       {showOptions && (
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-              className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
-            >
-              {'<<'}
-            </button>
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
-            >
-              {'<'}
-            </button>
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
-            >
-              {'>'}
-            </button>
-            <button
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-              className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
-            >
-              {'>>'}
-            </button>
-          </div>
-          <span className="text-[var(--font)]">
+        <div className="flex flex-wrap items-center justify-center mt-4 space-x-2 sm:space-x-4">
+          <button
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+          >
+            {'<<'}
+          </button>
+          <button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+          >
+            {'<'}
+          </button>
+          <span className="text-[var(--font)] text-sm sm:text-base">
             Página{' '}
             <strong>
               {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
             </strong>
           </span>
+          <button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+          >
+            {'>'}
+          </button>
+          <button
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+          >
+            {'>>'}
+          </button>
           <select
             value={table.getState().pagination.pageSize}
             onChange={(e) => {
               table.setPageSize(Number(e.target.value));
             }}
-            className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded"
+            className="ml-2 sm:ml-4 px-2 py-1 bg-[var(--hover)] text-[var(--font)] rounded mt-4 md:mt-0"
           >
-            {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+            {[5, 10, 20, 30].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 Mostrar {pageSize}
               </option>
@@ -329,7 +379,8 @@ const QueryTable = <T extends object>({
           </select>
         </div>
       )}
-      {/* Overlay contextual */}
+
+      {/* Overlay eliminacion individual */}
       {overlayData && (
         <motion.div
           className="absolute z-50 bg-[var(--bg)] border border-[var(--border)] rounded shadow-lg p-4"
@@ -346,15 +397,41 @@ const QueryTable = <T extends object>({
             <FaExclamationTriangle className="text-[var(--error)] text-xl" />
             <p className="text-sm text-[var(--font)]">¿Estás seguro de eliminar este elemento?</p>
           </div>
-          <div className="flex justify-between mt-4">
-            <button onClick={confirmDelete} className="w-[40%] px-3 py-1 bg-[var(--error)] text-[var(--font)] rounded hover:bg-red-400">
+          <div className="flex justify-end space-x-4  mt-4">
+            <button onClick={confirmDelete} className="w-[25%] px-3 py-1 bg-[var(--error)] text-[var(--font)] rounded hover:bg-red-400">
               Sí
             </button>
-            <button onClick={cancelDelete} className="w-[40%] px-3 py-1 bg-[var(--info)] text-[var(--font)] rounded hover:bg-blue-400">
+            <button onClick={cancelDelete} className="w-[25%] px-3 py-1 bg-[var(--info)] text-[var(--font)] rounded hover:bg-blue-400">
               No
             </button>
           </div>
         </motion.div>
+      )}
+
+      {/* Modal de eliminación masiva */}
+      {showMassDeleteConfirmation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <motion.div
+            className="bg-[var(--bg)] border border-[var(--border)] rounded-lg shadow-lg p-6 w-[90%] sm:w-[400px] max-w-full"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+          >
+            <div className="flex items-center space-x-2">
+              <FaExclamationTriangle className="text-[var(--error)] text-2xl" />
+              <p className="text-md text-[var(--font)]">¿Estás seguro de eliminar los elementos seleccionados?</p>
+            </div>
+
+            <div className="flex flex-wrap justify-end space-x-2 sm:space-x-4 mt-6">
+              <button onClick={confirmMassDelete} className="px-4 py-2 bg-[var(--error)] text-white rounded hover:bg-red-400">
+                Sí
+              </button>
+              <button onClick={() => setShowMassDeleteConfirmation(false)} className="px-4 py-2 bg-[var(--info)] text-white rounded hover:bg-blue-400">
+                No
+              </button>
+            </div>
+          </motion.div>
+        </div>
       )}
     </div>
   );

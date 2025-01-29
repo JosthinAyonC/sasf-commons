@@ -1,6 +1,7 @@
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 import React, { createContext, useCallback, useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 import useQuery from '~/hooks/useQuery';
 import { RootState } from '~/store';
 import { logout, refreshToken } from '~/store/authSlice';
@@ -29,6 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const dispatch = useDispatch();
   const token = useSelector((state: RootState) => state.auth.token);
   const exp = useSelector((state: RootState) => state.auth.exp);
+  const navigate = useNavigate();
 
   // Usar `useQuery` para el endpoint de refresh
   const { data, error, refetch } = useQuery<AuthResponse>(`${process.env.AUTH_URL}${process.env.REFRESH_TOKEN_PATH || ''}`);
@@ -51,8 +53,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) {
       console.error('Error refreshing token:', error);
       dispatch(logout());
+      navigate('/auth/login');
     }
-  }, [data, error, dispatch]);
+  }, [navigate, data, error, dispatch]);
 
   // Verificar si el token está por expirar y ejecutar el refresh
   useEffect(() => {
