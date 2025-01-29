@@ -6,7 +6,7 @@ const ErrorScreen: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen bg-[var(--bg)] text-[var(--font)]">
+    <div className="flex flex-col items-center justify-center w-full h-screen bg-[var(--bg)] text-[var(--font)] px-2">
       {/* Vector superior */}
       <div className="flex items-center justify-center mr-16">
         <svg width="1920" height="472" viewBox="0 0 1920 472" fill="none" xmlns="http://www.w3.org/2000/svg">

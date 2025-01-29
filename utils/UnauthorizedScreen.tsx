@@ -6,7 +6,7 @@ const UnauthorizedScreen: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen text-[var(--font)] bg-[var(--bg)]">
+    <div className="flex flex-col items-center justify-center w-full h-screen text-[var(--font)] bg-[var(--bg)] px-2">
       {/* Icono */}
       <div className="w-64 h-64 flex items-center justify-center bg-[var(--bg)] rounded-full shadow-xl mb-6">
         <svg width="467" height="467" viewBox="0 0 467 467" fill="none" xmlns="http://www.w3.org/2000/svg">

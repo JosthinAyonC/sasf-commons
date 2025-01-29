@@ -6,7 +6,7 @@ const NotFoundScreen: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen text-[var(--font)] bg-[var(--bg)]">
+    <div className="flex flex-col items-center justify-center w-full h-screen text-[var(--font)] bg-[var(--bg)] px-2">
       {/* Icono */}
       <div className="flex justify-center items-center w-80 h-80 w bg-[var(--bg)] rounded-full shadow-xl mb-6">
         <svg width="675" height="607" viewBox="0 0 675 607" fill="none" xmlns="http://www.w3.org/2000/svg">

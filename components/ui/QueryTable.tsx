@@ -161,7 +161,6 @@ const QueryTable = <T extends object>({
 
     // Llama a onStatusChange con el nuevo estado
     await onStatusChange(row, newStatus as 'A' | 'I');
-    fetchData();
   };
 
   // TODO: implementar diseño para seleccionar todos los registros

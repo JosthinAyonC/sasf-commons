@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Lógica para refrescar el token
   const refreshSession = useCallback(() => {
     if (token) {
-      console.log('Intentando refrescar el token...');
+      console.log('Refrescando el token.');
       refetch();
     }
   }, [token, refetch]);

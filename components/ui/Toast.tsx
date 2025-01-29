@@ -6,7 +6,7 @@ import { Toast } from '~/provider/ToastContext';
 
 const ToastContainer = ({ toasts, onRemove }: { toasts: Toast[]; onRemove: (_id: string) => void }) => {
   return (
-    <div className="fixed top-4 right-4 space-y-2 z-50 w-[30vw] max-h-[40vh] overflow-y-auto">
+    <div className="fixed top-4 right-4 space-y-2 z-50 md:w-[30vw] w-[90%] md:max-h-[40vh] max-h-[40%] overflow-y-auto">
       {toasts.map((toast) => (
         <ToastMessage key={toast.id} {...toast} onRemove={onRemove} />
       ))}
