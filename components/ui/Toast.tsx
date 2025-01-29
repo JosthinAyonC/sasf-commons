@@ -6,7 +6,7 @@ import { Toast } from '~/provider/ToastContext';
 
 const ToastContainer = ({ toasts, onRemove }: { toasts: Toast[]; onRemove: (_id: string) => void }) => {
   return (
-    <div className="fixed top-4 right-4 space-y-2 z-50">
+    <div className="fixed top-4 right-4 space-y-2 z-50 w-[30vw] max-h-[40vh] overflow-y-auto">
       {toasts.map((toast) => (
         <ToastMessage key={toast.id} {...toast} onRemove={onRemove} />
       ))}
@@ -14,7 +14,6 @@ const ToastContainer = ({ toasts, onRemove }: { toasts: Toast[]; onRemove: (_id:
   );
 };
 
-// TDOO: AJUSTAR ESTILOS DE LOS TOASTS
 const ToastMessage = ({ id, message, variant, onRemove }: Toast & { onRemove: (_id: string) => void }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -68,15 +67,15 @@ const ToastMessage = ({ id, message, variant, onRemove }: Toast & { onRemove: (_
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 50 }}
           transition={{ duration: 0.3 }}
-          className={`relative p-3 border rounded-md shadow-md ${background} border-l-8 ${borderColor}`}
+          className={`relative p-3 border rounded-md shadow-md ${background} border-l-8 ${borderColor} w-full max-h-[40vh]`}
         >
-          <div className="flex items-start">
-            <div className={`mr-4 text-2xl ${textcolor}`}>
+          <div className="flex items-start space-x-3">
+            <div className={`text-2xl ${textcolor}`}>
               <FontAwesomeIcon icon={icon} />
             </div>
-            <div>
+            <div className="flex-1">
               <div className="font-bold text-[16px]">{title}</div>
-              <div className="text-sm">{message || 'Mensaje predeterminado'}</div>
+              <div className="text-sm max-h-[10vh] overflow-hidden text-ellipsis line-clamp-4">{message || 'Mensaje predeterminado'}</div>
             </div>
             <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-800" onClick={() => onRemove(id)}>
               <FontAwesomeIcon icon={faClose} />

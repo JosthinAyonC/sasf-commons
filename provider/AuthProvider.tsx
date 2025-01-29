@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
 
   // Usar `useQuery` para el endpoint de refresh
-  const { data, error, refetch } = useQuery<AuthResponse>(`${process.env.AUTH_URL}${process.env.REFRESH_TOKEN_PATH || ''}`);
+  const { data, error, refetch } = useQuery<AuthResponse>(`${process.env.AUTH_URL}${process.env.REFRESH_TOKEN_PATH || ''}`, {}, {}, false);
 
   // Lógica para refrescar el token
   const refreshSession = useCallback(() => {

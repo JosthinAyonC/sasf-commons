@@ -2,26 +2,30 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '~/store';
 
+export interface ApiError {
+  status: number;
+  message: string;
+  error: {
+    timestamp?: string;
+    message?: string;
+    details?: string;
+  };
+}
+
 /**
  * Custom hook to perform POST, PUT, or PATCH requests with Redux integration for authorization.
  *
  * @param url The API endpoint to send the request to.
  * @param method The HTTP method to use (e.g., 'POST', 'PUT', 'PATCH').
- * @returns An object containing mutate function, loading, error, and response data.
+ * @returns A function `mutate` to execute the request.
  */
-function useMutation<T, U = Record<string, unknown>>(url: string, method: 'POST' | 'PUT' | 'PATCH') {
-  const [data, setData] = useState<T | null>(null);
+function useMutation<T, U = Record<string, unknown> | Record<string, unknown>[]>(url: string, method: 'POST' | 'PUT' | 'PATCH') {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Retrieve the token from the Redux store
   const token = useSelector((state: RootState) => state.auth.token);
 
   const mutate = useCallback(
-    async (body: U | URLSearchParams, headers?: Record<string, string>) => {
+    async (body: U | URLSearchParams, headers?: Record<string, string>): Promise<T> => {
       setLoading(true);
-      setError(null);
-
       try {
         const isFormUrlEncoded = body instanceof URLSearchParams;
 
@@ -36,19 +40,11 @@ function useMutation<T, U = Record<string, unknown>>(url: string, method: 'POST'
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+          throw { status: response.status, message: errorData.message, error: errorData } as ApiError;
         }
 
-        const result: T = await response.json();
-        setData(result);
-        return result;
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('An unknown error occurred.');
-        }
-        return null;
+        return await response.json();
       } finally {
         setLoading(false);
       }
@@ -56,7 +52,7 @@ function useMutation<T, U = Record<string, unknown>>(url: string, method: 'POST'
     [url, method, token]
   );
 
-  return { mutate, data, loading, error };
+  return { mutate, loading };
 }
 
 export default useMutation;

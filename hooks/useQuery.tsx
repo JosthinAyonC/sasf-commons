@@ -8,11 +8,12 @@ import { RootState } from '~/store';
  * @param url The API endpoint to fetch data from.
  * @param options Optional fetch options (e.g., method, headers, body).
  * @param queryParams Optional query parameters to append to the URL.
+ * @param autoFetch Whether the request should run automatically when the component mounts.
  * @returns An object containing loading, error, data, and a refetch function.
  */
-function useQuery<T>(url: string, options?: RequestInit, queryParams?: Record<string, string | number | boolean>) {
+function useQuery<T>(url: string, options?: RequestInit, queryParams?: Record<string, string | number | boolean>, autoFetch: boolean = true) {
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(autoFetch);
   const [error, setError] = useState<string | null>(null);
   const [trigger, setTrigger] = useState<number>(0);
 
@@ -67,8 +68,10 @@ function useQuery<T>(url: string, options?: RequestInit, queryParams?: Record<st
   }, [fullUrl, options, token]);
 
   useEffect(() => {
-    fetchData();
-  }, [trigger]);
+    if (autoFetch) {
+      fetchData();
+    }
+  }, [trigger, autoFetch]);
 
   const refetch = () => {
     setTrigger((prev) => prev + 1);

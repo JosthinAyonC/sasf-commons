@@ -1,7 +1,7 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FaEdit, FaExclamationTriangle, FaFilter, FaPlus, FaTrashAlt } from 'react-icons/fa';
+import { FaEdit, FaExclamationTriangle, FaFilter, FaPlus, FaTimes, FaTrashAlt } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import useDebounce from '~/hooks/useDebounce';
 import { RootState } from '~/store';
@@ -131,9 +131,10 @@ const QueryTable = <T extends object>({
     setOverlayData({ row, buttonRect });
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (overlayData && onDeleteAction) {
-      onDeleteAction(overlayData.row);
+      await onDeleteAction(overlayData.row);
+      fetchData();
     }
     setOverlayData(null);
   };
@@ -142,7 +143,7 @@ const QueryTable = <T extends object>({
     setOverlayData(null);
   };
 
-  const handleStatusToggle = (row: T) => {
+  const handleStatusToggle = async (row: T) => {
     if (!statusAccessor || !onStatusChange) return;
 
     setFetchedData((prevData) => {
@@ -159,7 +160,8 @@ const QueryTable = <T extends object>({
     const newStatus = (row[statusAccessor as keyof T] === 'A' ? 'I' : 'A') as T[keyof T];
 
     // Llama a onStatusChange con el nuevo estado
-    onStatusChange(row, newStatus as 'A' | 'I');
+    await onStatusChange(row, newStatus as 'A' | 'I');
+    fetchData();
   };
 
   // TODO: implementar diseño para seleccionar todos los registros
@@ -167,10 +169,10 @@ const QueryTable = <T extends object>({
   //   setSelectedRows(selectedRows.length === table.getRowModel().rows.length ? [] : table.getRowModel().rows.map((row) => row.original));
   // };
 
-  // Eliminar registros seleccionados
-  const confirmMassDelete = () => {
+  const confirmMassDelete = async () => {
     if (onDeleteMassiveAction) {
-      onDeleteMassiveAction(selectedRows);
+      await onDeleteMassiveAction(selectedRows); // Espera la finalización
+      fetchData(); // Ahora se ejecuta solo cuando la mutación se completa
     }
     setSelectedRows([]);
     setShowMassDeleteConfirmation(false);
@@ -249,8 +251,9 @@ const QueryTable = <T extends object>({
       {/* Encabezado con búsqueda y botón de agregar */}
       <div className="flex flex-wrap justify-between items-center mb-4 px-4 py-2 bg-[var(--bg)] border-b border-[var(--border)] rounded-t-lg">
         <p className="text-lg font-bold text-[var(--font)] break-words">{title}</p>
-        {searchable && (
-          <div className="flex items-center space-x-2 w-full sm:w-auto mt-2 sm:mt-0">
+
+        <div className="flex items-center space-x-2 w-full sm:w-auto mt-2 sm:mt-0">
+          {searchable && (
             <div className="relative flex items-center border border-[var(--border)] rounded bg-[var(--bg)] focus-within:ring focus-within:border-[var(--highlight)]">
               <span className="px-3 text-[var(--placeholder)]">
                 <FaFilter />
@@ -262,14 +265,20 @@ const QueryTable = <T extends object>({
                 placeholder="Buscar..."
                 className="flex-1 p-2 bg-transparent text-[var(--font)] placeholder-[var(--placeholder)] focus:outline-none w-[25%]"
               />
+              {globalFilter && (
+                <button onClick={() => setGlobalFilter('')} className="absolute right-2 text-[var(--placeholder)] hover:text-[var(--font)] focus:outline-none">
+                  <FaTimes />
+                </button>
+              )}
             </div>
-            {onNewAction && (
-              <button onClick={onNewAction} className="p-2 bg-[var(--info)] text-white rounded hover:bg-blue-400">
-                <FaPlus />
-              </button>
-            )}
-          </div>
-        )}
+          )}
+
+          {onNewAction && (
+            <button onClick={onNewAction} className="p-3 bg-[var(--info)] text-white rounded hover:bg-blue-400">
+              <FaPlus />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Tabla con scroll horizontal */}
