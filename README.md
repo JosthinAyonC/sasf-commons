@@ -178,13 +178,13 @@ import PrivateRoute from '~/components/PrivateRoute';
 ```
 
 ## Documentación para los componentes `QueryTable` y `Table`
-
 ### Componente QueryTable
 
 #### Descripción General
-El componente `QueryTable` es una tabla reutilizable con paginación, filtrado y capacidad de obtención de datos desde el servidor. Integra `@tanstack/react-table` y admite Redux para manejar tokens de autenticación.
+El componente `QueryTable` es una tabla reutilizable con paginación, filtrado y capacidad de obtención de datos desde el servidor. Integra `@tanstack/react-table` y admite Redux para manejar tokens de autenticación. Además, se ha integrado un sistema de **refetch** basado en `EventEmitter` para actualizar la tabla automáticamente tras ciertas mutaciones.
 
 #### Props
+
 | Propiedad          | Tipo                                  | Valor por Defecto | Descripción                                                                                 |
 |--------------------|---------------------------------------|-------------------|---------------------------------------------------------------------------------------------|
 | `columns`          | `ColumnDef<T>[]`                     | **Requerido**     | Define la estructura y configuración de las columnas de la tabla.                           |
@@ -199,6 +199,49 @@ El componente `QueryTable` es una tabla reutilizable con paginación, filtrado y
 | `searchable`       | `boolean`                            | `true`            | Define si se habilita el campo de búsqueda global.                                          |
 | `onSelectAction`   | `(row: T) => void`                   | `undefined`       | Función opcional que se ejecuta al seleccionar una fila, pasando los datos de la fila.      |
 
+#### Integración con `EventEmitter` para Refetch Automático
+El `QueryTable` está suscrito a un `EventEmitter` que permite refrescar los datos automáticamente cuando un componente externo emite un evento `refreshTable`.
+
+##### Configuración del `EventEmitter`
+Crea un archivo llamado `eventEmitter.ts` y define el `EventEmitter` global:
+```tsx
+import { EventEmitter } from 'events';
+export const tableEventEmitter = new EventEmitter();
+```
+
+##### Uso en `QueryTable`
+Dentro del `QueryTable`, se suscribe al evento `refreshTable` y dispara un `fetchData()` cuando se recibe:
+```tsx
+import { tableEventEmitter } from '~/config/eventEmitter';
+
+useEffect(() => {
+  const listener = () => fetchData();
+  tableEventEmitter.on('refreshTable', listener);
+  
+  return () => {
+    tableEventEmitter.off('refreshTable', listener);
+  };
+}, [fetchData]);
+```
+
+##### Emisión del evento tras una mutación
+Dentro de un componente como `ParametrosGeneralesForm`, después de una mutación exitosa, emite el evento para actualizar la tabla:
+```tsx
+import { tableEventEmitter } from '~/utils/eventEmitter';
+
+const onSubmit = async (formData: AgeParametrosGenerales) => {
+  try {
+    await mutate({ ...formattedData, usuarioModificacion: currentCodUser });
+    addToast('Parámetro general editado satisfactoriamente.', 'success');
+    
+    tableEventEmitter.emit('refreshTable'); // Notifica a QueryTable que recargue los datos
+  } catch (error) {
+    const err = error as ApiError;
+    addToast(err.message, 'danger');
+  }
+};
+```
+
 #### Ejemplo de Uso
 ```tsx
 <QueryTable
@@ -209,8 +252,11 @@ El componente `QueryTable` es una tabla reutilizable con paginación, filtrado y
 />
 ```
 
+#### Beneficios de esta Implementación
+- **Actualización automática de la tabla** cuando ocurre una mutación (`PUT`, `POST`, `DELETE`).
+- **Manejo centralizado del estado** sin necesidad de prop drilling.
+- **Mayor modularidad**, permitiendo reutilizar `QueryTable` en distintos contextos.
 ---
-
 ### Componente Table
 
 #### Descripción General

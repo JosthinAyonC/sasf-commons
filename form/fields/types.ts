@@ -32,6 +32,16 @@ export interface TextFieldProps<T extends FieldValues> {
   onChange?: (_value: string) => void;
 }
 
+export interface ToggleFieldProps {
+  name: string;
+  label?: string;
+  isDisabled?: boolean;
+  variant?: 'enterprise' | 'default';
+  toggleClassName?: string;
+  labelClassName?: string;
+  containerClassName?: string;
+}
+
 /*
  * Interfaz de las propiedades del componente DataPickerProps
  */

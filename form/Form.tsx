@@ -14,9 +14,13 @@ export const Form = <T extends FieldValues>({ children, onSubmit, className, met
 
   return (
     <RHFProvider {...finalMethods}>
-      <form onSubmit={finalMethods.handleSubmit(onSubmit)} className={className}>
-        {children}
-      </form>
+      <div className="rounded-lg md:shadow-lg w-full max-w-3xl">
+        <div className="p-6">
+          <form onSubmit={finalMethods.handleSubmit(onSubmit)} className={className}>
+            {children}
+          </form>
+        </div>
+      </div>
     </RHFProvider>
   );
 };

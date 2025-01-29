@@ -76,7 +76,12 @@ export const Dialog: React.FC<DialogProps> = ({
               <FontAwesomeIcon icon={faClose} />
             </button>
           )}
-          {title && <h2 className={`text-[var(--font)] mb-4 text-xl ${titleClassName || ''}`}>{title}</h2>}
+
+          {title && (
+            <div className="px-6 py-3 rounded-t-lg border-b flex items-center justify-between">
+              <h2 className={`text-[var(--font)] text-lg font-semibold ${titleClassName}`}>{title}</h2>
+            </div>
+          )}
           <div className={`${isDesktop ? 'mt-4' : 'mt-10'} text-[var(--font)]`}>{children}</div>
         </motion.div>
       </motion.div>

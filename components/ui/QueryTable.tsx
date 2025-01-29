@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaEdit, FaExclamationTriangle, FaFilter, FaPlus, FaTimes, FaTrashAlt } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { tableEventEmitter } from '~/config/eventEmitter';
 import useDebounce from '~/hooks/useDebounce';
 import { RootState } from '~/store';
 
@@ -125,6 +126,15 @@ const QueryTable = <T extends object>({
 
   useEffect(() => {
     fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    const listener = () => fetchData();
+    tableEventEmitter.on('refreshTable', listener);
+
+    return () => {
+      tableEventEmitter.off('refreshTable', listener);
+    };
   }, [fetchData]);
 
   const handleDeleteClick = (row: T, buttonRect: DOMRect) => {
@@ -260,7 +270,10 @@ const QueryTable = <T extends object>({
               <input
                 type="text"
                 value={globalFilter ?? ''}
-                onChange={(e) => setGlobalFilter(e.target.value)}
+                onChange={(e) => {
+                  setGlobalFilter(e.target.value);
+                  setPagination({ ...pagination, pageIndex: 0 });
+                }}
                 placeholder="Buscar..."
                 className="flex-1 p-2 bg-transparent text-[var(--font)] placeholder-[var(--placeholder)] focus:outline-none w-[25%]"
               />

@@ -24,7 +24,7 @@ function useMutation<T, U = Record<string, unknown> | Record<string, unknown>[]>
   const token = useSelector((state: RootState) => state.auth.token);
 
   const mutate = useCallback(
-    async (body: U | URLSearchParams, headers?: Record<string, string>): Promise<T> => {
+    async (body: U | URLSearchParams, headers?: Record<string, string>): Promise<T | null> => {
       setLoading(true);
       try {
         const isFormUrlEncoded = body instanceof URLSearchParams;
@@ -44,7 +44,12 @@ function useMutation<T, U = Record<string, unknown> | Record<string, unknown>[]>
           throw { status: response.status, message: errorData.message, error: errorData } as ApiError;
         }
 
-        return await response.json();
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          return await response.json();
+        }
+
+        return null;
       } finally {
         setLoading(false);
       }
