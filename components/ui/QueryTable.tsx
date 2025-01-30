@@ -237,7 +237,7 @@ const QueryTable = <T extends object>({
     ),
   };
 
-  const tableColumns = [selectionColumn, actionColumn, ...columns];
+  const tableColumns = [selectionColumn, ...(onSelectAction || onDeleteAction ? [actionColumn] : []), ...columns];
 
   const table = useReactTable<T>({
     data: Array.isArray(fetchedData?.[responseDataKey]) ? (fetchedData?.[responseDataKey] as T[]) : [],
