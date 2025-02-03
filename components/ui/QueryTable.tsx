@@ -1,9 +1,21 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FaEdit, FaExclamationTriangle, FaFilter, FaPlus, FaTimes, FaTrashAlt } from 'react-icons/fa';
+import {
+  FaAngleDoubleLeft,
+  FaAngleDoubleRight,
+  FaAngleLeft,
+  FaAngleRight,
+  FaEdit,
+  FaExclamationTriangle,
+  FaFilter,
+  FaPlus,
+  FaTimes,
+  FaTrashAlt,
+} from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { tableEventEmitter } from '~/config/eventEmitter';
+import { useMediaQuery } from '~/hooks';
 import useDebounce from '~/hooks/useDebounce';
 import { RootState } from '~/store';
 
@@ -29,6 +41,8 @@ interface TableProps<T extends object> {
   onStatusChange?: (_row: T, _newStatus: 'A' | 'I') => void;
   onNewAction?: () => void;
   onDeleteMassiveAction?: (_row: T[]) => void;
+  defaultPage?: number;
+  defaultSize?: number;
 }
 
 /**
@@ -56,10 +70,12 @@ const QueryTable = <T extends object>({
   onStatusChange,
   onNewAction,
   onDeleteMassiveAction,
+  defaultPage = 0,
+  defaultSize = 5,
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 5,
+    pageIndex: defaultPage,
+    pageSize: defaultSize,
   });
 
   const [globalFilter, setGlobalFilter] = useState('');
@@ -75,6 +91,8 @@ const QueryTable = <T extends object>({
     setSelectedRows((prevSelected) => (prevSelected.includes(row) ? prevSelected.filter((selected) => selected !== row) : [...prevSelected, row]));
   };
 
+  const totalPages = fetchedData ? Math.ceil((fetchedData[responseTotalCount] as number) / pagination.pageSize) : 0;
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const token = useSelector((state: RootState) => state.auth.token);
 
   const fetchData = useCallback(async () => {
@@ -178,6 +196,29 @@ const QueryTable = <T extends object>({
   //   setSelectedRows(selectedRows.length === table.getRowModel().rows.length ? [] : table.getRowModel().rows.map((row) => row.original));
   // };
 
+  const renderPaginationButtons = () => {
+    const { pageIndex } = pagination;
+    const maxPagesToShow = isDesktop ? 5 : 3;
+    let startPage = Math.max(0, pageIndex - Math.floor(maxPagesToShow / 2));
+    const endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(0, endPage - maxPagesToShow + 1);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
+      <button
+        key={page}
+        onClick={() => setPagination({ ...pagination, pageIndex: page })}
+        className={`px-3 py-1 rounded-md ${
+          page === pageIndex ? 'bg-[var(--secondary)] text-[var(--font)]' : 'bg-[var(--bg)] text-gray-700 hover:bg-[var(--hover2)]'
+        }`}
+      >
+        {page + 1}
+      </button>
+    ));
+  };
+
   const confirmMassDelete = async () => {
     if (onDeleteMassiveAction) {
       await onDeleteMassiveAction(selectedRows); // Espera la finalización
@@ -242,7 +283,7 @@ const QueryTable = <T extends object>({
   const table = useReactTable<T>({
     data: Array.isArray(fetchedData?.[responseDataKey]) ? (fetchedData?.[responseDataKey] as T[]) : [],
     columns: tableColumns,
-    pageCount: fetchedData ? Math.ceil((fetchedData[responseTotalCount] as number) / pagination.pageSize) : 0,
+    pageCount: totalPages,
     state: { pagination, globalFilter },
     onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
@@ -348,51 +389,46 @@ const QueryTable = <T extends object>({
         </table>
       </div>
 
-      {/* Controles de paginación */}
-      {showOptions && (
-        <div className="flex flex-wrap items-center justify-center mt-4 space-x-2 sm:space-x-4">
+      {/* Paginación */}
+      {showOptions && totalPages > 1 && (
+        <div className="flex justify-center items-center mt-4 space-x-2 flex-wrap">
           <button
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+            onClick={() => setPagination({ ...pagination, pageIndex: 0 })}
+            disabled={pagination.pageIndex === 0}
+            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            {'<<'}
+            <FaAngleDoubleLeft />
           </button>
           <button
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+            onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
+            disabled={pagination.pageIndex === 0}
+            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            {'<'}
+            <FaAngleLeft />
           </button>
-          <span className="text-[var(--font)] text-sm sm:text-base">
-            Página{' '}
-            <strong>
-              {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
-            </strong>
-          </span>
+          {renderPaginationButtons()}
           <button
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+            onClick={() => setPagination({ ...pagination, pageIndex: Math.min(totalPages - 1, pagination.pageIndex + 1) })}
+            disabled={pagination.pageIndex === totalPages - 1}
+            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            {'>'}
+            <FaAngleRight />
           </button>
           <button
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+            onClick={() => setPagination({ ...pagination, pageIndex: totalPages - 1 })}
+            disabled={pagination.pageIndex === totalPages - 1}
+            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            {'>>'}
+            <FaAngleDoubleRight />
           </button>
           <select
             value={table.getState().pagination.pageSize}
             onChange={(e) => {
               table.setPageSize(Number(e.target.value));
             }}
-            className="ml-2 sm:ml-4 px-2 py-1 bg-[var(--hover)] text-[var(--font)] rounded mt-4 md:mt-0"
+            className="ml-2 p-2 bg-[var(--hover)] text-[var(--font)] rounded md:mt-0 mt-3"
           >
-            {[5, 10, 20, 30].map((pageSize) => (
+            {[5, 10, 20].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 Mostrar {pageSize}
               </option>
