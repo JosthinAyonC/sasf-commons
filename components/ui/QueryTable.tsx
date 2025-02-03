@@ -6,6 +6,7 @@ import {
   FaAngleDoubleRight,
   FaAngleLeft,
   FaAngleRight,
+  FaChevronDown,
   FaEdit,
   FaExclamationTriangle,
   FaFilter,
@@ -30,6 +31,7 @@ interface TableProps<T extends object> {
   filterKey?: string;
   pageKey?: string;
   sizeKey?: string;
+  sortKey?: string;
   responseDataKey?: string;
   responseTotalCount?: string;
   debounceDelay?: number;
@@ -59,6 +61,7 @@ const QueryTable = <T extends object>({
   filterKey = 'filter',
   pageKey = 'page',
   sizeKey = 'size',
+  sortKey = 'sort',
   debounceDelay = 300,
   responseDataKey = 'content',
   responseTotalCount = 'totalElements',
@@ -86,6 +89,7 @@ const QueryTable = <T extends object>({
   const [overlayData, setOverlayData] = useState<{ row: T; buttonRect: DOMRect } | null>(null);
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
   const [showMassDeleteConfirmation, setShowMassDeleteConfirmation] = useState(false);
+  const [sortQuery, setSortQuery] = useState(``);
 
   const handleRowSelection = (row: T) => {
     setSelectedRows((prevSelected) => (prevSelected.includes(row) ? prevSelected.filter((selected) => selected !== row) : [...prevSelected, row]));
@@ -116,7 +120,7 @@ const QueryTable = <T extends object>({
       )
     ).toString();
 
-    const url = `${fetchUrl}?${queryString}`;
+    const url = `${fetchUrl}?${queryString}&${sortKey}=${sortQuery}`;
 
     try {
       const response = await fetch(url, {
@@ -140,7 +144,7 @@ const QueryTable = <T extends object>({
     } finally {
       setLoading(false);
     }
-  }, [fetchUrl, pagination, debouncedFilter, filterKey, token]);
+  }, [fetchUrl, pagination, debouncedFilter, filterKey, token, sortQuery, sortKey]);
 
   useEffect(() => {
     fetchData();
@@ -157,6 +161,11 @@ const QueryTable = <T extends object>({
 
   const handleDeleteClick = (row: T, buttonRect: DOMRect) => {
     setOverlayData({ row, buttonRect });
+  };
+
+  const handleSort = (columnId: string) => {
+    setPagination({ ...pagination, pageIndex: 0 });
+    setSortQuery(columnId.replaceAll('_', '.'));
   };
 
   const confirmDelete = async () => {
@@ -292,10 +301,6 @@ const QueryTable = <T extends object>({
     manualPagination: true,
   });
 
-  if (error) {
-    return <p>Error al cargar los datos: {error}</p>;
-  }
-
   return (
     <div className="flex flex-col overflow-hidden p-2">
       {/* Encabezado con búsqueda y botón de agregar */}
@@ -335,21 +340,36 @@ const QueryTable = <T extends object>({
       </div>
 
       {/* Tabla con scroll horizontal */}
-      <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
-        <table className="min-w-full text-center bg-[var(--bg)] text-[var(--font)]">
-          <thead className="border-b bg-[var(--secondary)]">
+      <div className="overflow-x-auto rounded-xl border border-[var(--border)] shadow-md">
+        <table className="min-w-full bg-[var(--bg)] text-[var(--font)] text-left">
+          <thead className="border-b bg-[var(--secondary)] text-[var(--font)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-4 py-2 text-sm font-medium border-[var(--border)]">
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  <th key={header.id} className="px-4 py-3 text-sm font-semibold border-[var(--border)] whitespace-nowrap">
+                    {header.isPlaceholder ? null : header.id !== 'selection' && header.id !== 'actions' ? (
+                      <div className="cursor-pointer group hover:text-[var(--highlight)] transition duration-200" onClick={() => handleSort(header.id)}>
+                        <span className="flex items-center justify-between space-x-2 group-hover:text-[var(--highlight)]">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <FaChevronDown className="text-xs" />
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center">{flexRender(header.column.columnDef.header, header.getContext())}</div>
+                    )}
                   </th>
                 ))}
               </tr>
             ))}
           </thead>
           <tbody>
-            {loading ? (
+            {error ? (
+              <tr className="border-b border-[var(--border)]">
+                <td colSpan={tableColumns.length} className="text-center py-4 text-[var(--error)] font-medium">
+                  Ocurrió un error al obtener la data.
+                </td>
+              </tr>
+            ) : loading ? (
               <tr className="border-b border-[var(--border)]">
                 <td colSpan={tableColumns.length} className="text-center py-4">
                   <Loader className="text-[var(--secondary)]" />
@@ -357,19 +377,19 @@ const QueryTable = <T extends object>({
               </tr>
             ) : table.getRowModel().rows.length === 0 ? (
               <tr className="border-b border-[var(--border)]">
-                <td colSpan={tableColumns.length} className="text-center py-4">
-                  No se encontraron resultados
+                <td colSpan={tableColumns.length} className="text-center py-4 text-[var(--font)] font-medium">
+                  No se encontraron resultados.
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b border-[var(--border)]">
+                <tr key={row.id} className="border-b border-[var(--border)] hover:bg-[var(--hover2)] transition duration-200">
                   {row.getVisibleCells().map((cell) => {
                     if (statusAccessor && cell.column.id === statusAccessor) {
                       const status = cell.getValue() as 'A' | 'I';
                       return (
                         <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
-                          <div className="flex items-center justify-center space-x-2">
+                          <div className="flex items-center justify-center">
                             <Toggle isActive={status === 'A'} onToggle={() => handleStatusToggle(row.original)} />
                           </div>
                         </td>
