@@ -240,7 +240,7 @@ const QueryTable = <T extends object>({
   const selectionColumn: ColumnDef<T> = {
     id: 'selection',
     header: () => (
-      <div className="flex items-center justify-center space-x-2">
+      <div className="flex">
         <button
           onClick={() => setShowMassDeleteConfirmation(true)}
           className={`p-2 rounded-md bg-[var(--hover2)] text-[var(font)] hover:text-[var(--error)] ${selectedRows.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -349,9 +349,9 @@ const QueryTable = <T extends object>({
                   <th key={header.id} className="px-4 py-3 text-sm font-semibold border-[var(--border)] whitespace-nowrap">
                     {header.isPlaceholder ? null : header.id !== 'selection' && header.id !== 'actions' ? (
                       <div className="cursor-pointer group hover:text-[var(--highlight)] transition duration-200" onClick={() => handleSort(header.id)}>
-                        <span className="flex items-center justify-between space-x-2 group-hover:text-[var(--highlight)]">
+                        <span className="flex items-center justify-center space-x-2 group-hover:text-[var(--highlight)]">
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                          <FaChevronDown className="text-xs" />
+                          <FaChevronDown className="text-xs ml-2" />
                         </span>
                       </div>
                     ) : (
@@ -383,7 +383,7 @@ const QueryTable = <T extends object>({
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b border-[var(--border)] hover:bg-[var(--hover2)] transition duration-200">
+                <tr key={row.id} className="border-b border-[var(--border)] text-center hover:bg-[var(--hover2)] transition duration-200">
                   {row.getVisibleCells().map((cell) => {
                     if (statusAccessor && cell.column.id === statusAccessor) {
                       const status = cell.getValue() as 'A' | 'I';
