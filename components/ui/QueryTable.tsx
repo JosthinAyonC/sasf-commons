@@ -417,14 +417,14 @@ const QueryTable = <T extends object>({
             disabled={pagination.pageIndex === 0}
             className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            <FaAngleDoubleLeft />
+            <FaAngleDoubleLeft className="text-[var(--font)]" />
           </button>
           <button
             onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
             disabled={pagination.pageIndex === 0}
             className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            <FaAngleLeft />
+            <FaAngleLeft className="text-[var(--font)]" />
           </button>
           {renderPaginationButtons()}
           <button
@@ -432,14 +432,14 @@ const QueryTable = <T extends object>({
             disabled={pagination.pageIndex === totalPages - 1}
             className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            <FaAngleRight />
+            <FaAngleRight className="text-[var(--font)]" />
           </button>
           <button
             onClick={() => setPagination({ ...pagination, pageIndex: totalPages - 1 })}
             disabled={pagination.pageIndex === totalPages - 1}
             className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            <FaAngleDoubleRight />
+            <FaAngleDoubleRight className="text-[var(--font)]" />
           </button>
           <select
             value={table.getState().pagination.pageSize}
