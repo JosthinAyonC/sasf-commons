@@ -106,6 +106,7 @@ export interface SelectFieldProps<T extends FieldValues> {
   options?: { label: string; value: number | string }[];
   register: UseFormRegister<T>;
   error?: FieldError;
+  isRequired?: boolean;
 }
 
 /*

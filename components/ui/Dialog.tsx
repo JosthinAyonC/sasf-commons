@@ -11,6 +11,8 @@ interface DialogProps {
   onCloseAction?: () => void;
   closeIconClassName?: string;
   contentClassName?: string;
+  mobileClassName?: string;
+  desktopClassName?: string;
   title?: string;
   titleClassName?: string;
 }
@@ -34,6 +36,8 @@ export const Dialog: React.FC<DialogProps> = ({
   onCloseAction,
   closeIconClassName,
   contentClassName,
+  desktopClassName,
+  mobileClassName,
   title,
   titleClassName,
 }) => {
@@ -56,7 +60,9 @@ export const Dialog: React.FC<DialogProps> = ({
       >
         <motion.div
           className={`${
-            isDesktop ? 'bg-[var(--bg)] rounded-lg shadow-lg p-6 w-full max-w-md relative' : 'bg-[var(--bg)] w-full h-full p-6 relative'
+            isDesktop
+              ? `bg-[var(--bg)] rounded-lg shadow-lg p-6 w-full max-w-md relative ${desktopClassName}`
+              : `bg-[var(--bg)] w-full h-full p-6 relative ${mobileClassName}`
           } ${contentClassName || ''}`}
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

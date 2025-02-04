@@ -10,6 +10,7 @@ export const SelectField = <T extends FieldValues>({
   selectClassName,
   errorClassName,
   options,
+  isRequired,
 }: Omit<SelectFieldProps<T>, 'register' | 'error'>) => {
   const {
     register,
@@ -27,7 +28,7 @@ export const SelectField = <T extends FieldValues>({
       )}
       <select
         id={name as string}
-        {...register(name)}
+        {...register(name, { required: isRequired ? 'Este campo es obligatorio' : undefined })}
         className={`border border-[var(--border)] bg-[var(--bg)] text-[var(--font)] rounded-md p-2 w-full focus:border-[var(--primary)] ${selectClassName}`}
       >
         <option value="">{(options?.length ?? 0) > 0 ? 'Selecciona una opción' : 'No se encontraron opciones para mostrar'}</option>

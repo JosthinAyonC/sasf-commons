@@ -1,9 +1,22 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FaEdit, FaExclamationTriangle, FaFilter, FaPlus, FaTimes, FaTrashAlt } from 'react-icons/fa';
+import {
+  FaAngleDoubleLeft,
+  FaAngleDoubleRight,
+  FaAngleLeft,
+  FaAngleRight,
+  FaChevronDown,
+  FaEdit,
+  FaExclamationTriangle,
+  FaFilter,
+  FaPlus,
+  FaTimes,
+  FaTrashAlt,
+} from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { tableEventEmitter } from '~/config/eventEmitter';
+import { useMediaQuery } from '~/hooks';
 import useDebounce from '~/hooks/useDebounce';
 import { RootState } from '~/store';
 
@@ -18,6 +31,7 @@ interface TableProps<T extends object> {
   filterKey?: string;
   pageKey?: string;
   sizeKey?: string;
+  sortKey?: string;
   responseDataKey?: string;
   responseTotalCount?: string;
   debounceDelay?: number;
@@ -29,6 +43,8 @@ interface TableProps<T extends object> {
   onStatusChange?: (_row: T, _newStatus: 'A' | 'I') => void;
   onNewAction?: () => void;
   onDeleteMassiveAction?: (_row: T[]) => void;
+  defaultPage?: number;
+  defaultSize?: number;
 }
 
 /**
@@ -45,6 +61,7 @@ const QueryTable = <T extends object>({
   filterKey = 'filter',
   pageKey = 'page',
   sizeKey = 'size',
+  sortKey = 'sort',
   debounceDelay = 300,
   responseDataKey = 'content',
   responseTotalCount = 'totalElements',
@@ -56,10 +73,12 @@ const QueryTable = <T extends object>({
   onStatusChange,
   onNewAction,
   onDeleteMassiveAction,
+  defaultPage = 0,
+  defaultSize = 5,
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 5,
+    pageIndex: defaultPage,
+    pageSize: defaultSize,
   });
 
   const [globalFilter, setGlobalFilter] = useState('');
@@ -70,11 +89,14 @@ const QueryTable = <T extends object>({
   const [overlayData, setOverlayData] = useState<{ row: T; buttonRect: DOMRect } | null>(null);
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
   const [showMassDeleteConfirmation, setShowMassDeleteConfirmation] = useState(false);
+  const [sortQuery, setSortQuery] = useState(``);
 
   const handleRowSelection = (row: T) => {
     setSelectedRows((prevSelected) => (prevSelected.includes(row) ? prevSelected.filter((selected) => selected !== row) : [...prevSelected, row]));
   };
 
+  const totalPages = fetchedData ? Math.ceil((fetchedData[responseTotalCount] as number) / pagination.pageSize) : 0;
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const token = useSelector((state: RootState) => state.auth.token);
 
   const fetchData = useCallback(async () => {
@@ -98,7 +120,7 @@ const QueryTable = <T extends object>({
       )
     ).toString();
 
-    const url = `${fetchUrl}?${queryString}`;
+    const url = `${fetchUrl}?${queryString}&${sortKey}=${sortQuery}`;
 
     try {
       const response = await fetch(url, {
@@ -122,7 +144,7 @@ const QueryTable = <T extends object>({
     } finally {
       setLoading(false);
     }
-  }, [fetchUrl, pagination, debouncedFilter, filterKey, token]);
+  }, [fetchUrl, pagination, debouncedFilter, filterKey, token, sortQuery, sortKey]);
 
   useEffect(() => {
     fetchData();
@@ -139,6 +161,11 @@ const QueryTable = <T extends object>({
 
   const handleDeleteClick = (row: T, buttonRect: DOMRect) => {
     setOverlayData({ row, buttonRect });
+  };
+
+  const handleSort = (columnId: string) => {
+    setPagination({ ...pagination, pageIndex: 0 });
+    setSortQuery(columnId.replaceAll('_', '.'));
   };
 
   const confirmDelete = async () => {
@@ -178,6 +205,29 @@ const QueryTable = <T extends object>({
   //   setSelectedRows(selectedRows.length === table.getRowModel().rows.length ? [] : table.getRowModel().rows.map((row) => row.original));
   // };
 
+  const renderPaginationButtons = () => {
+    const { pageIndex } = pagination;
+    const maxPagesToShow = isDesktop ? 5 : 3;
+    let startPage = Math.max(0, pageIndex - Math.floor(maxPagesToShow / 2));
+    const endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(0, endPage - maxPagesToShow + 1);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
+      <button
+        key={page}
+        onClick={() => setPagination({ ...pagination, pageIndex: page })}
+        className={`px-3 py-1 rounded-md ${
+          page === pageIndex ? 'bg-[var(--secondary)] text-[var(--font)]' : 'bg-[var(--bg)] text-gray-700 hover:bg-[var(--hover2)]'
+        }`}
+      >
+        {page + 1}
+      </button>
+    ));
+  };
+
   const confirmMassDelete = async () => {
     if (onDeleteMassiveAction) {
       await onDeleteMassiveAction(selectedRows); // Espera la finalización
@@ -190,7 +240,7 @@ const QueryTable = <T extends object>({
   const selectionColumn: ColumnDef<T> = {
     id: 'selection',
     header: () => (
-      <div className="flex items-center justify-center space-x-2">
+      <div className="flex">
         <button
           onClick={() => setShowMassDeleteConfirmation(true)}
           className={`p-2 rounded-md bg-[var(--hover2)] text-[var(font)] hover:text-[var(--error)] ${selectedRows.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -237,12 +287,12 @@ const QueryTable = <T extends object>({
     ),
   };
 
-  const tableColumns = [selectionColumn, actionColumn, ...columns];
+  const tableColumns = [selectionColumn, ...(onSelectAction || onDeleteAction ? [actionColumn] : []), ...columns];
 
   const table = useReactTable<T>({
     data: Array.isArray(fetchedData?.[responseDataKey]) ? (fetchedData?.[responseDataKey] as T[]) : [],
     columns: tableColumns,
-    pageCount: fetchedData ? Math.ceil((fetchedData[responseTotalCount] as number) / pagination.pageSize) : 0,
+    pageCount: totalPages,
     state: { pagination, globalFilter },
     onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
@@ -250,10 +300,6 @@ const QueryTable = <T extends object>({
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
   });
-
-  if (error) {
-    return <p>Error al cargar los datos: {error}</p>;
-  }
 
   return (
     <div className="flex flex-col overflow-hidden p-2">
@@ -294,21 +340,36 @@ const QueryTable = <T extends object>({
       </div>
 
       {/* Tabla con scroll horizontal */}
-      <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
-        <table className="min-w-full text-center bg-[var(--bg)] text-[var(--font)]">
-          <thead className="border-b bg-[var(--secondary)]">
+      <div className="overflow-x-auto rounded-xl border border-[var(--border)] shadow-md">
+        <table className="min-w-full bg-[var(--bg)] text-[var(--font)] text-left">
+          <thead className="border-b bg-[var(--secondary)] text-[var(--font)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-4 py-2 text-sm font-medium border-[var(--border)]">
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  <th key={header.id} className="px-4 py-3 text-sm font-semibold border-[var(--border)] whitespace-nowrap">
+                    {header.isPlaceholder ? null : header.id !== 'selection' && header.id !== 'actions' ? (
+                      <div className="cursor-pointer group hover:text-[var(--highlight)] transition duration-200" onClick={() => handleSort(header.id)}>
+                        <span className="flex items-center justify-center space-x-2 group-hover:text-[var(--highlight)]">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <FaChevronDown className="text-xs ml-2" />
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center">{flexRender(header.column.columnDef.header, header.getContext())}</div>
+                    )}
                   </th>
                 ))}
               </tr>
             ))}
           </thead>
           <tbody>
-            {loading ? (
+            {error ? (
+              <tr className="border-b border-[var(--border)]">
+                <td colSpan={tableColumns.length} className="text-center py-4 text-[var(--error)] font-medium">
+                  Ocurrió un error al obtener la data.
+                </td>
+              </tr>
+            ) : loading ? (
               <tr className="border-b border-[var(--border)]">
                 <td colSpan={tableColumns.length} className="text-center py-4">
                   <Loader className="text-[var(--secondary)]" />
@@ -316,19 +377,19 @@ const QueryTable = <T extends object>({
               </tr>
             ) : table.getRowModel().rows.length === 0 ? (
               <tr className="border-b border-[var(--border)]">
-                <td colSpan={tableColumns.length} className="text-center py-4">
-                  No se encontraron resultados
+                <td colSpan={tableColumns.length} className="text-center py-4 text-[var(--font)] font-medium">
+                  No se encontraron resultados.
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b border-[var(--border)]">
+                <tr key={row.id} className="border-b border-[var(--border)] text-center hover:bg-[var(--hover2)] transition duration-200">
                   {row.getVisibleCells().map((cell) => {
                     if (statusAccessor && cell.column.id === statusAccessor) {
                       const status = cell.getValue() as 'A' | 'I';
                       return (
                         <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
-                          <div className="flex items-center justify-center space-x-2">
+                          <div className="flex items-center justify-center">
                             <Toggle isActive={status === 'A'} onToggle={() => handleStatusToggle(row.original)} />
                           </div>
                         </td>
@@ -348,51 +409,46 @@ const QueryTable = <T extends object>({
         </table>
       </div>
 
-      {/* Controles de paginación */}
-      {showOptions && (
-        <div className="flex flex-wrap items-center justify-center mt-4 space-x-2 sm:space-x-4">
+      {/* Paginación */}
+      {showOptions && totalPages > 1 && (
+        <div className="flex justify-center items-center mt-4 space-x-2 flex-wrap">
           <button
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+            onClick={() => setPagination({ ...pagination, pageIndex: 0 })}
+            disabled={pagination.pageIndex === 0}
+            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            {'<<'}
+            <FaAngleDoubleLeft />
           </button>
           <button
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+            onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
+            disabled={pagination.pageIndex === 0}
+            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            {'<'}
+            <FaAngleLeft />
           </button>
-          <span className="text-[var(--font)] text-sm sm:text-base">
-            Página{' '}
-            <strong>
-              {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
-            </strong>
-          </span>
+          {renderPaginationButtons()}
           <button
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+            onClick={() => setPagination({ ...pagination, pageIndex: Math.min(totalPages - 1, pagination.pageIndex + 1) })}
+            disabled={pagination.pageIndex === totalPages - 1}
+            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            {'>'}
+            <FaAngleRight />
           </button>
           <button
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-            className="px-2 sm:px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
+            onClick={() => setPagination({ ...pagination, pageIndex: totalPages - 1 })}
+            disabled={pagination.pageIndex === totalPages - 1}
+            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
           >
-            {'>>'}
+            <FaAngleDoubleRight />
           </button>
           <select
             value={table.getState().pagination.pageSize}
             onChange={(e) => {
               table.setPageSize(Number(e.target.value));
             }}
-            className="ml-2 sm:ml-4 px-2 py-1 bg-[var(--hover)] text-[var(--font)] rounded mt-4 md:mt-0"
+            className="ml-2 p-2 bg-[var(--hover)] text-[var(--font)] rounded md:mt-0 mt-3"
           >
-            {[5, 10, 20, 30].map((pageSize) => (
+            {[5, 10, 20].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 Mostrar {pageSize}
               </option>
