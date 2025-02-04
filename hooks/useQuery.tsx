@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '~/store';
 
+import { ApiError } from './useMutation';
+
 /**
  * Custom hook to perform fetch requests with Redux integration for authorization and flexible query params.
  *
@@ -50,7 +52,8 @@ function useQuery<T>(url: string, options?: RequestInit, queryParams?: Record<st
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw { status: response.status, message: errorData.message, error: errorData } as ApiError;
       }
 
       const result: T = await response.json();

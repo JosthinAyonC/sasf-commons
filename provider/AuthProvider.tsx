@@ -31,49 +31,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { token, exp, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
-  // Usar `useQuery` para el endpoint de refresh
   const { data, error, refetch } = useQuery<AuthResponse>(`${process.env.AUTH_URL}${process.env.REFRESH_TOKEN_PATH || ''}`, {}, {}, false);
 
-  // Lógica para refrescar el token
   const refreshSession = useCallback(() => {
-    if (token) {
-      console.log('Refrescando el token...');
-      refetch();
-    }
-  }, [token, refetch]);
+    if (!isAuthenticated || !token || !exp) return;
 
-  // Manejar el resultado del refresh
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (exp <= currentTime) {
+      console.warn('El token ya ha expirado, evitando refresh.');
+      return;
+    }
+
+    console.log('Refrescando el token...');
+    refetch();
+  }, [isAuthenticated, token, exp, refetch]);
+
   useEffect(() => {
     if (!isAuthenticated) return;
+
     if (data) {
       const decodedToken = jwtDecode<{ sub: string; roles: string[] } & JwtPayload>(data.access_token);
       dispatch(refreshToken({ token: data.access_token, exp: Number(decodedToken.exp) }));
       console.log('Token refrescado exitosamente.');
     }
-    if (error) {
-      console.error('Error refreshing token:', error);
+
+    if (error && isAuthenticated) {
+      console.error('Error al refrescar el token:', error);
       dispatch(logout());
       navigate('/auth/login');
     }
-  }, [navigate, data, error, dispatch]);
+  }, [isAuthenticated, navigate, data, error, dispatch]);
 
-  // Verificar si el token está por expirar y ejecutar el refresh
   useEffect(() => {
-    if (exp) {
-      const interval = setInterval(() => {
-        const currentTime = Math.floor(Date.now() / 1000);
-        const timeLeft = exp - currentTime;
+    if (!isAuthenticated || !exp) return;
 
-        if (timeLeft <= 180) {
-          // Refrescar cuando falten 3 minutos (180 segundos)
-          console.log('Refrescando token...');
-          refreshSession();
-        }
-      }, 90000); // Revisar cada 90 segundos
+    const interval = setInterval(() => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const timeLeft = exp - currentTime;
 
-      return () => clearInterval(interval);
-    }
-  }, [exp, refreshSession]);
+      if (timeLeft <= 180) {
+        // 🔥 Refrescar cuando falten 3 minutos (180 segundos)
+        console.log('Refrescando token automáticamente...');
+        refreshSession();
+      }
+    }, 90000); // 🔄 Revisar cada 90 segundos
+
+    return () => clearInterval(interval);
+  }, [isAuthenticated, exp, refreshSession]);
 
   return <AuthContext.Provider value={{ refreshSession }}>{children}</AuthContext.Provider>;
 };
