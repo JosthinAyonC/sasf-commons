@@ -28,8 +28,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Crear el proveedor del contexto
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch();
-  const token = useSelector((state: RootState) => state.auth.token);
-  const exp = useSelector((state: RootState) => state.auth.exp);
+  const { token, exp, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
   // Usar `useQuery` para el endpoint de refresh
@@ -45,6 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Manejar el resultado del refresh
   useEffect(() => {
+    if (!isAuthenticated) return;
     if (data) {
       const decodedToken = jwtDecode<{ sub: string; roles: string[] } & JwtPayload>(data.access_token);
       dispatch(refreshToken({ token: data.access_token, exp: Number(decodedToken.exp) }));
