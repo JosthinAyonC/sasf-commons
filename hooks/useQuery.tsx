@@ -15,7 +15,6 @@ function useQuery<T>(url: string, options?: RequestInit, queryParams?: Record<st
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(autoFetch);
   const [error, setError] = useState<string | null>(null);
-  const [trigger, setTrigger] = useState<number>(0);
 
   // Retrieve the token from the Redux store
   const token = useSelector((state: RootState) => state.auth.token);
@@ -71,10 +70,10 @@ function useQuery<T>(url: string, options?: RequestInit, queryParams?: Record<st
     if (autoFetch) {
       fetchData();
     }
-  }, [trigger, autoFetch]);
+  }, [autoFetch]);
 
   const refetch = () => {
-    setTrigger((prev) => prev + 1);
+    fetchData();
   };
 
   return { data, loading, error, refetch };

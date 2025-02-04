@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Lógica para refrescar el token
   const refreshSession = useCallback(() => {
     if (token) {
-      console.log('Refrescando el token.');
+      console.log('Refrescando el token...');
       refetch();
     }
   }, [token, refetch]);
@@ -69,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.log('Refrescando token...');
           refreshSession();
         }
-      }, 60000); // Revisar cada 60 segundos
+      }, 90000); // Revisar cada 90 segundos
 
       return () => clearInterval(interval);
     }
