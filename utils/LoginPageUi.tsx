@@ -58,7 +58,7 @@ const LoginPageUi = ({
         </div>
 
         {/* Formulario */}
-        <Form<FormState> onSubmit={onSubmit} methods={methods} className="w-full max-w-sm space-y-4">
+        <Form<FormState> onSubmit={onSubmit} methods={methods} className="w-full space-y-4 items-center justify-center md:shadow-none">
           {/* Campo de usuario */}
           <div className="relative">
             <FontAwesomeIcon icon={faUser} className="absolute left-3 top-10 text-gray-500" />
