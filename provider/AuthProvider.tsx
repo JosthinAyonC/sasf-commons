@@ -39,6 +39,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const currentTime = Math.floor(Date.now() / 1000);
     if (exp <= currentTime) {
       console.warn('El token ya ha expirado, evitando refresh.');
+      dispatch(logout());
+      navigate('/auth/login');
       return;
     }
 
