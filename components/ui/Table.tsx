@@ -62,15 +62,23 @@ const Table = <T extends object>({ data, columns, defaultPage = 0, defaultSize =
                 ))}
               </thead>
               <tbody>
-                {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="border-b">
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
+                {table.getRowModel().rows.length === 0 ? (
+                  <tr className="border-b border-[var(--border)]">
+                    <td colSpan={columns.length} className="text-center py-4 text-[var(--font)] font-medium">
+                      No se encontraron registros disponibles.
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  table.getRowModel().rows.map((row) => (
+                    <tr key={row.id} className="border-b">
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
             {/* Controles de paginación */}
