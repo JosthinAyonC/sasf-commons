@@ -1,16 +1,27 @@
 import { ColumnDef, filterFns, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import React from 'react';
 
+import { Loader } from './Loader';
+
 interface TableProps<T extends object> {
   data: T[];
   columns: ColumnDef<T>[];
   searchable?: boolean;
+  loading?: boolean;
   showOptions?: boolean;
   defaultPage?: number;
   defaultSize?: number;
 }
 
-const Table = <T extends object>({ data, columns, defaultPage = 0, defaultSize = 5, showOptions = true, searchable = true }: TableProps<T>) => {
+const Table = <T extends object>({
+  data,
+  columns,
+  loading = false,
+  defaultPage = 0,
+  defaultSize = 5,
+  showOptions = true,
+  searchable = true,
+}: TableProps<T>) => {
   const [pagination, setPagination] = React.useState({
     pageIndex: defaultPage,
     pageSize: defaultSize,
@@ -62,7 +73,13 @@ const Table = <T extends object>({ data, columns, defaultPage = 0, defaultSize =
                 ))}
               </thead>
               <tbody>
-                {table.getRowModel().rows.length === 0 ? (
+                {loading ? (
+                  <tr className="border-b border-[var(--border)]">
+                    <td colSpan={columns.length} className="text-center py-4">
+                      <Loader className="text-[var(--secondary)]" />
+                    </td>
+                  </tr>
+                ) : table.getRowModel().rows.length === 0 ? (
                   <tr className="border-b border-[var(--border)]">
                     <td colSpan={columns.length} className="text-center py-4 text-[var(--font)] font-medium">
                       No se encontraron registros disponibles.

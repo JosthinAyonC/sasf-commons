@@ -84,6 +84,7 @@ export const DropdownField = <T extends FieldValues>({
   containerClassName,
   isRequired = false,
   rules,
+  disabled = false,
 }: DropdownFieldProps<T>) => {
   const {
     field: { value, onChange, ref },
@@ -124,6 +125,7 @@ export const DropdownField = <T extends FieldValues>({
         classNamePrefix="react-select"
         styles={customStyles}
         ref={ref}
+        isDisabled={disabled}
       />
       {error && <span className={`text-[var(--error)] text-sm mt-1 ${errorClassName}`}>{error.message}</span>}
     </div>

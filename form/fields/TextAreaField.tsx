@@ -39,7 +39,7 @@ export const TextAreaField = <T extends FieldValues>({
         disabled={disabled}
         className={`border border-[var(--border)] rounded-md p-2 focus:outline-none focus:border-[var(--primary)] placeholder:text-[var(--placeholder)] bg-[var(--bg)] text-[var(--font)] w-full min-h-[40px] ${
           error ? 'border-[var(--error)]' : ''
-        } ${inputClassName}`}
+        } ${disabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''} ${inputClassName}`}
       />
       {error && <span className={`text-[var(--error)] mt-1 block ${errorClassName}`}>{error.message}</span>}
     </div>

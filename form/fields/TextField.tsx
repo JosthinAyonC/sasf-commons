@@ -61,7 +61,7 @@ export const TextField = <T extends FieldValues>({
         })}
         className={`border border-[var(--border)] rounded-md p-2 w-full 
           focus:outline-none focus:border-[var(--focus)] placeholder:text-[var(--placeholder)] 
-          bg-[var(--bg)] text-[var(--font)] ${disabled ? 'cursor-not-allowed' : ''}
+          bg-[var(--bg)] text-[var(--font)] ${disabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''}
           ${inputClassName}`}
         autoComplete="off"
         disabled={disabled}

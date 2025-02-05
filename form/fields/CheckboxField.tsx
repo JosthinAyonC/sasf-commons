@@ -24,7 +24,7 @@ export const CheckboxField = <T extends FieldValues>({
         type="checkbox"
         id={name}
         defaultChecked={defaultChecked}
-        className={`border border-[var(--border)] accent-[var(--secondary)] rounded-sm focus:ring-[var(--focus)] focus:outline-none bg-[var(--bg)] text-[var(--primary)] cursor-pointer ${checkClassName}`}
+        className={`border border-[var(--border)] accent-[var(--secondary)] rounded-sm focus:ring-[var(--focus)] focus:outline-none bg-[var(--bg)] text-[var(--primary)] cursor-pointer ${isDisabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''} ${checkClassName}`}
         {...register(name)}
         disabled={isDisabled}
       />

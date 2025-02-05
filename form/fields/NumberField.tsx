@@ -16,6 +16,7 @@ export const NumberField = <T extends FieldValues>({
   placeholder,
   defaultValue,
   onChange,
+  disabled = false,
 }: Omit<NumberFieldProps<T>, 'register' | 'error'>) => {
   const {
     register,
@@ -68,6 +69,7 @@ export const NumberField = <T extends FieldValues>({
         id={name as string}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        disabled={disabled}
         {...register(name, {
           onChange: handleInput,
           required: isRequired ? 'Este campo es obligatorio' : undefined,
@@ -76,7 +78,7 @@ export const NumberField = <T extends FieldValues>({
         })}
         className={`border border-[var(--border)] rounded-md p-2 w-full 
             focus:outline-none focus:border-[var(--focus)] placeholder:text-[var(--placeholder)] 
-            bg-[var(--bg)] text-[var(--font)] 
+            bg-[var(--bg)] text-[var(--font)] ${disabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''}
             ${inputClassName}`}
         autoComplete="off"
       />

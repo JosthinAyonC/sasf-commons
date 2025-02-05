@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('Refrescando token automáticamente...');
         refreshSession();
       }
-    }, 90000); // 🔄 Revisar cada 90 segundos
+    }, 6000); // 🔄 Revisar cada 60 segundos
 
     return () => clearInterval(interval);
   }, [isAuthenticated, exp, refreshSession]);

@@ -77,6 +77,7 @@ export interface NumberFieldProps<T extends FieldValues> {
   defaultValue?: number;
   isRequired?: boolean;
   onChange?: (_value: number) => void;
+  disabled?: boolean;
 }
 
 /*

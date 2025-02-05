@@ -61,6 +61,10 @@ module.exports = {
           light: '#3182CE',
           dark: '#4299E1',
         },
+        disabled: {
+          light: '#CBD5E0',
+          dark: '#4A5568',
+        },
         neutral: {
           100: '#F7FAFC',
           200: '#EDF2F7',
@@ -97,6 +101,7 @@ module.exports = {
           '--placeholder': theme('colors.placeholder.light'),
           '--border': theme('colors.border.light'),
           '--hover2': theme('colors.hover2.light'),
+          '--disabled': theme('colors.disabled.light'),
         },
         '.dark': {
           '--primary': theme('colors.primary.dark'),
@@ -113,6 +118,7 @@ module.exports = {
           '--placeholder': theme('colors.placeholder.dark'),
           '--border': theme('colors.border.dark'),
           '--hover2': theme('colors.hover2.dark'),
+          '--disabled': theme('colors.disabled.dark'),
         },
       });
     },
