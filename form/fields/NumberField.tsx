@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
-import Tooltip from '~/components/ui/Tooltip';
+import { Tooltip } from '~/components/ui';
 
 import { NumberFieldProps } from './types';
 

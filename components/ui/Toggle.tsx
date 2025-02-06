@@ -7,7 +7,7 @@ interface ToggleProps {
   onToggle: () => void;
 }
 
-const Toggle: React.FC<ToggleProps> = ({ isActive, onToggle }) => {
+export const Toggle: React.FC<ToggleProps> = ({ isActive, onToggle }) => {
   return (
     <div
       className={`relative flex items-center h-7 w-14 cursor-pointer rounded-full transition-colors duration-300 ${
@@ -33,5 +33,3 @@ const Toggle: React.FC<ToggleProps> = ({ isActive, onToggle }) => {
     </div>
   );
 };
-
-export default Toggle;

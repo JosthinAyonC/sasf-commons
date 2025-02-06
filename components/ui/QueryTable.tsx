@@ -17,12 +17,11 @@ import {
 } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { tableEventEmitter } from '~/config/eventEmitter';
-import { useMediaQuery } from '~/hooks';
-import useDebounce from '~/hooks/useDebounce';
+import { useDebounce, useMediaQuery } from '~/hooks';
 import { RootState } from '~/store';
 
 import { Loader } from './Loader';
-import Toggle from './Toggle';
+import { Toggle } from './Toggle';
 
 interface TableProps<T extends object> {
   columns: ColumnDef<T>[];
@@ -59,7 +58,7 @@ interface TableProps<T extends object> {
  * El componente esta demasiado adaptado a la esctrutura de Pageable de Spring Boot,
  * TODO: Hacerlo más genérico para que pueda ser usado con cualquier API
  */
-const QueryTable = <T extends object>({
+export const QueryTable = <T extends object>({
   columns,
   fetchUrl,
   queryParams = {},
@@ -530,5 +529,3 @@ const QueryTable = <T extends object>({
     </div>
   );
 };
-
-export default QueryTable;

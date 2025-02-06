@@ -12,7 +12,7 @@ type ScreenProps = {
   // TODO: Add more props personalized
 };
 
-const Screen: React.FC<ScreenProps> = ({ children, className, title, showGoBackButton = true }) => {
+export const Screen: React.FC<ScreenProps> = ({ children, className, title, showGoBackButton = true }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const navigate = useNavigate();
 

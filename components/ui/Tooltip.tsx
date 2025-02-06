@@ -11,7 +11,7 @@ type TooltipProps = {
   showIndicator?: boolean;
 };
 
-const Tooltip: React.FC<TooltipProps> = ({ message, className, variant = 'success', position = 'top', showIndicator = true }) => {
+export const Tooltip: React.FC<TooltipProps> = ({ message, className, variant = 'success', position = 'top', showIndicator = true }) => {
   if (!message) return null;
 
   const variantStyles: Record<string, string> = {
@@ -59,5 +59,3 @@ const Tooltip: React.FC<TooltipProps> = ({ message, className, variant = 'succes
     </motion.span>
   );
 };
-
-export default Tooltip;

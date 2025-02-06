@@ -13,7 +13,7 @@ interface TableProps<T extends object> {
   defaultSize?: number;
 }
 
-const Table = <T extends object>({
+export const Table = <T extends object>({
   data,
   columns,
   loading = false,
@@ -158,5 +158,3 @@ const Table = <T extends object>({
     </div>
   );
 };
-
-export default Table;

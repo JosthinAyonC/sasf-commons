@@ -13,7 +13,7 @@ import { ApiError } from './useMutation';
  * @param autoFetch Whether the request should run automatically when the component mounts.
  * @returns An object containing loading, error, data, and a refetch function.
  */
-function useQuery<T>(url: string, options?: RequestInit, queryParams?: Record<string, string | number | boolean>, autoFetch: boolean = true) {
+export function useQuery<T>(url: string, options?: RequestInit, queryParams?: Record<string, string | number | boolean>, autoFetch: boolean = true) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(autoFetch);
   const [error, setError] = useState<string | null>(null);

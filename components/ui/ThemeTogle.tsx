@@ -7,7 +7,7 @@ import { useTheme } from '~/provider/ThemeProvider';
  * ThemeToggle Component
  * @description Componente que alterna el modo de la aplicación entre claro y oscuro.
  */
-const ThemeToggle: React.FC = () => {
+export const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -30,5 +30,3 @@ const ThemeToggle: React.FC = () => {
     </div>
   );
 };
-
-export default ThemeToggle;

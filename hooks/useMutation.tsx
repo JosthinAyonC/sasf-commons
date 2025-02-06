@@ -19,7 +19,7 @@ export interface ApiError {
  * @param method The HTTP method to use (e.g., 'POST', 'PUT', 'PATCH').
  * @returns A function `mutate` to execute the request.
  */
-function useMutation<T, U = Record<string, unknown> | Record<string, unknown>[]>(url: string, method: 'POST' | 'PUT' | 'PATCH') {
+export function useMutation<T, U = Record<string, unknown> | Record<string, unknown>[]>(url: string, method: 'POST' | 'PUT' | 'PATCH') {
   const [loading, setLoading] = useState<boolean>(false);
   const token = useSelector((state: RootState) => state.auth.token);
 
@@ -59,5 +59,3 @@ function useMutation<T, U = Record<string, unknown> | Record<string, unknown>[]>
 
   return { mutate, loading };
 }
-
-export default useMutation;
