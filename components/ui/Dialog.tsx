@@ -77,7 +77,7 @@ export const Dialog: React.FC<DialogProps> = ({
       >
         <motion.div
           className={`
-            ${isDesktop ? `bg-[var(--bg)] rounded-lg shadow-lg p-6 w-full max-w-md relative ${desktopClassName}` : `bg-[var(--bg)] w-full h-full p-6 relative ${mobileClassName}`}
+            ${isDesktop ? `bg-[var(--bg)] rounded-lg shadow-lg p-6 w-full relative ${desktopClassName ?? 'max-w-md'}` : `bg-[var(--bg)] w-full h-full p-6 relative ${mobileClassName}`}
             ${contentClassName || ''}
           `}
           initial={{ scale: 0.9, opacity: 0 }}
@@ -87,6 +87,7 @@ export const Dialog: React.FC<DialogProps> = ({
         >
           {closeable && (
             <button
+              type="button"
               className={`absolute top-4 right-4 text-[var(--font)] text-xl hover:text-[var(--hover)] focus:outline-none focus:ring-2 focus:ring-[var(--focus)] ${closeIconClassName}`}
               onClick={() => {
                 closeDialog(keyId);

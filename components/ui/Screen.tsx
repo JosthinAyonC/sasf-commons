@@ -22,7 +22,7 @@ export const Screen: React.FC<ScreenProps> = ({ children, className, title, show
       {(title || showGoBackButton) && (
         <header className="flex items-center mb-4">
           {showGoBackButton && (
-            <button onClick={() => navigate(-1)} className="mr-4 p-2 text-[var(--font)] hover:text-[var(--hover)]">
+            <button type="button" onClick={() => navigate(-1)} className="mr-4 p-2 text-[var(--font)] hover:text-[var(--hover)]">
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
           )}

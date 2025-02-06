@@ -77,7 +77,7 @@ const ToastMessage = ({ id, message, variant, onRemove }: Toast & { onRemove: (_
               <div className="font-bold text-[16px]">{title}</div>
               <div className="text-sm max-h-[10vh] overflow-hidden text-ellipsis line-clamp-4">{message || 'Mensaje predeterminado'}</div>
             </div>
-            <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-800" onClick={() => onRemove(id)}>
+            <button type="button" className="absolute top-2 right-2 text-gray-500 hover:text-gray-800" onClick={() => onRemove(id)}>
               <FontAwesomeIcon icon={faClose} />
             </button>
           </div>
