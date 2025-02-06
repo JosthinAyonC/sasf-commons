@@ -59,11 +59,10 @@ export const Dialog: React.FC<DialogProps> = ({
         transition={{ duration: 0.3 }}
       >
         <motion.div
-          className={`${
-            isDesktop
-              ? `bg-[var(--bg)] rounded-lg shadow-lg p-6 w-full max-w-md relative ${desktopClassName}`
-              : `bg-[var(--bg)] w-full h-full p-6 relative ${mobileClassName}`
-          } ${contentClassName || ''}`}
+          className={`
+            ${isDesktop ? `bg-[var(--bg)] rounded-lg shadow-lg p-6 w-full max-w-md relative ${desktopClassName}` : `bg-[var(--bg)] w-full h-full p-6 relative ${mobileClassName}`}
+            ${contentClassName || ''}
+          `}
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
@@ -88,7 +87,7 @@ export const Dialog: React.FC<DialogProps> = ({
               <h2 className={`text-[var(--font)] text-lg font-semibold ${titleClassName}`}>{title}</h2>
             </div>
           )}
-          <div className={`${isDesktop ? 'mt-4' : 'mt-10'} text-[var(--font)]`}>{children}</div>
+          <div className={`${isDesktop ? 'mt-4' : 'mt-10'} text-[var(--font)]  max-h-[80vh] overflow-y-auto`}>{children}</div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
