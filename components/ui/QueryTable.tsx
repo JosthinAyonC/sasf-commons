@@ -7,6 +7,7 @@ import {
   FaAngleLeft,
   FaAngleRight,
   FaChevronDown,
+  FaChevronUp,
   FaEdit,
   FaExclamationTriangle,
   FaFilter,
@@ -45,6 +46,8 @@ interface TableProps<T extends object> {
   onDeleteMassiveAction?: (_row: T[]) => void;
   defaultPage?: number;
   defaultSize?: number;
+  defaultSortQuery?: string;
+  sorteable?: boolean;
 }
 
 /**
@@ -52,6 +55,9 @@ interface TableProps<T extends object> {
  * funciona para cruds sencillos, para tablas más complejas que mapeen relaciones
  * Lo recomendado es instalar prime react y usar sus componentes
  * Mapeando su lógica dentro del mismo componente.
+ *
+ * El componente esta demasiado adaptado a la esctrutura de Pageable de Spring Boot,
+ * TODO: Hacerlo más genérico para que pueda ser usado con cualquier API
  */
 const QueryTable = <T extends object>({
   columns,
@@ -75,6 +81,8 @@ const QueryTable = <T extends object>({
   onDeleteMassiveAction,
   defaultPage = 0,
   defaultSize = 5,
+  defaultSortQuery = '',
+  sorteable = true,
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
@@ -89,7 +97,7 @@ const QueryTable = <T extends object>({
   const [overlayData, setOverlayData] = useState<{ row: T; buttonRect: DOMRect } | null>(null);
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
   const [showMassDeleteConfirmation, setShowMassDeleteConfirmation] = useState(false);
-  const [sortQuery, setSortQuery] = useState(``);
+  const [sortQuery, setSortQuery] = useState(defaultSortQuery);
 
   const handleRowSelection = (row: T) => {
     setSelectedRows((prevSelected) => (prevSelected.includes(row) ? prevSelected.filter((selected) => selected !== row) : [...prevSelected, row]));
@@ -163,9 +171,9 @@ const QueryTable = <T extends object>({
     setOverlayData({ row, buttonRect });
   };
 
-  const handleSort = (columnId: string) => {
+  const handleSort = (columnId: string, sorter: string) => {
     setPagination({ ...pagination, pageIndex: 0 });
-    setSortQuery(columnId.replaceAll('_', '.'));
+    setSortQuery(`${columnId.replaceAll('_', '.')},${sorter}`);
   };
 
   const confirmDelete = async () => {
@@ -348,11 +356,20 @@ const QueryTable = <T extends object>({
                 {headerGroup.headers.map((header) => (
                   <th key={header.id} className="px-4 py-3 text-sm font-semibold border-[var(--border)] whitespace-nowrap">
                     {header.isPlaceholder ? null : header.id !== 'selection' && header.id !== 'actions' ? (
-                      <div className="cursor-pointer group hover:text-[var(--highlight)] transition duration-200" onClick={() => handleSort(header.id)}>
-                        <span className="flex items-center justify-center space-x-2 group-hover:text-[var(--highlight)]">
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          <FaChevronDown className="text-xs ml-2" />
-                        </span>
+                      <div className="group flex justify-center items-center space-x-2">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {sorteable && (
+                          <div className="flex flex-col">
+                            <FaChevronUp
+                              className={`cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
+                              onClick={() => handleSort(header.id, 'asc')}
+                            />
+                            <FaChevronDown
+                              className={`cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
+                              onClick={() => handleSort(header.id, 'desc')}
+                            />
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="flex items-center justify-center">{flexRender(header.column.columnDef.header, header.getContext())}</div>
