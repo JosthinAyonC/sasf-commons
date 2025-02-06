@@ -21,6 +21,7 @@ export const Accordion: React.FC<AccordionProps> = ({ title, children, disabled 
   return (
     <div className={`w-full border rounded-lg overflow-hidden transition-all ${disabled ? 'opacity-50 cursor-not-allowed' : 'border-[var(--border)]'}`}>
       <button
+        type="button"
         onClick={toggleAccordion}
         disabled={disabled}
         className="w-full flex justify-between items-center px-4 py-3 bg-[var(--bg)] text-[var(--font)] font-medium focus:outline-none hover:bg-[var(--hover2)] transition"

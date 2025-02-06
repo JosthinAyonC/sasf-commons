@@ -23,7 +23,7 @@ export interface TextFieldProps<T extends FieldValues> {
   minLength?: number;
   maxLength?: number;
   error?: FieldError;
-  type?: 'text' | 'email' | 'password';
+  type?: 'text' | 'email' | 'password' | 'hidden';
   placeholder?: string;
   defaultValue?: string;
   isRequired?: boolean;

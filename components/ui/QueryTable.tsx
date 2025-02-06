@@ -47,6 +47,8 @@ interface TableProps<T extends object> {
   defaultSize?: number;
   defaultSortQuery?: string;
   sorteable?: boolean;
+  pagesToShow?: number;
+  tableClassName?: string;
 }
 
 /**
@@ -82,6 +84,8 @@ export const QueryTable = <T extends object>({
   defaultSize = 5,
   defaultSortQuery = '',
   sorteable = true,
+  pagesToShow = 5,
+  tableClassName,
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
@@ -214,7 +218,7 @@ export const QueryTable = <T extends object>({
 
   const renderPaginationButtons = () => {
     const { pageIndex } = pagination;
-    const maxPagesToShow = isDesktop ? 5 : 3;
+    const maxPagesToShow = isDesktop ? pagesToShow : 3;
     let startPage = Math.max(0, pageIndex - Math.floor(maxPagesToShow / 2));
     const endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
 
@@ -224,6 +228,7 @@ export const QueryTable = <T extends object>({
 
     return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
       <button
+        type="button"
         key={page}
         onClick={() => setPagination({ ...pagination, pageIndex: page })}
         className={`px-3 py-1 rounded-md ${
@@ -249,6 +254,7 @@ export const QueryTable = <T extends object>({
     header: () => (
       <div className="flex">
         <button
+          type="button"
           onClick={() => setShowMassDeleteConfirmation(true)}
           className={`p-2 rounded-md bg-[var(--hover2)] text-[var(font)] hover:text-[var(--error)] ${selectedRows.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
           title="Eliminar seleccionados"
@@ -274,12 +280,13 @@ export const QueryTable = <T extends object>({
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2 relative">
         {onSelectAction && (
-          <button onClick={() => onSelectAction(row.original)} className="text-blue-500 hover:text-[var(--info)]" title="Editar">
+          <button type="button" onClick={() => onSelectAction(row.original)} className="text-blue-500 hover:text-[var(--info)]" title="Editar">
             <FaEdit className="text-lg" />
           </button>
         )}
         {onDeleteAction && (
           <button
+            type="button"
             onClick={(e) => {
               const buttonRect = (e.target as HTMLButtonElement).getBoundingClientRect();
               handleDeleteClick(row.original, buttonRect);
@@ -294,7 +301,9 @@ export const QueryTable = <T extends object>({
     ),
   };
 
-  const tableColumns = [selectionColumn, ...(onSelectAction || onDeleteAction ? [actionColumn] : []), ...columns];
+  const tableColumns = [...(onDeleteMassiveAction ? [selectionColumn] : []), ...(onSelectAction || onDeleteAction ? [actionColumn] : []), ...columns].filter(
+    (column) => column.id !== 'selection' || onDeleteMassiveAction
+  );
 
   const table = useReactTable<T>({
     data: Array.isArray(fetchedData?.[responseDataKey]) ? (fetchedData?.[responseDataKey] as T[]) : [],
@@ -309,7 +318,7 @@ export const QueryTable = <T extends object>({
   });
 
   return (
-    <div className="flex flex-col overflow-hidden p-2">
+    <div className={`flex flex-col ${tableClassName ?? ''}`}>
       {/* Encabezado con búsqueda y botón de agregar */}
       <div className="flex flex-wrap justify-between items-center mb-4 px-4 py-2 bg-[var(--bg)] border-b border-[var(--border)] rounded-t-lg">
         <p className="text-lg font-bold text-[var(--font)] break-words">{title}</p>
@@ -331,7 +340,11 @@ export const QueryTable = <T extends object>({
                 className="flex-1 p-2 bg-transparent text-[var(--font)] placeholder-[var(--placeholder)] focus:outline-none w-[25%]"
               />
               {globalFilter && (
-                <button onClick={() => setGlobalFilter('')} className="absolute right-2 text-[var(--placeholder)] hover:text-[var(--font)] focus:outline-none">
+                <button
+                  type="button"
+                  onClick={() => setGlobalFilter('')}
+                  className="absolute right-2 text-[var(--placeholder)] hover:text-[var(--font)] focus:outline-none"
+                >
                   <FaTimes />
                 </button>
               )}
@@ -339,7 +352,7 @@ export const QueryTable = <T extends object>({
           )}
 
           {onNewAction && (
-            <button onClick={onNewAction} className="p-3 bg-[var(--info)] text-white rounded hover:bg-blue-400">
+            <button type="button" onClick={onNewAction} className="p-3 bg-[var(--info)] text-white rounded hover:bg-blue-400">
               <FaPlus />
             </button>
           )}
@@ -429,6 +442,7 @@ export const QueryTable = <T extends object>({
       {showOptions && totalPages > 1 && (
         <div className="flex justify-center items-center mt-4 space-x-2 flex-wrap">
           <button
+            type="button"
             onClick={() => setPagination({ ...pagination, pageIndex: 0 })}
             disabled={pagination.pageIndex === 0}
             className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
@@ -436,6 +450,7 @@ export const QueryTable = <T extends object>({
             <FaAngleDoubleLeft className="text-[var(--font)]" />
           </button>
           <button
+            type="button"
             onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
             disabled={pagination.pageIndex === 0}
             className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
@@ -444,6 +459,7 @@ export const QueryTable = <T extends object>({
           </button>
           {renderPaginationButtons()}
           <button
+            type="button"
             onClick={() => setPagination({ ...pagination, pageIndex: Math.min(totalPages - 1, pagination.pageIndex + 1) })}
             disabled={pagination.pageIndex === totalPages - 1}
             className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
@@ -451,6 +467,7 @@ export const QueryTable = <T extends object>({
             <FaAngleRight className="text-[var(--font)]" />
           </button>
           <button
+            type="button"
             onClick={() => setPagination({ ...pagination, pageIndex: totalPages - 1 })}
             disabled={pagination.pageIndex === totalPages - 1}
             className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
@@ -491,10 +508,10 @@ export const QueryTable = <T extends object>({
             <p className="text-sm text-[var(--font)]">¿Estás seguro de eliminar este elemento?</p>
           </div>
           <div className="flex justify-end space-x-4  mt-4">
-            <button onClick={confirmDelete} className="w-[25%] px-3 py-1 bg-[var(--error)] text-[var(--font)] rounded hover:bg-red-400">
+            <button type="button" onClick={confirmDelete} className="w-[25%] px-3 py-1 bg-[var(--error)] text-[var(--font)] rounded hover:bg-red-400">
               Sí
             </button>
-            <button onClick={cancelDelete} className="w-[25%] px-3 py-1 bg-[var(--info)] text-[var(--font)] rounded hover:bg-blue-400">
+            <button type="button" onClick={cancelDelete} className="w-[25%] px-3 py-1 bg-[var(--info)] text-[var(--font)] rounded hover:bg-blue-400">
               No
             </button>
           </div>
@@ -516,10 +533,14 @@ export const QueryTable = <T extends object>({
             </div>
 
             <div className="flex flex-wrap justify-end space-x-2 sm:space-x-4 mt-6">
-              <button onClick={confirmMassDelete} className="px-4 py-2 bg-[var(--error)] text-white rounded hover:bg-red-400">
+              <button type="button" onClick={confirmMassDelete} className="px-4 py-2 bg-[var(--error)] text-white rounded hover:bg-red-400">
                 Sí
               </button>
-              <button onClick={() => setShowMassDeleteConfirmation(false)} className="px-4 py-2 bg-[var(--info)] text-white rounded hover:bg-blue-400">
+              <button
+                type="button"
+                onClick={() => setShowMassDeleteConfirmation(false)}
+                className="px-4 py-2 bg-[var(--info)] text-white rounded hover:bg-blue-400"
+              >
                 No
               </button>
             </div>

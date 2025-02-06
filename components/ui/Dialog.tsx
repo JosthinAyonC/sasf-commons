@@ -1,7 +1,7 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDialog, useMediaQuery } from '~/hooks';
 
 interface DialogProps {
@@ -45,6 +45,23 @@ export const Dialog: React.FC<DialogProps> = ({
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const zIndex = 1000 + getDialogOrder(keyId);
 
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeDialog(keyId);
+        if (onCloseAction) onCloseAction();
+      }
+    },
+    [keyId, closeDialog, onCloseAction]
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
   return (
     <AnimatePresence>
       <motion.div
@@ -87,7 +104,7 @@ export const Dialog: React.FC<DialogProps> = ({
               <h2 className={`text-[var(--font)] text-lg font-semibold ${titleClassName}`}>{title}</h2>
             </div>
           )}
-          <div className={`${isDesktop ? 'mt-4' : 'mt-10'} text-[var(--font)]  max-h-[80vh] overflow-y-auto`}>{children}</div>
+          <div className={`${isDesktop ? 'mt-4' : 'mt-10'} text-[var(--font)] max-h-[80vh] overflow-y-auto`}>{children}</div>
         </motion.div>
       </motion.div>
     </AnimatePresence>

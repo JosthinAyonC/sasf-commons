@@ -11,6 +11,7 @@ interface TableProps<T extends object> {
   showOptions?: boolean;
   defaultPage?: number;
   defaultSize?: number;
+  tableClassName?: string;
 }
 
 export const Table = <T extends object>({
@@ -21,6 +22,7 @@ export const Table = <T extends object>({
   defaultSize = 5,
   showOptions = true,
   searchable = true,
+  tableClassName,
 }: TableProps<T>) => {
   const [pagination, setPagination] = React.useState({
     pageIndex: defaultPage,
@@ -44,7 +46,7 @@ export const Table = <T extends object>({
   });
 
   return (
-    <div className="flex flex-col ">
+    <div className={`flex flex-col ${tableClassName ?? ''}`}>
       {/* Campo de búsqueda */}
       {searchable && (
         <input
@@ -103,6 +105,7 @@ export const Table = <T extends object>({
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center space-x-2">
                   <button
+                    type="button"
                     onClick={() => table.setPageIndex(0)}
                     disabled={!table.getCanPreviousPage()}
                     className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
@@ -110,6 +113,7 @@ export const Table = <T extends object>({
                     {'<<'}
                   </button>
                   <button
+                    type="button"
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
                     className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
@@ -117,6 +121,7 @@ export const Table = <T extends object>({
                     {'<'}
                   </button>
                   <button
+                    type="button"
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
                     className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
@@ -124,6 +129,7 @@ export const Table = <T extends object>({
                     {'>'}
                   </button>
                   <button
+                    type="button"
                     onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                     disabled={!table.getCanNextPage()}
                     className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded disabled:opacity-50"
