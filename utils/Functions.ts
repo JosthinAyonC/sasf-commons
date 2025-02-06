@@ -2,9 +2,8 @@ export const capitalize = (str: string): string => str.charAt(0).toUpperCase() +
 
 export const toPascalCase = (str: string): string => {
   return str
-    .replace(/[-_]/g, ' ')
-    .split(' ') // Divide en palabras
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .split(/[-_]/g)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
 };
 

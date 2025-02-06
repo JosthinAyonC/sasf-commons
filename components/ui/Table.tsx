@@ -1,11 +1,19 @@
-import { ColumnDef, filterFns, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
-import React from 'react';
-
+import {
+  ColumnDef,
+  filterFns,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import React, { useState } from 'react';
 import { Loader } from './Loader';
 
 interface TableProps<T extends object> {
   data: T[];
   columns: ColumnDef<T>[];
+  functionalComponent?: (row: T) => JSX.Element; // Componente funcional a renderizar en la celda
   searchable?: boolean;
   loading?: boolean;
   showOptions?: boolean;
@@ -17,6 +25,7 @@ interface TableProps<T extends object> {
 export const Table = <T extends object>({
   data,
   columns,
+  functionalComponent, // Recibe un componente funcional
   loading = false,
   defaultPage = 0,
   defaultSize = 5,
@@ -24,12 +33,14 @@ export const Table = <T extends object>({
   searchable = true,
   tableClassName,
 }: TableProps<T>) => {
-  const [pagination, setPagination] = React.useState({
+  const [expandedRow, setExpandedRow] = useState<string | null>(null); // Estado para controlar el componente activo
+
+  const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
     pageSize: defaultSize,
   });
 
-  const [globalFilter, setGlobalFilter] = React.useState('');
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     data,
@@ -89,13 +100,25 @@ export const Table = <T extends object>({
                   </tr>
                 ) : (
                   table.getRowModel().rows.map((row) => (
-                    <tr key={row.id} className="border-b">
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
+                    <React.Fragment key={row.id}>
+                      <tr
+                        className="border-b cursor-pointer hover:bg-[var(--hover)]"
+                        onClick={() => setExpandedRow(expandedRow === row.id ? null : row.id)}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </td>
+                        ))}
+                      </tr>
+                      {expandedRow === row.id && functionalComponent && (
+                        <tr className="border-b">
+                          <td colSpan={columns.length} className="p-4 text-left bg-[var(--secondary)]">
+                            {functionalComponent(row.original)}
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   ))
                 )}
               </tbody>
