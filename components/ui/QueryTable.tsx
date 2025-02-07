@@ -7,6 +7,7 @@ import {
   FaAngleLeft,
   FaAngleRight,
   FaChevronDown,
+  FaChevronRight,
   FaChevronUp,
   FaEdit,
   FaExclamationTriangle,
@@ -193,6 +194,10 @@ export const QueryTable = <T extends object>({
       tableEventEmitter.off('refreshTable', listener);
     };
   }, [fetchData]);
+
+  useEffect(() => {
+    setExpandedRows({});
+  }, [globalFilter]);
 
   const handleDeleteClick = (row: T, buttonRect: DOMRect) => {
     setOverlayData({ row, buttonRect });
@@ -445,8 +450,8 @@ export const QueryTable = <T extends object>({
                             }`}
                           disabled={typeof disableRowExpand === 'function' && disableRowExpand(row.original)}
                         >
-                          <span className={`inline-block transition-transform duration-300 ${expandedRows[row.id] ? 'rotate-180' : 'rotate-0'}`}>
-                            <FaChevronDown />
+                          <span className={`inline-block transition-transform duration-300 ${expandedRows[row.id] ? 'rotate-90' : 'rotate-0'}`}>
+                            <FaChevronRight />
                           </span>
                         </button>
                       </td>

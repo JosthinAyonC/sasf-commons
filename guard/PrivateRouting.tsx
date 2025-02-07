@@ -18,7 +18,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, requiredRole }) =
 
   if (requiredRole && roles) {
     const isvalidRol = roles.some((rol) => {
-      console.log(rol);
       return rol === requiredRole;
     });
 

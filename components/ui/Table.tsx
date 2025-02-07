@@ -1,7 +1,7 @@
 import { ColumnDef, filterFns, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { motion } from 'framer-motion';
-import React, { useState } from 'react';
-import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight, FaChevronDown, FaEdit, FaExclamationTriangle, FaTrashAlt } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight, FaChevronRight, FaEdit, FaExclamationTriangle, FaTrashAlt } from 'react-icons/fa';
 
 import { Loader } from './Loader';
 
@@ -47,9 +47,6 @@ export const Table = <T extends object>({
   };
 
   const handleDeleteClick = (row: T, buttonRect: DOMRect) => {
-    console.log('handleDeleteClick');
-    console.log(row);
-    console.log(buttonRect);
     setOverlayData({ row, buttonRect });
   };
 
@@ -97,6 +94,10 @@ export const Table = <T extends object>({
   });
 
   const [globalFilter, setGlobalFilter] = useState('');
+
+  useEffect(() => {
+    setExpandedRows({});
+  }, [globalFilter]);
 
   const tableColumns = [...(onSelectAction || onDeleteAction ? [actionColumn] : []), ...columns];
 
@@ -177,8 +178,8 @@ export const Table = <T extends object>({
                               }`}
                               disabled={typeof disableRowExpand === 'function' && disableRowExpand(row.original)}
                             >
-                              <span className={`inline-block transition-transform duration-300 ${expandedRows[row.id] ? 'rotate-180' : 'rotate-0'}`}>
-                                <FaChevronDown />
+                              <span className={`inline-block transition-transform duration-300 ${expandedRows[row.id] ? 'rotate-90' : 'rotate-0'}`}>
+                                <FaChevronRight />
                               </span>
                             </button>
                           </td>
