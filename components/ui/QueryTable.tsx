@@ -1,6 +1,6 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { motion } from 'framer-motion';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   FaAngleDoubleLeft,
   FaAngleDoubleRight,
@@ -17,7 +17,8 @@ import {
 } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { tableEventEmitter } from '~/config/eventEmitter';
-import { useDebounce, useMediaQuery } from '~/hooks';
+import CheckBoxUi from '~/form/ui/CheckBoxUi';
+import { useDebounce, useMediaQuery, useToast } from '~/hooks';
 import { RootState } from '~/store';
 
 import { Loader } from './Loader';
@@ -49,6 +50,8 @@ interface TableProps<T extends object> {
   sorteable?: boolean;
   pagesToShow?: number;
   tableClassName?: string;
+  rowExpand?: (_row: T) => JSX.Element;
+  disableRowExpand?: (_row: T) => boolean;
 }
 
 /**
@@ -86,12 +89,15 @@ export const QueryTable = <T extends object>({
   sorteable = true,
   pagesToShow = 5,
   tableClassName,
+  rowExpand,
+  disableRowExpand,
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
     pageSize: defaultSize,
   });
 
+  const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
   const [globalFilter, setGlobalFilter] = useState('');
   const debouncedFilter = useDebounce(globalFilter, debounceDelay);
   const [fetchedData, setFetchedData] = useState<(Record<string, unknown> & { content: T[]; totalElements: number }) | null>(null);
@@ -101,13 +107,31 @@ export const QueryTable = <T extends object>({
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
   const [showMassDeleteConfirmation, setShowMassDeleteConfirmation] = useState(false);
   const [sortQuery, setSortQuery] = useState(defaultSortQuery);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const { addToast } = useToast();
+  const hasShownToast = useRef(false);
+
+  useEffect(() => {
+    if (isMobile && !hasShownToast.current) {
+      addToast('Por favor rota tu pantalla para mejor experiencia', 'info');
+      hasShownToast.current = true;
+    }
+  }, [isMobile]);
+
+  const toggleRowExpansion = (rowId: string, row: T) => {
+    if (typeof disableRowExpand === 'function' && disableRowExpand(row)) return;
+
+    setExpandedRows((prev) => ({
+      ...prev,
+      [rowId]: !prev[rowId],
+    }));
+  };
 
   const handleRowSelection = (row: T) => {
     setSelectedRows((prevSelected) => (prevSelected.includes(row) ? prevSelected.filter((selected) => selected !== row) : [...prevSelected, row]));
   };
 
   const totalPages = fetchedData ? Math.ceil((fetchedData[responseTotalCount] as number) / pagination.pageSize) : 0;
-  const isDesktop = useMediaQuery('(min-width: 768px)');
   const token = useSelector((state: RootState) => state.auth.token);
 
   const fetchData = useCallback(async () => {
@@ -218,7 +242,7 @@ export const QueryTable = <T extends object>({
 
   const renderPaginationButtons = () => {
     const { pageIndex } = pagination;
-    const maxPagesToShow = isDesktop ? pagesToShow : 3;
+    const maxPagesToShow = !isMobile ? pagesToShow : 3;
     let startPage = Math.max(0, pageIndex - Math.floor(maxPagesToShow / 2));
     const endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
 
@@ -264,14 +288,7 @@ export const QueryTable = <T extends object>({
         </button>
       </div>
     ),
-    cell: ({ row }) => (
-      <input
-        type="checkbox"
-        checked={selectedRows.includes(row.original)}
-        onChange={() => handleRowSelection(row.original)}
-        className="border border-[var(--border)] accent-[var(--secondary)] rounded-sm focus:ring-[var(--focus)] focus:outline-none bg-[var(--bg)] text-[var(--primary)] cursor-pointer scale-150"
-      />
-    ),
+    cell: ({ row }) => <CheckBoxUi checked={selectedRows.includes(row.original)} onChange={() => handleRowSelection(row.original)} />,
   };
 
   const actionColumn: ColumnDef<T> = {
@@ -365,6 +382,7 @@ export const QueryTable = <T extends object>({
           <thead className="border-b bg-[var(--secondary)] text-[var(--font)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
+                {rowExpand && <th className="px-4 py-4 text-sm font-medium border-[var(--border)]"></th>}
                 {headerGroup.headers.map((header) => (
                   <th key={header.id} className="px-4 py-3 text-sm font-semibold border-[var(--border)] whitespace-nowrap">
                     {header.isPlaceholder ? null : header.id !== 'selection' && header.id !== 'actions' ? (
@@ -394,44 +412,73 @@ export const QueryTable = <T extends object>({
           <tbody>
             {error ? (
               <tr className="border-b border-[var(--border)]">
-                <td colSpan={tableColumns.length} className="text-center py-4 text-[var(--error)] font-medium">
+                <td colSpan={tableColumns.length + (rowExpand ? 1 : 0)} className="text-center py-4 text-[var(--error)] font-medium">
                   Ocurrió un error al obtener la data.
                 </td>
               </tr>
             ) : loading ? (
               <tr className="border-b border-[var(--border)]">
-                <td colSpan={tableColumns.length} className="text-center py-4">
+                <td colSpan={tableColumns.length + (rowExpand ? 1 : 0)} className="text-center py-4">
                   <Loader className="text-[var(--secondary)]" />
                 </td>
               </tr>
             ) : table.getRowModel().rows.length === 0 ? (
               <tr className="border-b border-[var(--border)]">
-                <td colSpan={tableColumns.length} className="text-center py-4 text-[var(--font)] font-medium">
+                <td colSpan={tableColumns.length + (rowExpand ? 1 : 0)} className="text-center py-4 text-[var(--font)] font-medium">
                   No se encontraron resultados.
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b border-[var(--border)] text-center hover:bg-[var(--hover2)] transition duration-200">
-                  {row.getVisibleCells().map((cell) => {
-                    if (statusAccessor && cell.column.id === statusAccessor) {
-                      const status = cell.getValue() as 'A' | 'I';
+                <React.Fragment key={row.id}>
+                  <tr key={row.id} className="border-b border-[var(--border)] text-center hover:bg-[var(--hover2)] transition duration-200">
+                    {rowExpand && (
+                      <td className="whitespace-nowrap px-4 py-4 text-sm font-light border-[var(--border)]">
+                        <button
+                          type="button"
+                          onClick={() => toggleRowExpansion(row.id, row.original)}
+                          className={`focus:outline-none transition-transform duration-300 flex items-center justify-center
+                            ${
+                              typeof disableRowExpand === 'function' && disableRowExpand(row.original)
+                                ? 'cursor-not-allowed text-[var(--disabled)] opacity-50'
+                                : 'cursor-pointer hover:text-[var(--hover)]'
+                            }`}
+                          disabled={typeof disableRowExpand === 'function' && disableRowExpand(row.original)}
+                        >
+                          <span className={`inline-block transition-transform duration-300 ${expandedRows[row.id] ? 'rotate-180' : 'rotate-0'}`}>
+                            <FaChevronDown />
+                          </span>
+                        </button>
+                      </td>
+                    )}
+                    {row.getVisibleCells().map((cell) => {
+                      if (statusAccessor && cell.column.id === statusAccessor) {
+                        const status = cell.getValue() as 'A' | 'I';
+                        return (
+                          <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
+                            <div className="flex items-center justify-center">
+                              <Toggle isActive={status === 'A'} onToggle={() => handleStatusToggle(row.original)} />
+                            </div>
+                          </td>
+                        );
+                      }
+
                       return (
                         <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
-                          <div className="flex items-center justify-center">
-                            <Toggle isActive={status === 'A'} onToggle={() => handleStatusToggle(row.original)} />
-                          </div>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       );
-                    }
-
-                    return (
-                      <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    })}
+                  </tr>
+                  {expandedRows[row.id] && rowExpand && (
+                    <tr className="border-b">
+                      <td colSpan={columns.length + 1} className="p-4 text-left bg-[var(--bg)] relative">
+                        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-[var(--border)]" />
+                        <div className="ml-8">{rowExpand(row.original)}</div>
                       </td>
-                    );
-                  })}
-                </tr>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))
             )}
           </tbody>
@@ -441,39 +488,52 @@ export const QueryTable = <T extends object>({
       {/* Paginación */}
       {showOptions && totalPages > 1 && (
         <div className="flex justify-center items-center mt-4 space-x-2 flex-wrap">
-          <button
-            type="button"
-            onClick={() => setPagination({ ...pagination, pageIndex: 0 })}
-            disabled={pagination.pageIndex === 0}
-            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
-          >
-            <FaAngleDoubleLeft className="text-[var(--font)]" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
-            disabled={pagination.pageIndex === 0}
-            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
-          >
-            <FaAngleLeft className="text-[var(--font)]" />
-          </button>
-          {renderPaginationButtons()}
-          <button
-            type="button"
-            onClick={() => setPagination({ ...pagination, pageIndex: Math.min(totalPages - 1, pagination.pageIndex + 1) })}
-            disabled={pagination.pageIndex === totalPages - 1}
-            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
-          >
-            <FaAngleRight className="text-[var(--font)]" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setPagination({ ...pagination, pageIndex: totalPages - 1 })}
-            disabled={pagination.pageIndex === totalPages - 1}
-            className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
-          >
-            <FaAngleDoubleRight className="text-[var(--font)]" />
-          </button>
+          {/* Información de registros */}
+          <div className="flex items-center space-x-2 py-2">
+            <span className="text-[var(--font)] text-sm text-center md:text-left align-middle">
+              Mostrando del registro {pagination.pageIndex * pagination.pageSize + 1} al{' '}
+              {Math.min(
+                (pagination.pageIndex + 1) * pagination.pageSize,
+                typeof fetchedData?.[responseTotalCount] === 'number' ? fetchedData[responseTotalCount] : 0
+              )}{' '}
+              de {String(fetchedData?.[responseTotalCount] ?? 0)}
+            </span>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={() => setPagination({ ...pagination, pageIndex: 0 })}
+              disabled={pagination.pageIndex === 0}
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
+            >
+              <FaAngleDoubleLeft className="text-[var(--font)]" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
+              disabled={pagination.pageIndex === 0}
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
+            >
+              <FaAngleLeft className="text-[var(--font)]" />
+            </button>
+            {renderPaginationButtons()}
+            <button
+              type="button"
+              onClick={() => setPagination({ ...pagination, pageIndex: Math.min(totalPages - 1, pagination.pageIndex + 1) })}
+              disabled={pagination.pageIndex === totalPages - 1}
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
+            >
+              <FaAngleRight className="text-[var(--font)]" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setPagination({ ...pagination, pageIndex: totalPages - 1 })}
+              disabled={pagination.pageIndex === totalPages - 1}
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
+            >
+              <FaAngleDoubleRight className="text-[var(--font)]" />
+            </button>
+          </div>
           <select
             value={table.getState().pagination.pageSize}
             onChange={(e) => {

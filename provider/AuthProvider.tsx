@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     console.log('Refrescando el token...');
     refetch();
-  }, [isAuthenticated, token, exp, refetch]);
+  }, [isAuthenticated, token, exp, refetch, dispatch, navigate]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
