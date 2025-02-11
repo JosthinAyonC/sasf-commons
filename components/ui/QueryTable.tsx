@@ -18,7 +18,7 @@ import {
 } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { tableEventEmitter } from '~/config/eventEmitter';
-import CheckBoxUi from '~/form/ui/CheckBoxUi';
+import { CheckBoxUi } from '~/form/ui';
 import { useDebounce, useMediaQuery, useToast } from '~/hooks';
 import { RootState } from '~/store';
 
