@@ -2,7 +2,7 @@ import { JwtPayload, jwtDecode } from 'jwt-decode';
 import React, { createContext, useCallback, useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import useQuery from '~/hooks/useQuery';
+import { useQuery } from '~/hooks';
 import { RootState } from '~/store';
 import { logout, refreshToken } from '~/store/authSlice';
 
@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { token, exp, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
-  const { data, error, refetch } = useQuery<AuthResponse>(`${process.env.AUTH_URL}${process.env.REFRESH_TOKEN_PATH || ''}`, {}, {}, false);
+  const { data, error, refetch } = useQuery<AuthResponse>(`${process.env.AUTH_URL}${process.env.REFRESH_TOKEN_PATH || ''}`, {}, {}, false, 'network-first');
 
   const refreshSession = useCallback(() => {
     if (!isAuthenticated || !token || !exp) return;
