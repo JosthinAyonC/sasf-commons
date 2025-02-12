@@ -28,6 +28,7 @@ import { Toggle } from './Toggle';
 interface TableProps<T extends object> {
   columns: ColumnDef<T>[];
   fetchUrl: string;
+  searchUrl?: string;
   title: string;
   queryParams?: Record<string, string | number | boolean>;
   filterKey?: string;
@@ -67,6 +68,7 @@ interface TableProps<T extends object> {
 export const QueryTable = <T extends object>({
   columns,
   fetchUrl,
+  searchUrl,
   queryParams = {},
   title,
   filterKey = 'filter',
@@ -156,7 +158,11 @@ export const QueryTable = <T extends object>({
       )
     ).toString();
 
-    const url = `${fetchUrl}?${queryString}&${sortKey}=${sortQuery}`;
+    let url = `${fetchUrl}?${queryString}&${sortKey}=${sortQuery}`;
+
+    if (searchUrl && globalFilter !== '') {
+      url = `${searchUrl}?${queryString}&${sortKey}=${sortQuery}`;
+    }
 
     try {
       const response = await fetch(url, {
