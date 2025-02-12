@@ -352,7 +352,7 @@ mutate({ key: 'value' });
 
 **Ejemplo de uso:**
 ```typescript
-import useQuery from '~/hooks/useQuery';
+import { useQuery } from '~/hooks';
 
 const { data, loading, error, refetch } = useQuery('/api/resource', {}, { param: 'value' });
 ```

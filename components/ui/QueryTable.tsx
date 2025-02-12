@@ -1,6 +1,6 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { motion } from 'framer-motion';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FaAngleDoubleLeft,
   FaAngleDoubleRight,
@@ -16,11 +16,9 @@ import {
   FaTimes,
   FaTrashAlt,
 } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
 import { tableEventEmitter } from '~/config/eventEmitter';
 import { CheckBoxUi } from '~/form/ui';
-import { useDebounce, useMediaQuery, useToast } from '~/hooks';
-import { RootState } from '~/store';
+import { useDebounce, useMediaQuery, useQuery, useToast } from '~/hooks';
 
 import { Loader } from './Loader';
 import { Toggle } from './Toggle';
@@ -103,15 +101,13 @@ export const QueryTable = <T extends object>({
   const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
   const [globalFilter, setGlobalFilter] = useState('');
   const debouncedFilter = useDebounce(globalFilter, debounceDelay);
-  const [fetchedData, setFetchedData] = useState<(Record<string, unknown> & { content: T[]; totalElements: number }) | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [overlayData, setOverlayData] = useState<{ row: T; buttonRect: DOMRect } | null>(null);
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
   const [showMassDeleteConfirmation, setShowMassDeleteConfirmation] = useState(false);
   const [sortQuery, setSortQuery] = useState(defaultSortQuery);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { addToast } = useToast();
+  const [toFetchUrl, setToFetchUrl] = useState(fetchUrl);
   const hasShownToast = useRef(false);
 
   useEffect(() => {
@@ -134,75 +130,38 @@ export const QueryTable = <T extends object>({
     setSelectedRows((prevSelected) => (prevSelected.includes(row) ? prevSelected.filter((selected) => selected !== row) : [...prevSelected, row]));
   };
 
-  const totalPages = fetchedData ? Math.ceil((fetchedData[responseTotalCount] as number) / pagination.pageSize) : 0;
-  const token = useSelector((state: RootState) => state.auth.token);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    const queryParamsWithPagination = {
-      ...queryParams,
-      [pageKey]: pagination.pageIndex,
-      [sizeKey]: pagination.pageSize,
-      [filterKey]: debouncedFilter,
-    };
-
-    const queryString = new URLSearchParams(
-      Object.entries(queryParamsWithPagination).reduce(
-        (acc, [key, value]) => {
-          acc[key] = String(value);
-          return acc;
-        },
-        {} as Record<string, string>
-      )
-    ).toString();
-
-    let url = `${fetchUrl}?${queryString}&${sortKey}=${sortQuery}`;
-
-    if (searchUrl && globalFilter !== '') {
-      url = `${searchUrl}?${queryString}&${sortKey}=${sortQuery}`;
-    }
-
-    try {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: token ? `Bearer ${token}` : '',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      setFetchedData(result);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unknown error occurred.');
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchUrl, pagination, debouncedFilter, filterKey, token, sortQuery, sortKey]);
+  const queryParamsWithPagination = {
+    ...queryParams,
+    [pageKey]: pagination.pageIndex,
+    [sizeKey]: pagination.pageSize,
+    [filterKey]: debouncedFilter,
+    [sortKey]: sortQuery,
+  };
+  const { data, loading, error, refetch } = useQuery<(Record<string, unknown> & { content: T[]; totalElements: number }) | null>(
+    toFetchUrl,
+    undefined,
+    queryParamsWithPagination
+  );
+  const totalPages = data ? Math.ceil((data[responseTotalCount] as number) / pagination.pageSize) : 0;
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    refetch();
+  }, [refetch]);
 
   useEffect(() => {
-    const listener = () => fetchData();
+    const listener = () => refetch();
     tableEventEmitter.on('refreshTable', listener);
 
     return () => {
       tableEventEmitter.off('refreshTable', listener);
     };
-  }, [fetchData]);
+  }, [refetch]);
 
   useEffect(() => {
     setExpandedRows({});
+    if (searchUrl) {
+      setToFetchUrl(searchUrl);
+    }
   }, [globalFilter]);
 
   const handleDeleteClick = (row: T, buttonRect: DOMRect) => {
@@ -217,7 +176,7 @@ export const QueryTable = <T extends object>({
   const confirmDelete = async () => {
     if (overlayData && onDeleteAction) {
       await onDeleteAction(overlayData.row);
-      fetchData();
+      refetch();
     }
     setOverlayData(null);
   };
@@ -229,15 +188,10 @@ export const QueryTable = <T extends object>({
   const handleStatusToggle = async (row: T) => {
     if (!statusAccessor || !onStatusChange) return;
 
-    setFetchedData((prevData) => {
-      if (!prevData) return prevData;
-
-      const updatedContent = (prevData[responseDataKey] as T[]).map((item) =>
-        item === row ? { ...item, [statusAccessor]: (item[statusAccessor as keyof T] === 'A' ? 'I' : 'A') as T[keyof T] } : item
-      );
-
-      return { ...prevData, [responseDataKey]: updatedContent };
-    });
+    if (!data) return;
+    data[responseDataKey] = (data[responseDataKey] as T[]).map((item) =>
+      item === row ? { ...item, [statusAccessor]: (item[statusAccessor as keyof T] === 'A' ? 'I' : 'A') as T[keyof T] } : item
+    );
 
     // Obtiene el nuevo estado de manera segura
     const newStatus = (row[statusAccessor as keyof T] === 'A' ? 'I' : 'A') as T[keyof T];
@@ -278,7 +232,7 @@ export const QueryTable = <T extends object>({
   const confirmMassDelete = async () => {
     if (onDeleteMassiveAction) {
       await onDeleteMassiveAction(selectedRows); // Espera la finalización
-      fetchData(); // Ahora se ejecuta solo cuando la mutación se completa
+      refetch(); // Ahora se ejecuta solo cuando la mutación se completa
     }
     setSelectedRows([]);
     setShowMassDeleteConfirmation(false);
@@ -334,7 +288,7 @@ export const QueryTable = <T extends object>({
   );
 
   const table = useReactTable<T>({
-    data: Array.isArray(fetchedData?.[responseDataKey]) ? (fetchedData?.[responseDataKey] as T[]) : [],
+    data: Array.isArray(data?.[responseDataKey]) ? (data?.[responseDataKey] as T[]) : [],
     columns: tableColumns,
     pageCount: totalPages,
     state: { pagination, globalFilter },
@@ -503,11 +457,8 @@ export const QueryTable = <T extends object>({
           <div className="flex items-center space-x-2 py-2">
             <span className="text-[var(--font)] text-sm text-center md:text-left align-middle">
               Mostrando del registro {pagination.pageIndex * pagination.pageSize + 1} al{' '}
-              {Math.min(
-                (pagination.pageIndex + 1) * pagination.pageSize,
-                typeof fetchedData?.[responseTotalCount] === 'number' ? fetchedData[responseTotalCount] : 0
-              )}{' '}
-              de {String(fetchedData?.[responseTotalCount] ?? 0)}
+              {Math.min((pagination.pageIndex + 1) * pagination.pageSize, typeof data?.[responseTotalCount] === 'number' ? data[responseTotalCount] : 0)} de{' '}
+              {String(data?.[responseTotalCount] ?? 0)}
             </span>
           </div>
           <div>
