@@ -107,7 +107,6 @@ export const QueryTable = <T extends object>({
   const [sortQuery, setSortQuery] = useState(defaultSortQuery);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { addToast } = useToast();
-  const [toFetchUrl, setToFetchUrl] = useState(fetchUrl);
   const hasShownToast = useRef(false);
 
   useEffect(() => {
@@ -138,13 +137,16 @@ export const QueryTable = <T extends object>({
     [sortKey]: sortQuery,
   };
   const { data, loading, error, refetch } = useQuery<(Record<string, unknown> & { content: T[]; totalElements: number }) | null>(
-    toFetchUrl,
+    fetchUrl,
     undefined,
     queryParamsWithPagination
   );
   const totalPages = data ? Math.ceil((data[responseTotalCount] as number) / pagination.pageSize) : 0;
 
   useEffect(() => {
+    if (searchUrl) {
+      refetch(searchUrl);
+    }
     refetch();
   }, [refetch]);
 
@@ -159,9 +161,6 @@ export const QueryTable = <T extends object>({
 
   useEffect(() => {
     setExpandedRows({});
-    if (searchUrl) {
-      setToFetchUrl(searchUrl);
-    }
   }, [globalFilter]);
 
   const handleDeleteClick = (row: T, buttonRect: DOMRect) => {
@@ -466,7 +465,7 @@ export const QueryTable = <T extends object>({
               type="button"
               onClick={() => setPagination({ ...pagination, pageIndex: 0 })}
               disabled={pagination.pageIndex === 0}
-              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaAngleDoubleLeft className="text-[var(--font)]" />
             </button>
@@ -474,7 +473,7 @@ export const QueryTable = <T extends object>({
               type="button"
               onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
               disabled={pagination.pageIndex === 0}
-              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaAngleLeft className="text-[var(--font)]" />
             </button>
@@ -483,7 +482,7 @@ export const QueryTable = <T extends object>({
               type="button"
               onClick={() => setPagination({ ...pagination, pageIndex: Math.min(totalPages - 1, pagination.pageIndex + 1) })}
               disabled={pagination.pageIndex === totalPages - 1}
-              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaAngleRight className="text-[var(--font)]" />
             </button>
@@ -491,7 +490,7 @@ export const QueryTable = <T extends object>({
               type="button"
               onClick={() => setPagination({ ...pagination, pageIndex: totalPages - 1 })}
               disabled={pagination.pageIndex === totalPages - 1}
-              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50"
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaAngleDoubleRight className="text-[var(--font)]" />
             </button>
