@@ -19,6 +19,8 @@ export interface TextFieldProps<T extends FieldValues> {
   errorClassName?: string;
   className?: string;
   disabled?: boolean;
+  regexp?: RegExp;
+  regexpErrorLabel?: string;
   register: UseFormRegister<T>;
   minLength?: number;
   maxLength?: number;
@@ -185,7 +187,7 @@ export interface RadioButtonProps {
 
 export interface Option {
   label: string;
-  value: string | number;
+  value: string | number | object;
 }
 
 export interface DropdownFieldProps<T extends FieldValues> extends UseControllerProps<T> {

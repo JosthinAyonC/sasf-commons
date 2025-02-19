@@ -14,6 +14,8 @@ export const TextField = <T extends FieldValues>({
   isRequired = false,
   validatePassword = false,
   validateEmail = false,
+  regexp,
+  regexpErrorLabel,
   type = 'text',
   placeholder,
   defaultValue,
@@ -30,7 +32,7 @@ export const TextField = <T extends FieldValues>({
   return (
     <div>
       {label && (
-        <label htmlFor={name as string} className={` text-[var(--font)] ${labelClassName} block`}>
+        <label htmlFor={name as string} className={`text-[var(--font)] ${labelClassName} block`}>
           {label}
         </label>
       )}
@@ -49,8 +51,9 @@ export const TextField = <T extends FieldValues>({
           required: isRequired ? 'Este campo es obligatorio' : undefined,
           minLength: minLength ? { value: minLength, message: `El valor mínimo es ${minLength} caracteres` } : undefined,
           maxLength: maxLength ? { value: maxLength, message: `El valor máximo es ${maxLength} caracteres` } : undefined,
-          pattern:
-            type === 'email' && validateEmail
+          pattern: regexp
+            ? { value: regexp, message: regexpErrorLabel || 'Formato inválido' }
+            : type === 'email' && validateEmail
               ? { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Correo electrónico inválido' }
               : type === 'password' && validatePassword
                 ? {
