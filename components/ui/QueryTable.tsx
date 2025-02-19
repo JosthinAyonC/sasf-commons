@@ -171,7 +171,7 @@ export const QueryTable = <T extends object>({
   const confirmDelete = async () => {
     if (overlayData && onDeleteAction) {
       await onDeleteAction(overlayData.row);
-      refetch();
+      refetch('', true);
     }
     setOverlayData(null);
   };
@@ -227,7 +227,7 @@ export const QueryTable = <T extends object>({
   const confirmMassDelete = async () => {
     if (onDeleteMassiveAction) {
       await onDeleteMassiveAction(selectedRows); // Espera la finalización
-      refetch(); // Ahora se ejecuta solo cuando la mutación se completa
+      refetch('', true); // Ahora se ejecuta solo cuando la mutación se completa
     }
     setSelectedRows([]);
     setShowMassDeleteConfirmation(false);
@@ -355,7 +355,7 @@ export const QueryTable = <T extends object>({
                               onClick={() => handleSort(header.id, 'asc')}
                             />
                             <FaChevronDown
-                              className={`cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
+                              className={`-mt-[3px] cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
                               onClick={() => handleSort(header.id, 'desc')}
                             />
                           </div>
