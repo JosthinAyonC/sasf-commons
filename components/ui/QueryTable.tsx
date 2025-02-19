@@ -219,9 +219,8 @@ export const QueryTable = <T extends object>({
         type="button"
         key={page}
         onClick={() => setPagination({ ...pagination, pageIndex: page })}
-        className={`px-3 py-1 rounded-md ${
-          page === pageIndex ? 'bg-[var(--secondary)] text-[var(--font)]' : 'bg-[var(--bg)] text-gray-700 hover:bg-[var(--hover2)]'
-        }`}
+        className={`px-3 py-1 rounded-md ${page === pageIndex ? 'bg-[var(--secondary)] text-[var(--font)]' : 'bg-[var(--bg)] text-gray-700 hover:bg-[var(--hover2)]'
+          }`}
       >
         {page + 1}
       </button>
@@ -402,10 +401,9 @@ export const QueryTable = <T extends object>({
                           type="button"
                           onClick={() => toggleRowExpansion(row.id, row.original)}
                           className={`focus:outline-none transition-transform duration-300 flex items-center justify-center
-                            ${
-                              typeof disableRowExpand === 'function' && disableRowExpand(row.original)
-                                ? 'cursor-not-allowed text-[var(--disabled)] opacity-50'
-                                : 'cursor-pointer hover:text-[var(--hover)]'
+                            ${typeof disableRowExpand === 'function' && disableRowExpand(row.original)
+                              ? 'cursor-not-allowed text-[var(--disabled)] opacity-50'
+                              : 'cursor-pointer hover:text-[var(--hover)]'
                             }`}
                           disabled={typeof disableRowExpand === 'function' && disableRowExpand(row.original)}
                         >
@@ -450,7 +448,7 @@ export const QueryTable = <T extends object>({
       </div>
 
       {/* Paginación */}
-      {showOptions && totalPages > 1 && (
+      {showOptions && (
         <div className="flex justify-center items-center mt-4 space-x-2 flex-wrap">
           {/* Información de registros */}
           <div className="flex items-center space-x-2 py-2">
