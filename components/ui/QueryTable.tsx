@@ -434,7 +434,7 @@ export const QueryTable = <T extends object>({
                   </tr>
                   {expandedRows[row.id] && rowExpand && (
                     <tr className="border-b">
-                      <td colSpan={columns.length + 1} className="p-4 text-left bg-[var(--bg)] relative">
+                      <td colSpan={columns.length + 3} className="p-4 text-left bg-[var(--bg)] relative">
                         <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-[var(--border)]" />
                         <div className="ml-8">{rowExpand(row.original)}</div>
                       </td>
