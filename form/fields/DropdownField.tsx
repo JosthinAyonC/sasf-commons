@@ -85,6 +85,7 @@ export const DropdownField = <T extends FieldValues>({
   isRequired = false,
   rules,
   disabled = false,
+  onChangeSelection,
 }: DropdownFieldProps<T>) => {
   const {
     field: { value, onChange, ref },
@@ -99,11 +100,18 @@ export const DropdownField = <T extends FieldValues>({
   });
 
   const handleChange = (selected: SingleValue<Option> | MultiValue<Option>) => {
+    let selectedValues;
+
     if (isMulti) {
-      const selectedValues = (selected as MultiValue<Option>)?.map((option) => option.value);
-      onChange(selectedValues);
+      selectedValues = (selected as MultiValue<Option>)?.map((option) => option.value);
     } else {
-      onChange((selected as SingleValue<Option>)?.value || null);
+      selectedValues = (selected as SingleValue<Option>)?.value || '';
+    }
+
+    onChange(selectedValues);
+
+    if (onChangeSelection) {
+      onChangeSelection(selectedValues);
     }
   };
 

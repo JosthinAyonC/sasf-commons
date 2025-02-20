@@ -52,6 +52,7 @@ interface TableProps<T extends object> {
   tableClassName?: string;
   rowExpand?: (_row: T) => JSX.Element;
   disableRowExpand?: (_row: T) => boolean;
+  notFoundLabel?: string;
 }
 
 /**
@@ -92,6 +93,7 @@ export const QueryTable = <T extends object>({
   tableClassName,
   rowExpand,
   disableRowExpand,
+  notFoundLabel = 'No se encontraron resultados',
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
@@ -114,7 +116,7 @@ export const QueryTable = <T extends object>({
       addToast('Por favor rota tu pantalla para mejor experiencia', 'info');
       hasShownToast.current = true;
     }
-  }, [isMobile]);
+  }, [isMobile, addToast]);
 
   const toggleRowExpansion = (rowId: string, row: T) => {
     if (typeof disableRowExpand === 'function' && disableRowExpand(row)) return;
@@ -348,7 +350,7 @@ export const QueryTable = <T extends object>({
                     {header.isPlaceholder ? null : header.id !== 'selection' && header.id !== 'actions' ? (
                       <div className="group flex justify-center items-center space-x-2">
                         {flexRender(header.column.columnDef.header, header.getContext())}
-                        {sorteable && (
+                        {sorteable && header.column.columnDef.enableSorting !== false && (
                           <div className="flex flex-col">
                             <FaChevronUp
                               className={`cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
@@ -385,7 +387,7 @@ export const QueryTable = <T extends object>({
             ) : table.getRowModel().rows.length === 0 ? (
               <tr className="border-b border-[var(--border)]">
                 <td colSpan={tableColumns.length + (rowExpand ? 1 : 0)} className="text-center py-4 text-[var(--font)] font-medium">
-                  No se encontraron resultados.
+                  {notFoundLabel}
                 </td>
               </tr>
             ) : (

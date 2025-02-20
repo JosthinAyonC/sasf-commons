@@ -100,7 +100,7 @@ export function useQuery<T>(
         }
       }
     },
-    [fullUrl, token, cachePolicy, data]
+    [fullUrl, token, cachePolicy, data, fetchDataFromApi]
   );
 
   useEffect(() => {
