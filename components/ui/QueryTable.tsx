@@ -52,6 +52,7 @@ interface TableProps<T extends object> {
   tableClassName?: string;
   rowExpand?: (_row: T) => JSX.Element;
   disableRowExpand?: (_row: T) => boolean;
+  notFoundLabel?: string;
 }
 
 /**
@@ -92,6 +93,7 @@ export const QueryTable = <T extends object>({
   tableClassName,
   rowExpand,
   disableRowExpand,
+  notFoundLabel = 'No se encontraron resultados',
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
@@ -114,7 +116,7 @@ export const QueryTable = <T extends object>({
       addToast('Por favor rota tu pantalla para mejor experiencia', 'info');
       hasShownToast.current = true;
     }
-  }, [isMobile]);
+  }, [isMobile, addToast]);
 
   const toggleRowExpansion = (rowId: string, row: T) => {
     if (typeof disableRowExpand === 'function' && disableRowExpand(row)) return;
@@ -144,14 +146,7 @@ export const QueryTable = <T extends object>({
   const totalPages = data ? Math.ceil((data[responseTotalCount] as number) / pagination.pageSize) : 0;
 
   useEffect(() => {
-    if (searchUrl) {
-      refetch(searchUrl);
-    }
-    refetch();
-  }, [refetch]);
-
-  useEffect(() => {
-    const listener = () => refetch();
+    const listener = () => refetch('', true);
     tableEventEmitter.on('refreshTable', listener);
 
     return () => {
@@ -161,6 +156,9 @@ export const QueryTable = <T extends object>({
 
   useEffect(() => {
     setExpandedRows({});
+    if (searchUrl) {
+      refetch(searchUrl);
+    }
   }, [globalFilter]);
 
   const handleDeleteClick = (row: T, buttonRect: DOMRect) => {
@@ -175,7 +173,7 @@ export const QueryTable = <T extends object>({
   const confirmDelete = async () => {
     if (overlayData && onDeleteAction) {
       await onDeleteAction(overlayData.row);
-      refetch();
+      refetch('', true);
     }
     setOverlayData(null);
   };
@@ -231,7 +229,7 @@ export const QueryTable = <T extends object>({
   const confirmMassDelete = async () => {
     if (onDeleteMassiveAction) {
       await onDeleteMassiveAction(selectedRows); // Espera la finalización
-      refetch(); // Ahora se ejecuta solo cuando la mutación se completa
+      refetch('', true); // Ahora se ejecuta solo cuando la mutación se completa
     }
     setSelectedRows([]);
     setShowMassDeleteConfirmation(false);
@@ -352,14 +350,14 @@ export const QueryTable = <T extends object>({
                     {header.isPlaceholder ? null : header.id !== 'selection' && header.id !== 'actions' ? (
                       <div className="group flex justify-center items-center space-x-2">
                         {flexRender(header.column.columnDef.header, header.getContext())}
-                        {sorteable && (
+                        {sorteable && header.column.columnDef.enableSorting !== false && (
                           <div className="flex flex-col">
                             <FaChevronUp
                               className={`cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
                               onClick={() => handleSort(header.id, 'asc')}
                             />
                             <FaChevronDown
-                              className={`cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
+                              className={`-mt-[3px] cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
                               onClick={() => handleSort(header.id, 'desc')}
                             />
                           </div>
@@ -389,7 +387,7 @@ export const QueryTable = <T extends object>({
             ) : table.getRowModel().rows.length === 0 ? (
               <tr className="border-b border-[var(--border)]">
                 <td colSpan={tableColumns.length + (rowExpand ? 1 : 0)} className="text-center py-4 text-[var(--font)] font-medium">
-                  No se encontraron resultados.
+                  {notFoundLabel}
                 </td>
               </tr>
             ) : (
@@ -436,7 +434,7 @@ export const QueryTable = <T extends object>({
                   </tr>
                   {expandedRows[row.id] && rowExpand && (
                     <tr className="border-b">
-                      <td colSpan={columns.length + 1} className="p-4 text-left bg-[var(--bg)] relative">
+                      <td colSpan={columns.length + 3} className="p-4 text-left bg-[var(--bg)] relative">
                         <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-[var(--border)]" />
                         <div className="ml-8">{rowExpand(row.original)}</div>
                       </td>

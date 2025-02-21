@@ -77,28 +77,31 @@ export function useQuery<T>(
     }
   };
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const fetchData = useCallback(
+    async (forceNetwork: boolean = false) => {
+      setLoading(true);
+      setError(null);
 
-    if (cachePolicy === 'network-first') {
-      // Intentamos obtener los datos desde la red primero
-      const networkData = await fetchDataFromApi();
-      if (networkData) {
-        // Actualizamos el caché con los datos obtenidos de la red
-        cacheManager.set(fullUrl, networkData);
-        setData(networkData);
+      if (cachePolicy === 'network-first' || forceNetwork) {
+        // Intentamos obtener los datos desde la red primero
+        const networkData = await fetchDataFromApi();
+        if (networkData) {
+          // Actualizamos el caché con los datos obtenidos de la red
+          cacheManager.set(fullUrl, networkData);
+          setData(networkData);
+        }
+      } else if (cachePolicy === 'cache-first') {
+        const cachedData = cacheManager.get(fullUrl);
+        if (cachedData) {
+          setData(cachedData as T); // Usamos los datos en caché
+          setLoading(false);
+        } else {
+          await fetchDataFromApi(); // Si no hay caché, hace la solicitud de red
+        }
       }
-    } else if (cachePolicy === 'cache-first') {
-      const cachedData = cacheManager.get(fullUrl);
-      if (cachedData) {
-        setData(cachedData as T); // Usamos los datos en caché
-        setLoading(false);
-      } else {
-        await fetchDataFromApi(); // Si no hay caché, hace la solicitud de red
-      }
-    }
-  }, [fullUrl, token, cachePolicy, data]);
+    },
+    [fullUrl, token, cachePolicy]
+  );
 
   useEffect(() => {
     if (autoFetch) {
@@ -106,13 +109,13 @@ export function useQuery<T>(
     }
   }, [autoFetch, cachePolicy, fetchData]);
 
-  const refetch = (newUrl: string = '') => {
+  const refetch = (newUrl: string = '', forceNetwork: boolean = false) => {
     if (newUrl) {
       setInitialUrl(newUrl);
     }
     setLoading(true);
     setError(null);
-    fetchData();
+    fetchData(forceNetwork);
   };
 
   return { data, loading, error, refetch };

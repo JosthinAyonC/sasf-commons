@@ -184,14 +184,13 @@ export interface RadioButtonProps {
   optionClassName?: string;
   optionLabelClassName?: string;
 }
-
-export interface Option {
+export interface Option<T = string | number | object> {
   label: string;
-  value: string | number | object;
+  value: T;
 }
 
-export interface DropdownFieldProps<T extends FieldValues> extends UseControllerProps<T> {
-  options: Option[];
+export interface DropdownFieldProps<T extends FieldValues, V = string | number | object> extends UseControllerProps<T> {
+  options: Option<V>[];
   isMulti?: boolean;
   placeholder?: string;
   isClearable?: boolean;
@@ -201,4 +200,5 @@ export interface DropdownFieldProps<T extends FieldValues> extends UseController
   errorClassName?: string;
   containerClassName?: string;
   label?: string;
+  onChangeSelection?: (_value: V | V[]) => void;
 }
