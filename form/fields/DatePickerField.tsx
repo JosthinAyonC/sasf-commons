@@ -26,6 +26,42 @@ export const DatePickerField = <T extends FieldValues>({
 
   return (
     <div className="relative">
+      <style>{`
+  .react-datepicker {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    background-color: var(--bg);
+  }
+
+  .react-datepicker__header {
+    background-color: var(--secondary);
+    color: var(--font);
+    border-bottom: 1px solid var(--border);
+    padding: 10px;
+    font-weight: bold;
+  }
+
+  .react-datepicker__month-container {
+    background-color: var(--bg);
+    }
+
+  .react-datepicker__day {
+    color: var(--font);
+    font-size: 14px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--keyboard-selected {
+    background-color: var(--secondary);
+    color: var(--bg);
+    font-weight: bold;
+    border-radius: 6px;
+  }
+
+`}</style>
       {label && (
         <label htmlFor={name as string} className={`block mb-1 text-[var(--font)] font-semibold ${labelClassName}`}>
           {label}
@@ -79,7 +115,7 @@ export const DatePickerField = <T extends FieldValues>({
                   <select
                     value={date.getMonth()}
                     onChange={(e) => changeMonth(parseInt(e.target.value))}
-                    className="bg-[var(--bg)] text-[var(--font)] rounded-md px-2 py-1 focus:outline-none"
+                    className="bg-[var(--hover2)] text-[var(--font)] rounded-md px-2 py-1 focus:outline-none"
                   >
                     {months.map((month, index) => (
                       <option key={month} value={index}>
@@ -92,7 +128,7 @@ export const DatePickerField = <T extends FieldValues>({
                   <select
                     value={date.getFullYear()}
                     onChange={(e) => changeYear(parseInt(e.target.value))}
-                    className="bg-[var(--bg)] text-[var(--font)] rounded-md px-2 py-1 focus:outline-none ml-2"
+                    className="bg-[var(--hover2)] text-[var(--font)] rounded-md px-2 py-1 focus:outline-none ml-2"
                   >
                     {years.map((year) => (
                       <option key={year} value={year}>
