@@ -25,7 +25,7 @@ export const DatePickerField = <T extends FieldValues>({
   const years = Array.from({ length: yearUpRange + yearDownRange + 1 }, (_, i) => currentYear - yearDownRange + i);
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <style>{`
   .react-datepicker {
     border-radius: 8px;
@@ -61,6 +61,30 @@ export const DatePickerField = <T extends FieldValues>({
     border-radius: 6px;
   }
 
+  .react-datepicker-wrapper{
+    width: 100%;}
+    .react-datepicker__input-container input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 14px;
+    background-color: var(--bg);
+    color: var(--font);
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .react-datepicker__input-container input:focus {
+    border-color: var(--focus);
+    outline: none;
+  }
+
+  .react-datepicker__calendar-icon {
+    color: var(--font);
+    right: 8px;
+    top: 40%;
+    transform: translateY(-50%);
+  }
 `}</style>
       {label && (
         <label htmlFor={name as string} className={`block mb-1 text-[var(--font)] font-semibold ${labelClassName}`}>
