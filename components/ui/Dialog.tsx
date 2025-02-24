@@ -67,7 +67,7 @@ export const Dialog: React.FC<DialogProps> = ({
       <motion.div
         className="fixed inset-0 flex items-center justify-center"
         style={{
-          backgroundColor: 'rgba(0, 0, 0, 0.4)',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
           zIndex,
         }}
         initial={{ opacity: 0 }}
@@ -77,7 +77,7 @@ export const Dialog: React.FC<DialogProps> = ({
       >
         <motion.div
           className={`
-            ${isDesktop ? `bg-[var(--bg)] rounded-lg shadow-lg p-6 w-full relative ${desktopClassName ?? 'max-w-md'}` : `bg-[var(--bg)] w-full h-full p-6 relative ${mobileClassName}`}
+            ${isDesktop ? `bg-[var(--bg)] rounded-lg border border-[var(--border)] shadow-lg p-6 w-full relative ${desktopClassName ?? 'max-w-md'}` : `bg-[var(--bg)] w-full h-full p-6 relative ${mobileClassName}`}
             ${contentClassName || ''}
           `}
           initial={{ scale: 0.9, opacity: 0 }}

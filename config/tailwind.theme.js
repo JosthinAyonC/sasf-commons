@@ -21,6 +21,14 @@ module.exports = {
           light: '#F56565',
           dark: '#5581CA',
         },
+        secondaryalt: {
+          light: '#bcdbfb',
+          dark: '#5581CA',
+        },
+        secondaryalthover: {
+          light: '#f0f7fe',
+          dark: '#2b3340',
+        },
         hover: {
           light: '#ff7676',
           dark: '#4A5568',
@@ -43,7 +51,7 @@ module.exports = {
         },
         border: {
           light: '#CBD5E0',
-          dark: '#4A5568',
+          dark: '#2f3642',
         },
         highlight: {
           light: '#FFF5F5',
@@ -89,6 +97,8 @@ module.exports = {
         ':root': {
           '--primary': theme('colors.primary.light'),
           '--secondary': theme('colors.secondary.light'),
+          '--secondaryalt': theme('colors.secondaryalt.light'),
+          '--secondaryalthover': theme('colors.secondaryalthover.light'),
           '--font': theme('colors.font.light'),
           '--hover': theme('colors.hover.light'),
           '--bg': theme('colors.background.light'),
@@ -106,6 +116,8 @@ module.exports = {
         '.dark': {
           '--primary': theme('colors.primary.dark'),
           '--secondary': theme('colors.secondary.dark'),
+          '--secondaryalt': theme('colors.secondaryalt.dark'),
+          '--secondaryalthover': theme('colors.secondaryalthover.dark'),
           '--font': theme('colors.font.dark'),
           '--hover': theme('colors.hover.dark'),
           '--bg': theme('colors.background.dark'),

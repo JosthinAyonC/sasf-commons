@@ -133,10 +133,10 @@ export const Table = <T extends object>({
         <div className="inline-block min-w-full">
           <div className="overflow-hidden rounded-lg">
             <table className="min-w-full text-center bg-[var(--bg)] text-[var(--font)] border border-[var(--border)] rounded-lg">
-              <thead className="border-b bg-[var(--secondary)] text-[var(--font)] rounded-t-lg">
+              <thead className="border-b bg-[var(--secondaryalt)] text-[var(--font)] rounded-t-lg">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
-                    {rowExpand && <th className="px-4 py-4 text-sm font-medium border-[var(--border)] rounded-tl-lg">Expandir</th>}
+                    {rowExpand && <th className="px-4 py-4 text-sm font-medium border-[var(--border)] rounded-tl-lg"></th>}
                     {headerGroup.headers.map((header, index) => (
                       <th
                         key={header.id}
@@ -152,7 +152,7 @@ export const Table = <T extends object>({
                 {loading ? (
                   <tr className="border-b border-[var(--border)]">
                     <td colSpan={columns.length + (rowExpand ? 1 : 0)} className="text-center py-4">
-                      <Loader className="text-[var(--secondary)]" />
+                      <Loader className="text-[var(--secondaryalt)]" />
                     </td>
                   </tr>
                 ) : table.getRowModel().rows.length === 0 ? (
@@ -164,7 +164,7 @@ export const Table = <T extends object>({
                 ) : (
                   table.getRowModel().rows.map((row) => (
                     <React.Fragment key={row.id}>
-                      <tr className="border-b border-[var(--border)] hover:bg-[var(--hover2)] transition duration-200">
+                      <tr className="border-b border-[var(--border)] hover:bg-[var(--secondaryalthover)] transition duration-200">
                         {rowExpand && (
                           <td className="whitespace-nowrap px-4 py-4 text-sm font-light border-[var(--border)] rounded-bl-lg">
                             <button

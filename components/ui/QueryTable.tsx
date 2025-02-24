@@ -1,6 +1,6 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { motion } from 'framer-motion';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FaAngleDoubleLeft,
   FaAngleDoubleRight,
@@ -17,8 +17,9 @@ import {
   FaTrashAlt,
 } from 'react-icons/fa';
 import { tableEventEmitter } from '~/config/eventEmitter';
+import { Button } from '~/form/fields';
 import { CheckBoxUi } from '~/form/ui';
-import { useDebounce, useMediaQuery, useQuery, useToast } from '~/hooks';
+import { useDebounce, useMediaQuery, useQuery } from '~/hooks';
 
 import { Loader } from './Loader';
 import { Toggle } from './Toggle';
@@ -108,15 +109,6 @@ export const QueryTable = <T extends object>({
   const [showMassDeleteConfirmation, setShowMassDeleteConfirmation] = useState(false);
   const [sortQuery, setSortQuery] = useState(defaultSortQuery);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const { addToast } = useToast();
-  const hasShownToast = useRef(false);
-
-  useEffect(() => {
-    if (isMobile && !hasShownToast.current) {
-      addToast('Por favor rota tu pantalla para mejor experiencia', 'info');
-      hasShownToast.current = true;
-    }
-  }, [isMobile, addToast]);
 
   const toggleRowExpansion = (rowId: string, row: T) => {
     if (typeof disableRowExpand === 'function' && disableRowExpand(row)) return;
@@ -217,9 +209,7 @@ export const QueryTable = <T extends object>({
         type="button"
         key={page}
         onClick={() => setPagination({ ...pagination, pageIndex: page })}
-        className={`px-3 py-1 rounded-md ${
-          page === pageIndex ? 'bg-[var(--secondary)] text-[var(--font)]' : 'bg-[var(--bg)] text-gray-700 hover:bg-[var(--hover2)]'
-        }`}
+        className={`px-3 py-1 rounded-md text-[var(--font)] ${page === pageIndex ? 'bg-[var(--secondaryalt)] ' : 'bg-[var(--bg)] hover:bg-[var(--disabled)]'}`}
       >
         {page + 1}
       </button>
@@ -228,8 +218,8 @@ export const QueryTable = <T extends object>({
 
   const confirmMassDelete = async () => {
     if (onDeleteMassiveAction) {
-      await onDeleteMassiveAction(selectedRows); // Espera la finalización
-      refetch('', true); // Ahora se ejecuta solo cuando la mutación se completa
+      await onDeleteMassiveAction(selectedRows);
+      refetch('', true);
     }
     setSelectedRows([]);
     setShowMassDeleteConfirmation(false);
@@ -242,15 +232,17 @@ export const QueryTable = <T extends object>({
         <button
           type="button"
           onClick={() => setShowMassDeleteConfirmation(true)}
-          className={`p-2 rounded-md bg-[var(--hover2)] text-[var(font)] hover:text-[var(--error)] ${selectedRows.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`p-1 rounded-md text-[var(--error)] hover:text-red-600 ${selectedRows.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
           title="Eliminar seleccionados"
           disabled={selectedRows.length === 0}
         >
-          <FaTrashAlt className="lg" />
+          <FaTrashAlt className="text-lg" />
         </button>
       </div>
     ),
-    cell: ({ row }) => <CheckBoxUi checked={selectedRows.includes(row.original)} onChange={() => handleRowSelection(row.original)} />,
+    cell: ({ row }) => (
+      <CheckBoxUi className="accent-border-dark" checked={selectedRows.includes(row.original)} onChange={() => handleRowSelection(row.original)} />
+    ),
   };
 
   const actionColumn: ColumnDef<T> = {
@@ -341,7 +333,7 @@ export const QueryTable = <T extends object>({
       {/* Tabla con scroll horizontal */}
       <div className="overflow-x-auto rounded-xl border border-[var(--border)] shadow-md">
         <table className="min-w-full bg-[var(--bg)] text-[var(--font)] text-left">
-          <thead className="border-b bg-[var(--secondary)] text-[var(--font)]">
+          <thead className="border-b bg-[var(--secondaryalt)] text-[var(--font)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {rowExpand && <th className="px-4 py-4 text-sm font-medium border-[var(--border)]"></th>}
@@ -353,11 +345,11 @@ export const QueryTable = <T extends object>({
                         {sorteable && header.column.columnDef.enableSorting !== false && (
                           <div className="flex flex-col">
                             <FaChevronUp
-                              className={`cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
+                              className={`cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--disabled)]`}
                               onClick={() => handleSort(header.id, 'asc')}
                             />
                             <FaChevronDown
-                              className={`-mt-[3px] cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--hover2)]`}
+                              className={`-mt-[3px] cursor-pointer text-xs ml-2 text-[var(--font)] hover:text-[var(--disabled)]`}
                               onClick={() => handleSort(header.id, 'desc')}
                             />
                           </div>
@@ -393,7 +385,7 @@ export const QueryTable = <T extends object>({
             ) : (
               table.getRowModel().rows.map((row) => (
                 <React.Fragment key={row.id}>
-                  <tr key={row.id} className="border-b border-[var(--border)] text-center hover:bg-[var(--hover2)] transition duration-200">
+                  <tr key={row.id} className="border-b border-[var(--border)] text-center hover:bg-[var(--secondaryalthover)] transition duration-200">
                     {rowExpand && (
                       <td className="whitespace-nowrap px-4 py-4 text-sm font-light border-[var(--border)]">
                         <button
@@ -463,7 +455,7 @@ export const QueryTable = <T extends object>({
               type="button"
               onClick={() => setPagination({ ...pagination, pageIndex: 0 })}
               disabled={pagination.pageIndex === 0}
-              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--disabled)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaAngleDoubleLeft className="text-[var(--font)]" />
             </button>
@@ -471,7 +463,7 @@ export const QueryTable = <T extends object>({
               type="button"
               onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
               disabled={pagination.pageIndex === 0}
-              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--disabled)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaAngleLeft className="text-[var(--font)]" />
             </button>
@@ -480,7 +472,7 @@ export const QueryTable = <T extends object>({
               type="button"
               onClick={() => setPagination({ ...pagination, pageIndex: Math.min(totalPages - 1, pagination.pageIndex + 1) })}
               disabled={pagination.pageIndex === totalPages - 1}
-              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--disabled)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaAngleRight className="text-[var(--font)]" />
             </button>
@@ -488,7 +480,7 @@ export const QueryTable = <T extends object>({
               type="button"
               onClick={() => setPagination({ ...pagination, pageIndex: totalPages - 1 })}
               disabled={pagination.pageIndex === totalPages - 1}
-              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--disabled)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaAngleDoubleRight className="text-[var(--font)]" />
             </button>
@@ -498,7 +490,7 @@ export const QueryTable = <T extends object>({
             onChange={(e) => {
               table.setPageSize(Number(e.target.value));
             }}
-            className="ml-2 p-2 bg-[var(--hover)] text-[var(--font)] rounded md:mt-0 mt-3"
+            className="ml-2 p-2 bg-[var(--disabled)] text-[var(--font)] rounded md:mt-0 mt-3"
           >
             {[5, 10, 20].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
@@ -527,12 +519,12 @@ export const QueryTable = <T extends object>({
             <p className="text-sm text-[var(--font)]">¿Estás seguro de eliminar este elemento?</p>
           </div>
           <div className="flex justify-end space-x-4  mt-4">
-            <button type="button" onClick={confirmDelete} className="w-[25%] px-3 py-1 bg-[var(--error)] text-[var(--font)] rounded hover:bg-red-400">
+            <Button type="button" variant="primary" onClick={confirmDelete} className="px-4 py-2 bg-red-500 rounded hover:bg-red-600">
               Sí
-            </button>
-            <button type="button" onClick={cancelDelete} className="w-[25%] px-3 py-1 bg-[var(--info)] text-[var(--font)] rounded hover:bg-blue-400">
+            </Button>
+            <Button type="button" variant="outline" onClick={cancelDelete} className="px-4 py-2 rounded">
               No
-            </button>
+            </Button>
           </div>
         </motion.div>
       )}
@@ -552,16 +544,12 @@ export const QueryTable = <T extends object>({
             </div>
 
             <div className="flex flex-wrap justify-end space-x-2 sm:space-x-4 mt-6">
-              <button type="button" onClick={confirmMassDelete} className="px-4 py-2 bg-[var(--error)] text-white rounded hover:bg-red-400">
+              <Button type="button" variant="primary" onClick={confirmMassDelete} className="px-4 py-2 bg-red-500 rounded hover:bg-red-600">
                 Sí
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowMassDeleteConfirmation(false)}
-                className="px-4 py-2 bg-[var(--info)] text-white rounded hover:bg-blue-400"
-              >
+              </Button>
+              <Button variant="outline" type="button" onClick={() => setShowMassDeleteConfirmation(false)} className="px-4 py-2 rounded">
                 No
-              </button>
+              </Button>
             </div>
           </motion.div>
         </div>
