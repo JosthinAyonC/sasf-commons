@@ -21,6 +21,7 @@ export const TextField = <T extends FieldValues>({
   defaultValue,
   disabled = false,
   onChange,
+  requiredMsg,
 }: Omit<TextFieldProps<T>, 'register' | 'error'>) => {
   const {
     register,
@@ -48,7 +49,7 @@ export const TextField = <T extends FieldValues>({
               onChange(value);
             }
           },
-          required: isRequired ? 'Este campo es obligatorio' : undefined,
+          required: isRequired ? requiredMsg || 'Este campo es obligatorio' : undefined,
           minLength: minLength ? { value: minLength, message: `El valor mínimo es ${minLength} caracteres` } : undefined,
           maxLength: maxLength ? { value: maxLength, message: `El valor máximo es ${maxLength} caracteres` } : undefined,
           pattern: regexp

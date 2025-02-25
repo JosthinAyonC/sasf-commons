@@ -15,7 +15,9 @@ export const NumberField = <T extends FieldValues>({
   isRequired = false,
   placeholder,
   defaultValue,
+  showTootip = true,
   onChange,
+  requiredMsg,
   disabled = false,
 }: Omit<NumberFieldProps<T>, 'register' | 'error'>) => {
   const {
@@ -72,7 +74,7 @@ export const NumberField = <T extends FieldValues>({
         disabled={disabled}
         {...register(name, {
           onChange: handleInput,
-          required: isRequired ? 'Este campo es obligatorio' : undefined,
+          required: isRequired ? requiredMsg || 'Este campo es obligatorio' : undefined,
           min: min ? { value: min, message: `El valor mínimo es ${min}` } : undefined,
           max: max ? { value: max, message: `El valor máximo es ${max}` } : undefined,
         })}
@@ -82,7 +84,7 @@ export const NumberField = <T extends FieldValues>({
             ${inputClassName}`}
         autoComplete="off"
       />
-      <Tooltip message={tooltipMessage || ''} variant="danger" />
+      {showTootip && <Tooltip message={tooltipMessage || ''} variant="danger" />}
       {error && <span className={`text-[var(--error)] ${errorClassName}`}>{error.message}</span>}
     </div>
   );

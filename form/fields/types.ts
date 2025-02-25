@@ -32,6 +32,7 @@ export interface TextFieldProps<T extends FieldValues> {
   validatePassword?: boolean;
   validateEmail?: boolean;
   onChange?: (_value: string) => void;
+  requiredMsg?: string;
 }
 
 export interface ToggleFieldProps {
@@ -80,6 +81,8 @@ export interface NumberFieldProps<T extends FieldValues> {
   isRequired?: boolean;
   onChange?: (_value: number) => void;
   disabled?: boolean;
+  showTootip?: boolean;
+  requiredMsg?: string;
 }
 
 /*

@@ -158,6 +158,7 @@ export const QueryTable = <T extends object>({
   };
 
   const handleSort = (columnId: string, sorter: string) => {
+    setExpandedRows({});
     setPagination({ ...pagination, pageIndex: 0 });
     setSortQuery(`${columnId.replaceAll('_', '.')},${sorter}`);
   };

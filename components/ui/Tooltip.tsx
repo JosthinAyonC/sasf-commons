@@ -15,10 +15,10 @@ export const Tooltip: React.FC<TooltipProps> = ({ message, className, variant = 
   if (!message) return null;
 
   const variantStyles: Record<string, string> = {
-    danger: 'bg-[var(--error)] text-[var(--text-on-error)] border-[var(--error)]',
-    warning: 'bg-[var(--warning)] text-[var(--text-on-warning)] border-[var(--warning)]',
-    info: 'bg-[var(--info)] text-[var(--text-on-info)] border-[var(--info)]',
-    success: 'bg-[var(--success)] text-[var(--text-on-success)] border-[var(--success)]',
+    success: 'bg-[#D9FCE9] text-[#3AC279] border-[#3AC279]',
+    warning: 'bg-[#FFF0D9] text-[#FFFFFF] text-[#E89F29',
+    info: 'bg-[#E0EDFF] border-[#E89F29] text-[#3882E5]',
+    danger: 'bg-red-100 text-[#DA291C] border-[#DA291C]',
   };
 
   const positionStyles: Record<string, string> = {
@@ -49,13 +49,11 @@ export const Tooltip: React.FC<TooltipProps> = ({ message, className, variant = 
       animate={{ opacity: 1, y: 0, x: 0 }}
       exit={{ opacity: 0, y: position === 'top' ? 10 : position === 'bottom' ? -10 : 0, x: position === 'left' ? 10 : position === 'right' ? -10 : 0 }}
       transition={{ duration: 0.2 }}
-      className={`absolute ${positionStyles[position]} ${variantStyles[variant]} border p-2 rounded shadow ${className} border-[var(--font)] border-1`}
+      className={`absolute ${positionStyles[position]} ${variantStyles[variant]} border p-2 rounded shadow ${className} border-1`}
       role="tooltip"
     >
-      {showIndicator && (
-        <FontAwesomeIcon icon={indicatorIcons[position]} className="absolute drop-shadow-sm text-[var(--font)] " style={indicatorPositionStyles[position]} />
-      )}
-      <span className="text-[var(--font)] ">{message}</span>
+      {showIndicator && <FontAwesomeIcon icon={indicatorIcons[position]} className="absolute drop-shadow-sm" style={indicatorPositionStyles[position]} />}
+      <span>{message}</span>
     </motion.span>
   );
 };
