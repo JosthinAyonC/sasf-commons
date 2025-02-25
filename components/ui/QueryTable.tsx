@@ -209,7 +209,10 @@ export const QueryTable = <T extends object>({
       <button
         type="button"
         key={page}
-        onClick={() => setPagination({ ...pagination, pageIndex: page })}
+        onClick={() => {
+          setPagination({ ...pagination, pageIndex: page });
+          setExpandedRows({});
+        }}
         className={`px-3 py-1 rounded-md text-[var(--font)] ${page === pageIndex ? 'bg-[var(--secondaryalt)] ' : 'bg-[var(--bg)] hover:bg-[var(--disabled)]'}`}
       >
         {page + 1}
@@ -454,7 +457,10 @@ export const QueryTable = <T extends object>({
           <div>
             <button
               type="button"
-              onClick={() => setPagination({ ...pagination, pageIndex: 0 })}
+              onClick={() => {
+                setPagination({ ...pagination, pageIndex: 0 });
+                setExpandedRows({});
+              }}
               disabled={pagination.pageIndex === 0}
               className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--disabled)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -462,7 +468,10 @@ export const QueryTable = <T extends object>({
             </button>
             <button
               type="button"
-              onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
+              onClick={() => {
+                setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) });
+                setExpandedRows({});
+              }}
               disabled={pagination.pageIndex === 0}
               className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--disabled)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -471,7 +480,10 @@ export const QueryTable = <T extends object>({
             {renderPaginationButtons()}
             <button
               type="button"
-              onClick={() => setPagination({ ...pagination, pageIndex: Math.min(totalPages - 1, pagination.pageIndex + 1) })}
+              onClick={() => {
+                setPagination({ ...pagination, pageIndex: Math.min(totalPages - 1, pagination.pageIndex + 1) });
+                setExpandedRows({});
+              }}
               disabled={pagination.pageIndex === totalPages - 1}
               className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--disabled)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -479,7 +491,10 @@ export const QueryTable = <T extends object>({
             </button>
             <button
               type="button"
-              onClick={() => setPagination({ ...pagination, pageIndex: totalPages - 1 })}
+              onClick={() => {
+                setPagination({ ...pagination, pageIndex: totalPages - 1 });
+                setExpandedRows({});
+              }}
               disabled={pagination.pageIndex === totalPages - 1}
               className="px-3 py-1 bg-[var(--bg)] rounded-md hover:bg-[var(--disabled)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
