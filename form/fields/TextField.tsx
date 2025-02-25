@@ -1,3 +1,5 @@
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
 
@@ -71,7 +73,12 @@ export const TextField = <T extends FieldValues>({
         autoComplete="off"
         disabled={disabled}
       />
-      {error && <span className={`text-[var(--error)] text-sm ${errorClassName}`}>{error.message as string}</span>}
+      {error && (
+        <span className={`text-[var(--error)] text-sm ${errorClassName}`}>
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
+          {error.message as string}
+        </span>
+      )}
     </div>
   );
 };

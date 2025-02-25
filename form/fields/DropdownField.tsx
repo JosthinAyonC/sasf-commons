@@ -1,3 +1,5 @@
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { FieldValues, useController } from 'react-hook-form';
 import Select, { MultiValue, SingleValue, StylesConfig } from 'react-select';
@@ -141,7 +143,12 @@ export const DropdownField = <T extends FieldValues>({
         isDisabled={disabled}
         noOptionsMessage={() => noOptionsMessage || 'No hay opciones disponibles'}
       />
-      {error && <span className={`text-[var(--error)] text-sm mt-1 ${errorClassName}`}>{error.message}</span>}
+      {error && (
+        <span className={`text-[var(--error)] text-sm mt-1 ${errorClassName}`}>
+          <FontAwesomeIcon icon={faExclamationCircle} />
+          {error.message}
+        </span>
+      )}
     </div>
   );
 };

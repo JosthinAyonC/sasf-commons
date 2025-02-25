@@ -1,3 +1,5 @@
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
 import { Tooltip } from '~/components/ui';
@@ -85,7 +87,12 @@ export const NumberField = <T extends FieldValues>({
         autoComplete="off"
       />
       {showTootip && <Tooltip message={tooltipMessage || ''} variant="danger" />}
-      {error && <span className={`text-[var(--error)] ${errorClassName}`}>{error.message}</span>}
+      {error && (
+        <span className={`text-[var(--error)] ${errorClassName}`}>
+          <FontAwesomeIcon icon={faExclamationCircle} />
+          {error.message}
+        </span>
+      )}
     </div>
   );
 };
