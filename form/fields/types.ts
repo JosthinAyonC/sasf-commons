@@ -204,4 +204,6 @@ export interface DropdownFieldProps<T extends FieldValues, V = string | number |
   containerClassName?: string;
   label?: string;
   onChangeSelection?: (_value: V | V[]) => void;
+  noOptionsMessage?: string;
+  requiredMsg?: string;
 }

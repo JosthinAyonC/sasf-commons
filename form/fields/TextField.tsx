@@ -8,6 +8,7 @@ export const TextField = <T extends FieldValues>({
   name,
   minLength,
   maxLength,
+  className,
   labelClassName,
   errorClassName,
   inputClassName,
@@ -31,7 +32,7 @@ export const TextField = <T extends FieldValues>({
   const error = errors[name] as FieldError | undefined;
 
   return (
-    <div>
+    <div className={className}>
       {label && (
         <label htmlFor={name as string} className={`text-[var(--font)] ${labelClassName} block`}>
           {label}
@@ -70,7 +71,7 @@ export const TextField = <T extends FieldValues>({
         autoComplete="off"
         disabled={disabled}
       />
-      {error && <span className={`text-[var(--error)] ${errorClassName}`}>{error.message as string}</span>}
+      {error && <span className={`text-[var(--error)] text-sm ${errorClassName}`}>{error.message as string}</span>}
     </div>
   );
 };

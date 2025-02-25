@@ -14,20 +14,23 @@ const customStyles: StylesConfig<Option> = {
     boxShadow: 'none',
     borderRadius: '8px',
     '&:hover': {
-      borderColor: 'var(--hover)',
+      borderColor: 'var(--focus)',
+      cursor: 'text',
     },
   }),
   input: (styles) => ({
     ...styles,
     color: 'var(--font)',
+    padding: '0.4rem',
+    margin: '0 -4px',
   }),
   option: (styles, { isFocused, isSelected }) => ({
     ...styles,
-    backgroundColor: isSelected ? 'var(--secondary)' : isFocused ? 'var(--hover)' : 'var(--bg)',
-    color: isSelected ? 'var(--font)' : 'var(--font)',
+    backgroundColor: isSelected ? 'var(--secondaryalt)' : isFocused ? 'var(--secondaryalt)' : 'var(--bg)',
+    color: 'var(--font)',
     cursor: 'pointer',
     '&:active': {
-      backgroundColor: 'var(--secondary)',
+      backgroundColor: 'var(--secondaryalt)',
     },
   }),
   placeholder: (styles) => ({
@@ -86,6 +89,8 @@ export const DropdownField = <T extends FieldValues>({
   rules,
   disabled = false,
   onChangeSelection,
+  noOptionsMessage,
+  requiredMsg,
 }: DropdownFieldProps<T>) => {
   const {
     field: { value, onChange, ref },
@@ -95,7 +100,7 @@ export const DropdownField = <T extends FieldValues>({
     control,
     rules: {
       ...rules,
-      required: isRequired ? 'Este campo es obligatorio' : false,
+      required: isRequired ? requiredMsg || 'Este campo es obligatorio' : false,
     },
   });
 
@@ -118,7 +123,7 @@ export const DropdownField = <T extends FieldValues>({
   return (
     <div className={`w-full ${containerClassName}`}>
       {label && (
-        <label htmlFor={name as string} className={`text-[var(--font)] ${labelClassName} block mb-2`}>
+        <label htmlFor={name as string} className={`text-[var(--font)] ${labelClassName} block`}>
           {label}
           {isRequired && <span className="text-[var(--error)] ml-1">*</span>}
         </label>
@@ -134,6 +139,7 @@ export const DropdownField = <T extends FieldValues>({
         styles={customStyles}
         ref={ref}
         isDisabled={disabled}
+        noOptionsMessage={() => noOptionsMessage || 'No hay opciones disponibles'}
       />
       {error && <span className={`text-[var(--error)] text-sm mt-1 ${errorClassName}`}>{error.message}</span>}
     </div>
