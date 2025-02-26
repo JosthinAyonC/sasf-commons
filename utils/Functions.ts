@@ -28,3 +28,13 @@ export const toSnakeCase = (str: string): string => {
     .replace(/[\s-]+/g, '_')
     .toLowerCase();
 };
+
+// Convertir imagenes a base64
+export const convertFileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
