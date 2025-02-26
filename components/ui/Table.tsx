@@ -63,6 +63,7 @@ export const Table = <T extends object>({
 
   const actionColumn: ColumnDef<T> = {
     id: 'actions',
+    meta: { className: 'w-[10%]' },
     header: () => 'Acciones',
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2 relative">
@@ -140,7 +141,7 @@ export const Table = <T extends object>({
                     {headerGroup.headers.map((header, index) => (
                       <th
                         key={header.id}
-                        className={`px-6 py-4 text-sm font-medium border-[var(--border)] ${index === tableColumns.length - 1 ? 'rounded-tr-lg' : ''}`}
+                        className={`px-6 py-4 text-sm font-medium border-[var(--border)] ${index === tableColumns.length - 1 ? 'rounded-tr-lg' : ''} ${(header.column.columnDef.meta as Record<string, unknown>)?.className || ''}`}
                       >
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       </th>
