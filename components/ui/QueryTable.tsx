@@ -231,6 +231,7 @@ export const QueryTable = <T extends object>({
 
   const selectionColumn: ColumnDef<T> = {
     id: 'selection',
+    meta: { className: 'w-[1%]' },
     header: () => (
       <div className="flex">
         <button
@@ -252,6 +253,7 @@ export const QueryTable = <T extends object>({
   const actionColumn: ColumnDef<T> = {
     id: 'actions',
     header: () => 'Acciones',
+    meta: { className: 'w-[10%]' },
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2 relative">
         {onSelectAction && (
@@ -342,7 +344,10 @@ export const QueryTable = <T extends object>({
               <tr key={headerGroup.id}>
                 {rowExpand && <th className="px-4 py-4 text-sm font-medium border-[var(--border)]"></th>}
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className="px-4 py-3 text-sm font-semibold border-[var(--border)] whitespace-nowrap">
+                  <th
+                    key={header.id}
+                    className={`px-4 py-3 text-sm font-semibold border-[var(--border)] whitespace-nowrap ${(header.column.columnDef.meta as Record<string, unknown>)?.className || ''}`}
+                  >
                     {header.isPlaceholder ? null : header.id !== 'selection' && header.id !== 'actions' ? (
                       <div className="group flex justify-center items-center space-x-2">
                         {flexRender(header.column.columnDef.header, header.getContext())}
@@ -391,7 +396,7 @@ export const QueryTable = <T extends object>({
                 <React.Fragment key={row.id}>
                   <tr key={row.id} className="border-b border-[var(--border)] text-center hover:bg-[var(--secondaryalthover)] transition duration-200">
                     {rowExpand && (
-                      <td className="whitespace-nowrap px-4 py-4 text-sm font-light border-[var(--border)]">
+                      <td className="whitespace-nowrap px-2 py-4 text-sm font-light border-[var(--border)]">
                         <button
                           type="button"
                           onClick={() => toggleRowExpansion(row.id, row.original)}
