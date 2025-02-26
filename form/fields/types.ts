@@ -63,6 +63,21 @@ export interface DatePickerFieldProps<T extends FieldValues> {
   yearDownRange?: number;
 }
 
+export interface ImageUploadFieldProps {
+  name: string;
+  label?: string;
+  className?: string;
+  sizeX?: number;
+  sizeY?: number;
+  isRequired?: boolean;
+  defaultZoom?: number;
+  maxZoom?: number;
+  cropLabel?: string;
+  cancelLabel?: string;
+  saveLabel?: string;
+  placeholder?: string;
+}
+
 /*
  * Interfaz de las propiedades del componente InputNumber.
  */
