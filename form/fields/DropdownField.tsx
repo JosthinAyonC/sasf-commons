@@ -144,7 +144,7 @@ export const DropdownField = <T extends FieldValues>({
         noOptionsMessage={() => noOptionsMessage || 'No hay opciones disponibles'}
       />
       {error && (
-        <span className={`text-[var(--error)] text-sm mt-1 ${errorClassName}`}>
+        <span className={`text-[var(--error)] text-xs mt-1 ${errorClassName}`}>
           <FontAwesomeIcon icon={faExclamationCircle} />
           {error.message}
         </span>

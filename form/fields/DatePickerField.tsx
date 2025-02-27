@@ -173,7 +173,7 @@ export const DatePickerField = <T extends FieldValues>({
                 </div>
               )}
             />
-            {error && <span className={`text-[var(--error)] text-sm mt-1 ${errorClassName}`}>{error.message}</span>}
+            {error && <span className={`text-[var(--error)] text-xs mt-1 ${errorClassName}`}>{error.message}</span>}
           </>
         )}
       />

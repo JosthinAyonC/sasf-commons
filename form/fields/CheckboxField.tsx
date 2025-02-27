@@ -31,7 +31,7 @@ export const CheckboxField = <T extends FieldValues>({
       <label htmlFor={name} className={`text-[var(--font)] cursor-pointer ${labelClassName}`}>
         {label}
       </label>
-      {error && <span className={`text-[var(--error)] text-sm ${errorClassName}`}>{error.message}</span>}
+      {error && <span className={`text-[var(--error)] text-xs ${errorClassName}`}>{error.message}</span>}
     </div>
   );
 };

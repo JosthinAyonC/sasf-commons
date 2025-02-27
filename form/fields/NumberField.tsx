@@ -88,7 +88,7 @@ export const NumberField = <T extends FieldValues>({
       />
       {showTootip && <Tooltip message={tooltipMessage || ''} variant="danger" />}
       {error && (
-        <span className={`text-[var(--error)] ${errorClassName}`}>
+        <span className={`text-[var(--error)] text-xs ${errorClassName}`}>
           <FontAwesomeIcon icon={faExclamationCircle} />
           {error.message}
         </span>

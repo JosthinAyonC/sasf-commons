@@ -152,13 +152,16 @@ export const Table = <T extends object>({
               <tbody>
                 {loading ? (
                   <tr className="border-b border-[var(--border)]">
-                    <td colSpan={columns.length + (rowExpand ? 1 : 0)} className="text-center py-4">
+                    <td colSpan={columns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)} className="text-center py-4">
                       <Loader className="text-[var(--secondaryalt)]" />
                     </td>
                   </tr>
                 ) : table.getRowModel().rows.length === 0 ? (
                   <tr className="border-b border-[var(--border)]">
-                    <td colSpan={columns.length + (rowExpand ? 1 : 0)} className="text-center py-4 text-[var(--font)] font-medium">
+                    <td
+                      colSpan={columns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)}
+                      className="text-center py-4 text-[var(--font)] font-medium"
+                    >
                       No se encontraron registros disponibles.
                     </td>
                   </tr>

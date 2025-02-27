@@ -41,7 +41,7 @@ export const SelectField = <T extends FieldValues>({
             </option>
           ))}
       </select>
-      {error && <span className={`text-[var(--error)] ${errorClassName}`}>{error.message}</span>}
+      {error && <span className={`text-[var(--error)] text-xs ${errorClassName}`}>{error.message}</span>}
     </div>
   );
 };

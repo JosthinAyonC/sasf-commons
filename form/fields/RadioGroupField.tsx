@@ -36,7 +36,7 @@ export const RadioGroupField = <T extends FieldValues>({
           />
         ))}
       </div>
-      {error && <span className={`text-[var(--error)] mt-2 ${errorClassName}`}>{error.message}</span>}
+      {error && <span className={`text-[var(--error)] text-xs mt-2 ${errorClassName}`}>{error.message}</span>}
     </div>
   );
 };

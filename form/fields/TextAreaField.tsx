@@ -41,7 +41,7 @@ export const TextAreaField = <T extends FieldValues>({
           error ? 'border-[var(--error)]' : ''
         } ${disabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''} ${inputClassName}`}
       />
-      {error && <span className={`text-[var(--error)] mt-1 block ${errorClassName}`}>{error.message}</span>}
+      {error && <span className={`text-[var(--error)] text-xs mt-1 block ${errorClassName}`}>{error.message}</span>}
     </div>
   );
 };

@@ -375,19 +375,25 @@ export const QueryTable = <T extends object>({
           <tbody>
             {error ? (
               <tr className="border-b border-[var(--border)]">
-                <td colSpan={tableColumns.length + (rowExpand ? 1 : 0)} className="text-center py-4 text-[var(--error)] font-medium">
+                <td
+                  colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)}
+                  className="text-center py-4 text-[var(--error)] font-medium"
+                >
                   Ocurrió un error al obtener la data.
                 </td>
               </tr>
             ) : loading ? (
               <tr className="border-b border-[var(--border)]">
-                <td colSpan={tableColumns.length + (rowExpand ? 1 : 0)} className="text-center py-4">
+                <td colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)} className="text-center py-4">
                   <Loader className="text-[var(--secondary)]" />
                 </td>
               </tr>
             ) : table.getRowModel().rows.length === 0 ? (
               <tr className="border-b border-[var(--border)]">
-                <td colSpan={tableColumns.length + (rowExpand ? 1 : 0)} className="text-center py-4 text-[var(--font)] font-medium">
+                <td
+                  colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)}
+                  className="text-center py-4 text-[var(--font)] font-medium"
+                >
                   {notFoundLabel}
                 </td>
               </tr>

@@ -74,7 +74,7 @@ export const TextField = <T extends FieldValues>({
         disabled={disabled}
       />
       {error && (
-        <span className={`text-[var(--error)] text-sm ${errorClassName}`}>
+        <span className={`text-[var(--error)] text-xs ${errorClassName}`}>
           <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
           {error.message as string}
         </span>
