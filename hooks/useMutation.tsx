@@ -28,15 +28,16 @@ export function useMutation<T, U = Record<string, unknown> | Record<string, unkn
       setLoading(true);
       try {
         const isFormUrlEncoded = body instanceof URLSearchParams;
+        const isFormData = body instanceof FormData;
 
         const response = await fetch(url, {
           method,
           headers: {
-            ...(isFormUrlEncoded ? { 'Content-Type': 'application/x-www-form-urlencoded' } : { 'Content-Type': 'application/json' }),
+            ...(isFormData ? {} : isFormUrlEncoded ? { 'Content-Type': 'application/x-www-form-urlencoded' } : { 'Content-Type': 'application/json' }),
             Authorization: token ? `Bearer ${token}` : '',
             ...headers,
           },
-          body: isFormUrlEncoded ? body.toString() : JSON.stringify(body),
+          body: isFormData ? (body as FormData) : isFormUrlEncoded ? body.toString() : JSON.stringify(body),
         });
 
         if (!response.ok) {
