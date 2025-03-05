@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FieldValues, FormProvider as RHFProvider, UseFormReturn, useForm } from 'react-hook-form';
 
 import { Button } from './fields';
@@ -32,24 +32,30 @@ export const StepForm = <T extends FieldValues>({
 }: StepFormProps<T>) => {
   const internalMethods = useForm<T>({ mode: 'onBlur' });
   const finalMethods = methods || internalMethods;
+  const { formState, trigger, watch } = finalMethods;
+  const watchedFields = watch();
   const [currentStep, setCurrentStep] = useState(0);
   const [invalidStep, setInvalidStep] = useState(false);
 
-  const validateAndNext = async (index: number) => {
-    const isValid = await finalMethods.trigger();
-    if (isValid) {
+  useEffect(() => {
+    if (formState.isValid) {
       setInvalidStep(false);
+    }
+  }, [formState.isValid, watchedFields]);
+
+  const validateAndNext = async (index: number) => {
+    const isValid = await trigger();
+    setInvalidStep(!isValid);
+    if (isValid) {
       setCurrentStep(index);
-    } else {
-      setInvalidStep(true);
     }
   };
 
-  if (steps.length === 0) return <div className="w-full max-w-3xl p-6 bg-[var(--background)] text-[var(--font)]">No hay pasos para mostrar</div>;
+  if (steps.length === 0) return <div className="w-full max-w-5xl p-6 bg-[var(--background)] text-[var(--font)]">No hay pasos para mostrar</div>;
 
   return (
     <RHFProvider {...finalMethods}>
-      <div className={`w-full max-w-3xl p-6 bg-[var(--background)] text-[var(--font)] shadow rounded-lg ${className}`}>
+      <div className={`w-full max-w-5xl p-4 bg-[var(--background)] text-[var(--font)] shadow rounded-lg ${className}`}>
         {/* Stepper Labels */}
         <div className="flex items-center justify-start space-x-2 mb-4 text-lg font-semibold">
           {steps.map((step, index) => (

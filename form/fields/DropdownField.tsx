@@ -7,16 +7,16 @@ import Select, { MultiValue, SingleValue, StylesConfig } from 'react-select';
 import { DropdownFieldProps, Option } from './types';
 
 const customStyles: StylesConfig<Option> = {
-  control: (styles) => ({
+  control: (styles, { isDisabled }) => ({
     ...styles,
-    backgroundColor: 'var(--bg)',
-    borderColor: 'var(--border)',
+    backgroundColor: isDisabled ? 'var(--disabled)' : 'var(--bg)',
+    borderColor: isDisabled ? 'var(--disabled)' : 'var(--border)',
     borderWidth: '1px',
-    color: 'var(--font)',
+    color: isDisabled ? 'var(--disabled)' : 'var(--font)',
     boxShadow: 'none',
     borderRadius: '8px',
     '&:hover': {
-      borderColor: 'var(--focus)',
+      borderColor: isDisabled ? 'var(--disabled)' : 'var(--focus)',
       cursor: 'text',
     },
   }),
@@ -66,7 +66,6 @@ const customStyles: StylesConfig<Option> = {
     borderRadius: '8px',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
     marginTop: '4px',
-    zIndex: 10,
   }),
   menuList: (styles) => ({
     ...styles,
@@ -138,10 +137,18 @@ export const DropdownField = <T extends FieldValues>({
         value={isMulti ? options.filter((opt) => value?.includes(opt.value)) : options.find((opt) => opt.value === value)}
         onChange={handleChange}
         classNamePrefix="react-select"
-        styles={customStyles}
+        styles={{
+          ...customStyles,
+          menuPortal: (base) => ({
+            ...base,
+            zIndex: 1050,
+          }),
+        }}
         ref={ref}
         isDisabled={disabled}
         noOptionsMessage={() => noOptionsMessage || 'No hay opciones disponibles'}
+        menuPortalTarget={document.body}
+        menuPosition="absolute"
       />
       {error && (
         <span className={`text-[var(--error)] text-xs mt-1 ${errorClassName}`}>
