@@ -13,6 +13,8 @@ export const TextAreaField = <T extends FieldValues>({
   inputClassName,
   labelClassName,
   errorClassName,
+  requiredMsg,
+
 }: Omit<TextFieldProps<T>, 'register' | 'error'>) => {
   const {
     register,
@@ -30,7 +32,7 @@ export const TextAreaField = <T extends FieldValues>({
       )}
       <textarea
         {...register(name, {
-          required: isRequired ? 'Este campo es obligatorio' : undefined,
+          required: isRequired ? requiredMsg || 'Este campo es obligatorio' : undefined,
         })}
         placeholder={placeholder}
         id={name as string}
