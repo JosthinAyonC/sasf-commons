@@ -65,7 +65,7 @@ export const NumberField = <T extends FieldValues>({
     <div className="relative">
       {label && (
         <label htmlFor={name as string} className={`${labelClassName} block text-[var(--font)]`}>
-          {label}
+          {label} {isRequired && <span className="text-[var(--error)]">*</span>}
         </label>
       )}
       <input
@@ -89,7 +89,7 @@ export const NumberField = <T extends FieldValues>({
       {showTootip && <Tooltip message={tooltipMessage || ''} variant="danger" />}
       {error && (
         <span className={`text-[var(--error)] text-xs ${errorClassName}`}>
-          <FontAwesomeIcon icon={faExclamationCircle} />
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
           {error.message}
         </span>
       )}

@@ -152,7 +152,7 @@ export const DropdownField = <T extends FieldValues>({
       />
       {error && (
         <span className={`text-[var(--error)] text-xs mt-1 ${errorClassName}`}>
-          <FontAwesomeIcon icon={faExclamationCircle} />
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
           {error.message}
         </span>
       )}

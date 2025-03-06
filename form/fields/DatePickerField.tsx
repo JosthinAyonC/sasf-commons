@@ -34,6 +34,11 @@ export const DatePickerField = <T extends FieldValues>({
     background-color: var(--bg);
   }
 
+  .react-datepicker-popper {
+    z-index: 9999 !important;
+    position: absolute !important;
+  }
+
   .react-datepicker__header {
     background-color: var(--secondary);
     color: var(--font);
@@ -111,6 +116,7 @@ export const DatePickerField = <T extends FieldValues>({
               minDate={minDate}
               maxDate={maxDate}
               calendarClassName="bg-[var(--bg)] rounded-lg shadow-md font-sans"
+              portalId="root-portal"
               dayClassName={(date) =>
                 value && new Date(value).toISOString() === date.toISOString()
                   ? 'bg-[var(--secondary)] text-[var(--bg)] hover:text-[var(--bg)] hover:bg-[var(--primary)]'
