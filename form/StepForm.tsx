@@ -5,8 +5,8 @@ import { Button } from './fields';
 
 export interface Step {
   stepName: string;
+  stepClassName?: string;
   component: React.ReactNode;
-  // TODO: improve this funtion to pass the data to parent component
   nextStepAction?: () => void;
 }
 
@@ -53,11 +53,11 @@ export const StepForm = <T extends FieldValues>({
     }
   };
 
-  if (steps.length === 0) return <div className="w-full max-w-5xl p-6 bg-[var(--background)] text-[var(--font)]">No hay pasos para mostrar</div>;
+  if (steps.length === 0) return <div className="w-full p-6 bg-[var(--background)] text-[var(--font)]">No hay pasos para mostrar</div>;
 
   return (
     <RHFProvider {...finalMethods}>
-      <div className={`w-full max-w-5xl p-4 bg-[var(--background)] text-[var(--font)] shadow rounded-lg ${className}`}>
+      <div className={`w-full p-4 bg-[var(--background)] text-[var(--font)] shadow rounded-lg ${className}`}>
         {/* Stepper Labels */}
         <div className="flex items-center justify-start space-x-2 mb-4 text-lg font-semibold">
           {steps.map((step, index) => (
@@ -81,7 +81,7 @@ export const StepForm = <T extends FieldValues>({
 
         {/* Current Step Component */}
         {activeForm ? (
-          <form onSubmit={finalMethods.handleSubmit(onSubmit)} className="bg-[var(--background)] p-3 ">
+          <form onSubmit={finalMethods.handleSubmit(onSubmit)} className={steps[currentStep].stepClassName || ''}>
             {steps[currentStep].component}
 
             <div className="flex justify-end mt-4 space-x-2">
@@ -114,7 +114,7 @@ export const StepForm = <T extends FieldValues>({
             </div>
           </form>
         ) : (
-          <>
+          <div className={steps[currentStep].stepClassName || ''}>
             {steps[currentStep].component}
 
             <div className="flex justify-end mt-4 space-x-2">
@@ -145,7 +145,7 @@ export const StepForm = <T extends FieldValues>({
               {/* Botón Submit */}
               {currentStep === steps.length - 1 && <Button onClick={() => finalMethods.handleSubmit(onSubmit)()}>{submitLabel}</Button>}
             </div>
-          </>
+          </div>
         )}
       </div>
     </RHFProvider>

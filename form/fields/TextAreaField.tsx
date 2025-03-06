@@ -14,7 +14,6 @@ export const TextAreaField = <T extends FieldValues>({
   labelClassName,
   errorClassName,
   requiredMsg,
-
 }: Omit<TextFieldProps<T>, 'register' | 'error'>) => {
   const {
     register,
