@@ -61,6 +61,7 @@ export interface DatePickerFieldProps<T extends FieldValues> {
   defaultValue?: Date;
   yearUpRange?: number;
   yearDownRange?: number;
+  requiredMsg?: string;
 }
 
 export interface ImageUploadFieldProps {
@@ -131,6 +132,7 @@ export interface SelectFieldProps<T extends FieldValues> {
   register: UseFormRegister<T>;
   error?: FieldError;
   isRequired?: boolean;
+  requiredMsg?: string;
 }
 
 /*

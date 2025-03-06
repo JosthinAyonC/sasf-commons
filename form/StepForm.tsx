@@ -19,6 +19,7 @@ interface StepFormProps<T extends FieldValues> {
   previousStepLabel?: string;
   submitLabel?: string;
   cancelLabel?: string;
+  activeForm?: boolean;
 }
 
 export const StepForm = <T extends FieldValues>({
@@ -29,6 +30,7 @@ export const StepForm = <T extends FieldValues>({
   submitLabel = 'Guardar',
   nextStepLabel = 'Siguiente',
   previousStepLabel = 'Anterior',
+  activeForm = true,
 }: StepFormProps<T>) => {
   const internalMethods = useForm<T>({ mode: 'onBlur' });
   const finalMethods = methods || internalMethods;
@@ -78,38 +80,73 @@ export const StepForm = <T extends FieldValues>({
         </div>
 
         {/* Current Step Component */}
-        <form onSubmit={finalMethods.handleSubmit(onSubmit)} className="bg-[var(--background)] p-3 ">
-          {steps[currentStep].component}
+        {activeForm ? (
+          <form onSubmit={finalMethods.handleSubmit(onSubmit)} className="bg-[var(--background)] p-3 ">
+            {steps[currentStep].component}
 
-          <div className="flex justify-end mt-4 space-x-2">
-            {/* Botón Previous */}
-            {currentStep > 0 && (
-              <Button type="button" variant="outline" onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}>
-                {previousStepLabel}
-              </Button>
-            )}
+            <div className="flex justify-end mt-4 space-x-2">
+              {/* Botón Previous */}
+              {currentStep > 0 && (
+                <Button type="button" variant="outline" onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}>
+                  {previousStepLabel}
+                </Button>
+              )}
 
-            {/* Botón Next */}
-            {currentStep < steps.length - 1 && (
-              <Button
-                type="button"
-                variant="primary"
-                onClick={() => {
-                  if (steps[currentStep].nextStepAction) {
-                    steps[currentStep].nextStepAction();
-                  }
-                  validateAndNext(currentStep + 1);
-                }}
-                disabled={invalidStep}
-              >
-                {nextStepLabel}
-              </Button>
-            )}
+              {/* Botón Next */}
+              {currentStep < steps.length - 1 && (
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={() => {
+                    if (steps[currentStep].nextStepAction) {
+                      steps[currentStep].nextStepAction();
+                    }
+                    validateAndNext(currentStep + 1);
+                  }}
+                  disabled={invalidStep}
+                >
+                  {nextStepLabel}
+                </Button>
+              )}
 
-            {/* Botón Submit */}
-            {currentStep === steps.length - 1 && <Button type="submit">{submitLabel}</Button>}
-          </div>
-        </form>
+              {/* Botón Submit */}
+              {currentStep === steps.length - 1 && <Button type="submit">{submitLabel}</Button>}
+            </div>
+          </form>
+        ) : (
+          <>
+            {steps[currentStep].component}
+
+            <div className="flex justify-end mt-4 space-x-2">
+              {/* Botón Previous */}
+              {currentStep > 0 && (
+                <Button type="button" variant="outline" onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}>
+                  {previousStepLabel}
+                </Button>
+              )}
+
+              {/* Botón Next */}
+              {currentStep < steps.length - 1 && (
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={() => {
+                    if (steps[currentStep].nextStepAction) {
+                      steps[currentStep].nextStepAction();
+                    }
+                    validateAndNext(currentStep + 1);
+                  }}
+                  disabled={invalidStep}
+                >
+                  {nextStepLabel}
+                </Button>
+              )}
+
+              {/* Botón Submit */}
+              {currentStep === steps.length - 1 && <Button onClick={() => finalMethods.handleSubmit(onSubmit)()}>{submitLabel}</Button>}
+            </div>
+          </>
+        )}
       </div>
     </RHFProvider>
   );

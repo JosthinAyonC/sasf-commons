@@ -1,12 +1,6 @@
 import React from 'react';
 
-interface CheckBoxUiProps {
-  defaultChecked?: boolean;
-  checked?: boolean;
-  className?: string;
-  onChange?: (_e: React.ChangeEvent<HTMLInputElement>) => void;
-  disabled?: boolean;
-}
+import { CheckBoxUiProps } from './types';
 
 export const CheckBoxUi: React.FC<CheckBoxUiProps> = ({ defaultChecked, checked, className, onChange, disabled }) => {
   return (
