@@ -84,7 +84,7 @@ export const StepForm = <T extends FieldValues>({
           <form onSubmit={finalMethods.handleSubmit(onSubmit)} className="bg-[var(--background)] p-3 ">
             {steps[currentStep].component}
 
-            <div className="sticky bottom-0 bg-white p-4 flex justify-end mt-4 space-x-2">
+            <div className="bg-white p-4 flex justify-end mt-4 space-x-2">
               {/* Botón Previous */}
               {currentStep > 0 && (
                 <Button type="button" variant="outline" onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))} className = "transition-shadow duration-200 hover:ring-2 hover:ring-black-400">
