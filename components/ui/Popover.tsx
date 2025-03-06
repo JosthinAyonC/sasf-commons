@@ -55,7 +55,7 @@ export const Popover: React.FC<PopoverProps> = ({ trigger, children, width = '40
         createPortal(
           <div
             ref={popoverRef}
-            className={`absolute bg-white shadow-lg rounded-md p-3 border border-gray-200 ${className}`}
+            className={`absolute bg-[var(--bg)] shadow-lg rounded-md p-3 border border-[var(--border)] ${className}`}
             style={{
               position: 'absolute',
               width,
