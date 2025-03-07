@@ -14,10 +14,13 @@ export interface CheckBoxUiProps {
 export interface DatePickerUIProps {
   selected?: Date | null;
   onChange?: (_date: Date | null) => void;
+  onChangeRange?: (_dates: [Date | null, Date | null]) => void;
   minDate?: Date;
   maxDate?: Date;
   error?: string;
   inputClassName?: string;
   yearUpRange?: number;
   yearDownRange?: number;
+  placeholderText?: string;
+  defaultRange?: { startDate: Date | null; endDate: Date | null };
 }

@@ -1,35 +1,45 @@
-import { faCalendar } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { DatePickerUIProps } from './types';
 
-export const DatePickerUI: React.FC<DatePickerUIProps> = ({
-  selected,
-  onChange,
+export const DatePickerRangeUi: React.FC<DatePickerUIProps> = ({
+  onChangeRange,
   minDate,
   maxDate,
-  error,
-  inputClassName,
   yearUpRange = 5,
   yearDownRange = 5,
-  placeholderText = 'Seleccione una fecha',
+  defaultRange = { startDate: null, endDate: null },
 }) => {
+  const [startDate, setStartDate] = useState<Date | null>(defaultRange.startDate);
+  const [endDate, setEndDate] = useState<Date | null>(defaultRange.endDate);
+
   const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: yearUpRange + yearDownRange + 1 }, (_, i) => currentYear - yearDownRange + i);
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(selected ?? null);
+
+  const onChange = (dates: [Date | null, Date | null]) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+    if (onChangeRange && start && end) {
+      onChangeRange(dates);
+    }
+  };
 
   return (
-    <div className="relative w-full z-50">
+    <div>
       <style>{`
         .react-datepicker {
           border-radius: 8px;
           overflow: visible;
           box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
           background-color: var(--bg);
+        }
+
+        .react-datepicker__day--in-range {
+          background-color: var(--secondaryalt);
         }
 
         .react-datepicker-popper {
@@ -99,30 +109,15 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
       `}</style>
 
       <DatePicker
-        selected={selectedDate && !isNaN(new Date(selectedDate).getTime()) ? new Date(selectedDate) : null}
-        onChange={(date) => {
-          setSelectedDate(date);
-          if (onChange) {
-            onChange(date);
-          }
-        }}
-        dateFormat="dd/MM/yyyy"
+        onChange={onChange}
         minDate={minDate}
         maxDate={maxDate}
-        calendarClassName="bg-[var(--bg)] rounded-lg shadow-md font-sans"
-        portalId="root-portal"
-        dayClassName={(date) =>
-          selectedDate && new Date(selectedDate).toISOString() === date.toISOString()
-            ? 'bg-[var(--secondary)] text-[var(--bg)] hover:text-[var(--bg)] hover:bg-[var(--primary)]'
-            : 'hover:text-[#000000] text-[var(--font)]'
-        }
-        showIcon
-        icon={<FontAwesomeIcon icon={faCalendar} />}
-        calendarIconClassName="text-[var(--font)] right-0 top-0 mt-1"
-        className={`w-full border ${
-          error ? 'border-[var(--error)]' : 'border-[var(--border)]'
-        } rounded-md p-2 focus:outline-none focus:border-[var(--focus)] transition duration-150 ease-in-out placeholder:text-[var(--placeholder)] bg-[var(--bg)] text-[var(--font)] ${inputClassName}`}
-        placeholderText={placeholderText}
+        startDate={startDate}
+        endDate={endDate}
+        selectsRange
+        inline
+        showDisabledMonthNavigation
+        dateFormat="dd/MM/yyyy"
         renderCustomHeader={({ date, changeYear, changeMonth, decreaseMonth, increaseMonth, prevMonthButtonDisabled, nextMonthButtonDisabled }) => (
           <div className="flex justify-between items-center mb-2 px-2 bg-transparent">
             {/* Flecha de mes anterior */}
