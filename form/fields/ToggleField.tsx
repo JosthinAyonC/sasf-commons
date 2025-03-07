@@ -35,7 +35,7 @@ export const ToggleField = ({
     <div className={`flex items-center gap-3 ${containerClassName}`}>
       {label && <span className={`text-[var(--font)] ${labelClassName}`}>{label}</span>}
 
-      <input type="checkbox" id={name} {...register(name)} className="hidden" />
+      <input key={name} type="checkbox" id={name} {...register(name)} className="hidden" />
 
       <div
         className={`relative flex items-center h-7 w-14 cursor-pointer rounded-full transition-colors duration-300 

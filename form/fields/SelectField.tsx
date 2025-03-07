@@ -31,6 +31,7 @@ export const SelectField = <T extends FieldValues>({
         </label>
       )}
       <select
+        key={name}
         id={name as string}
         {...register(name, { required: isRequired ? requiredMsg || 'Este campo es obligatorio' : undefined })}
         className={`border border-[var(--border)] bg-[var(--bg)] text-[var(--font)] rounded-md p-2 w-full focus:border-[var(--primary)] ${selectClassName}`}

@@ -41,6 +41,7 @@ export const TextField = <T extends FieldValues>({
         </label>
       )}
       <input
+        key={name}
         type={type}
         id={name as string}
         placeholder={placeholder}

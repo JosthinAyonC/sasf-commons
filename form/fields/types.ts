@@ -65,6 +65,7 @@ export interface DatePickerFieldProps<T extends FieldValues> {
 }
 
 export interface ImageUploadFieldProps {
+  labelClassName?: string;
   name: string;
   label?: string;
   className?: string;
@@ -102,6 +103,8 @@ export interface NumberFieldProps<T extends FieldValues> {
   disabled?: boolean;
   showTootip?: boolean;
   requiredMsg?: string;
+  minValueMsg?: (_min: number) => string;
+  maxValueMsg?: (_max: number) => string;
 }
 
 /*

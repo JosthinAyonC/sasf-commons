@@ -13,7 +13,7 @@ export interface CheckBoxUiProps {
 
 export interface DatePickerUIProps {
   selected?: Date | null;
-  onChange?: (date: Date | null) => void;
+  onChange?: (_date: Date | null) => void;
   minDate?: Date;
   maxDate?: Date;
   error?: string;

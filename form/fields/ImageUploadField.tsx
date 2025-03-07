@@ -11,6 +11,7 @@ import { ImageUploadFieldProps } from './types';
 export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   name,
   label,
+  labelClassName,
   className,
   sizeX = 300,
   sizeY = 200,
@@ -107,9 +108,9 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   };
 
   return (
-    <div className={`flex flex-col ${className}`}>
+    <div className={`flex flex-col ${className}`} key={name}>
       {label && (
-        <label className="text-[var(--font)]">
+        <label className={`text-[var(--font)] ${labelClassName}`} htmlFor={name}>
           {label}
           {isRequired && ' *'}
         </label>
@@ -130,10 +131,15 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
         ) : (
           <span className="text-[var(--font)] text-sm">{placeholder}</span>
         )}
-
-        <div className="absolute bottom-0 right-2 p-2 rounded-full cursor-pointer bg-[var(--background)] hover:bg-[var(--background-hover)]">
-          <FaPen className="text-[var(--font)]" />
-        </div>
+        {(preview || watch(name)) && (
+          <div
+            className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 
+               p-1.5 rounded-full cursor-pointer bg-[var(--secondaryalt)] 
+               hover:bg-[var(--secondaryalthover)] shadow-lg"
+          >
+            <FaPen className="text-[var(--font)] text-xs" />
+          </div>
+        )}
       </div>
       {fileError && <span className="text-[var(--error)] text-sm">{fileError}</span>}
 

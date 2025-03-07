@@ -130,6 +130,7 @@ export const DropdownField = <T extends FieldValues>({
         </label>
       )}
       <Select
+        key={name}
         options={options}
         isMulti={isMulti}
         placeholder={placeholder}

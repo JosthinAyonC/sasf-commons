@@ -40,6 +40,7 @@ export const DatePickerField = <T extends FieldValues>({
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <>
             <DatePickerUI
+              key={name}
               selected={value && !isNaN(new Date(value).getTime()) ? new Date(value) : null}
               onChange={onChange}
               minDate={minDate}

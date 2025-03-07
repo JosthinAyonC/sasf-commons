@@ -87,7 +87,12 @@ export const StepForm = <T extends FieldValues>({
             <div className="bg-white p-4 flex justify-end mt-4 space-x-2">
               {/* Botón Previous */}
               {currentStep > 0 && (
-                <Button type="button" variant="outline" onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))} className = "transition-shadow duration-200 hover:ring-2 hover:ring-black-400">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
+                  className="transition-shadow duration-200 hover:ring-2 hover:ring-black-400"
+                >
                   {previousStepLabel}
                 </Button>
               )}
@@ -104,14 +109,18 @@ export const StepForm = <T extends FieldValues>({
                     validateAndNext(currentStep + 1);
                   }}
                   disabled={invalidStep}
-                  className = "transition-shadow duration-200 hover:ring-2 hover:ring-gray-400"
+                  className="transition-shadow duration-200 hover:ring-2 hover:ring-gray-400"
                 >
                   {nextStepLabel}
                 </Button>
               )}
 
               {/* Botón Submit */}
-              {currentStep === steps.length - 1 && <Button type="submit" className = "transition-shadow duration-200 hover:ring-2 hover:ring-gray-400">{submitLabel}</Button>}
+              {currentStep === steps.length - 1 && (
+                <Button type="submit" className="transition-shadow duration-200 hover:ring-2 hover:ring-gray-400">
+                  {submitLabel}
+                </Button>
+              )}
             </div>
           </form>
         ) : (
