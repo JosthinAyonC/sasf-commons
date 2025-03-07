@@ -1,59 +1,69 @@
-import { faCaretDown, faCaretLeft, faCaretRight, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faExclamationTriangle, faInfoCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { motion } from 'framer-motion';
-import React, { CSSProperties } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
 
-type TooltipProps = {
-  message: string;
-  className?: string;
-  variant?: 'danger' | 'warning' | 'info' | 'success';
-  position?: 'top' | 'bottom' | 'left' | 'right';
-  showIndicator?: boolean;
+const tooltipVariants = {
+  success: {
+    background: 'bg-[#D9FCE9]',
+    borderColor: 'border-[#3AC279]',
+    textcolor: 'text-[#3AC279]',
+    icon: faCheckCircle,
+  },
+  danger: {
+    background: 'bg-red-100',
+    borderColor: 'border-[#DA291C]',
+    textcolor: 'text-[#DA291C]',
+    icon: faTimesCircle,
+  },
+  warning: {
+    background: 'bg-[#FFF0D9]',
+    borderColor: 'border-[#E89F29]',
+    textcolor: 'text-[#E89F29]',
+    icon: faExclamationTriangle,
+  },
+  info: {
+    background: 'bg-[#E0EDFF]',
+    borderColor: 'border-[#3882E5]',
+    textcolor: 'text-[#3882E5]',
+    icon: faInfoCircle,
+  },
 };
 
-export const Tooltip: React.FC<TooltipProps> = ({ message, className, variant = 'success', position = 'top', showIndicator = true }) => {
-  if (!message) return null;
+interface TooltipProps {
+  message: string;
+  variant?: keyof typeof tooltipVariants;
+  duration?: number;
+}
 
-  const variantStyles: Record<string, string> = {
-    success: 'bg-[#D9FCE9] text-[#3AC279] border-[#3AC279]',
-    warning: 'bg-[#FFF0D9] text-[#FFFFFF] text-[#E89F29',
-    info: 'bg-[#E0EDFF] border-[#E89F29] text-[#3882E5]',
-    danger: 'bg-red-100 text-[#DA291C] border-[#DA291C]',
-  };
+export const Tooltip: React.FC<TooltipProps> = ({ message, variant = 'info', duration = 4000 }) => {
+  const [visible, setVisible] = useState(true);
 
-  const positionStyles: Record<string, string> = {
-    top: 'top-full mt-3',
-    bottom: 'bottom-full mb-3',
-    left: 'left-full ml-3',
-    right: 'right-full mr-3',
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(false), duration);
+    return () => clearTimeout(timer);
+  }, [duration]);
 
-  const indicatorIcons: Record<string, typeof faCaretUp> = {
-    top: faCaretUp,
-    bottom: faCaretDown,
-    left: faCaretLeft,
-    right: faCaretRight,
-  };
+  if (!visible) return null;
 
-  const indicatorPositionStyles: Record<string, CSSProperties> = {
-    top: { left: '50%', transform: 'translateX(-50%)', top: '-0.625rem' },
-    bottom: { left: '50%', transform: 'translateX(-50%)', bottom: '-0.625rem' },
-    left: { top: '50%', transform: 'translateY(-50%)', right: '-0.625rem' },
-    right: { top: '50%', transform: 'translateY(-50%)', left: '-0.625rem' },
-  };
+  const { background, borderColor, textcolor, icon } = tooltipVariants[variant];
 
   return (
-    <motion.span
-      style={{ zIndex: 9999 }}
-      initial={{ opacity: 0, y: position === 'top' ? 10 : position === 'bottom' ? -10 : 0, x: position === 'left' ? 10 : position === 'right' ? -10 : 0 }}
-      animate={{ opacity: 1, y: 0, x: 0 }}
-      exit={{ opacity: 0, y: position === 'top' ? 10 : position === 'bottom' ? -10 : 0, x: position === 'left' ? 10 : position === 'right' ? -10 : 0 }}
-      transition={{ duration: 0.2 }}
-      className={`absolute ${positionStyles[position]} ${variantStyles[variant]} border p-2 rounded shadow ${className} border-1`}
-      role="tooltip"
-    >
-      {showIndicator && <FontAwesomeIcon icon={indicatorIcons[position]} className="absolute drop-shadow-sm" style={indicatorPositionStyles[position]} />}
-      <span>{message}</span>
-    </motion.span>
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -5 }}
+          transition={{ duration: 0.3 }}
+          className={`absolute left-0 mt-1 px-3 py-1 rounded-md shadow-lg z-10 border ${background} ${borderColor}`}
+        >
+          <div className="flex flex-row items-center">
+            <FontAwesomeIcon icon={icon} className={`mr-2 ${textcolor}`} />
+            <span className={`${textcolor} text-xs`}>{message}</span>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };

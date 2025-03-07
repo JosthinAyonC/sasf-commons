@@ -130,6 +130,7 @@ export const DropdownField = <T extends FieldValues>({
         </label>
       )}
       <Select
+        key={name}
         options={options}
         isMulti={isMulti}
         placeholder={placeholder}
@@ -152,7 +153,7 @@ export const DropdownField = <T extends FieldValues>({
       />
       {error && (
         <span className={`text-[var(--error)] text-xs mt-1 ${errorClassName}`}>
-          <FontAwesomeIcon icon={faExclamationCircle} />
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
           {error.message}
         </span>
       )}

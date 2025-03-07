@@ -1,3 +1,5 @@
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
 
@@ -11,6 +13,7 @@ export const SelectField = <T extends FieldValues>({
   errorClassName,
   options,
   isRequired,
+  requiredMsg,
   onChange,
 }: Omit<SelectFieldProps<T>, 'register' | 'error'> & { onChange?: (_event: React.ChangeEvent<HTMLSelectElement>) => void }) => {
   const {
@@ -28,8 +31,9 @@ export const SelectField = <T extends FieldValues>({
         </label>
       )}
       <select
+        key={name}
         id={name as string}
-        {...register(name, { required: isRequired ? 'Este campo es obligatorio' : undefined })}
+        {...register(name, { required: isRequired ? requiredMsg || 'Este campo es obligatorio' : undefined })}
         className={`border border-[var(--border)] bg-[var(--bg)] text-[var(--font)] rounded-md p-2 w-full focus:border-[var(--primary)] ${selectClassName}`}
         onChange={onChange}
       >
@@ -41,7 +45,12 @@ export const SelectField = <T extends FieldValues>({
             </option>
           ))}
       </select>
-      {error && <span className={`text-[var(--error)] text-xs ${errorClassName}`}>{error.message}</span>}
+      {error && (
+        <span className={`text-[var(--error)] text-xs ${errorClassName}`}>
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
+          {error.message}
+        </span>
+      )}
     </div>
   );
 };

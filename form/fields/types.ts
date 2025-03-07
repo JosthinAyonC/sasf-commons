@@ -61,9 +61,12 @@ export interface DatePickerFieldProps<T extends FieldValues> {
   defaultValue?: Date;
   yearUpRange?: number;
   yearDownRange?: number;
+  requiredMsg?: string;
+  placeholderText?: string;
 }
 
 export interface ImageUploadFieldProps {
+  labelClassName?: string;
   name: string;
   label?: string;
   className?: string;
@@ -76,6 +79,9 @@ export interface ImageUploadFieldProps {
   cancelLabel?: string;
   saveLabel?: string;
   placeholder?: string;
+  imageUrl?: string;
+  draggText?: string;
+  fileNotSupportedText?: string;
 }
 
 /*
@@ -98,6 +104,8 @@ export interface NumberFieldProps<T extends FieldValues> {
   disabled?: boolean;
   showTootip?: boolean;
   requiredMsg?: string;
+  minValueMsg?: (_min: number) => string;
+  maxValueMsg?: (_max: number) => string;
 }
 
 /*
@@ -128,6 +136,7 @@ export interface SelectFieldProps<T extends FieldValues> {
   register: UseFormRegister<T>;
   error?: FieldError;
   isRequired?: boolean;
+  requiredMsg?: string;
 }
 
 /*

@@ -9,6 +9,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({ name, value, label, defaultCh
   return (
     <div className="relative flex items-center">
       <input
+        key={name}
         type="radio"
         id={`${name}-${value}`}
         value={value}

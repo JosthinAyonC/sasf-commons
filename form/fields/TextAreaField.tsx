@@ -1,3 +1,5 @@
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
 
@@ -13,6 +15,7 @@ export const TextAreaField = <T extends FieldValues>({
   inputClassName,
   labelClassName,
   errorClassName,
+  requiredMsg,
 }: Omit<TextFieldProps<T>, 'register' | 'error'>) => {
   const {
     register,
@@ -30,8 +33,9 @@ export const TextAreaField = <T extends FieldValues>({
       )}
       <textarea
         {...register(name, {
-          required: isRequired ? 'Este campo es obligatorio' : undefined,
+          required: isRequired ? requiredMsg || 'Este campo es obligatorio' : undefined,
         })}
+        key={name}
         placeholder={placeholder}
         id={name as string}
         defaultValue={defaultValue}
@@ -41,7 +45,12 @@ export const TextAreaField = <T extends FieldValues>({
           error ? 'border-[var(--error)]' : ''
         } ${disabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''} ${inputClassName}`}
       />
-      {error && <span className={`text-[var(--error)] text-xs mt-1 block ${errorClassName}`}>{error.message}</span>}
+      {error && (
+        <span className={`text-[var(--error)] text-xs ${errorClassName}`}>
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
+          {error.message as string}
+        </span>
+      )}
     </div>
   );
 };
