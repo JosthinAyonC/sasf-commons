@@ -17,7 +17,7 @@ export const Screen: React.FC<ScreenProps> = ({ children, className, title, show
   const navigate = useNavigate();
 
   return (
-    <div className={`flex flex-col h-screen w-full bg-[var(--bg)] ${isMobile ? 'p-4' : 'px-16 py-10'} ${className || ''}`}>
+    <div className={`flex flex-col h-full w-full bg-[var(--bg)] ${isMobile ? 'p-4' : 'px-16 py-10'} ${className || ''}`}>
       {/* Header con título y botón de volver atrás */}
       {(title || showGoBackButton) && (
         <header className="flex items-center mb-4">

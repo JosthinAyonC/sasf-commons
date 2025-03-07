@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Loader } from '~/components/ui';
 import { Button } from '~/form/fields';
 
 const NotFoundScreen: React.FC = () => {
+  const [showPage, setShowPage] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowPage(true);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!showPage) {
+    return <Loader className="text-[var(--secondary)]" />;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen text-[var(--font)] bg-[var(--bg)] px-2">
