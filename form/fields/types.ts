@@ -62,6 +62,7 @@ export interface DatePickerFieldProps<T extends FieldValues> {
   yearUpRange?: number;
   yearDownRange?: number;
   requiredMsg?: string;
+  placeholderText?: string;
 }
 
 export interface ImageUploadFieldProps {

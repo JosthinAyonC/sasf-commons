@@ -20,7 +20,6 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
   const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: yearUpRange + yearDownRange + 1 }, (_, i) => currentYear - yearDownRange + i);
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(selected ?? null);
 
   return (
     <div className="relative w-full z-50">
@@ -93,15 +92,13 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
 
         .react-datepicker__day--disabled {
           color: var(--disabled);
-          background-color: var(--disabled-bg);
           cursor: not-allowed;
         }
       `}</style>
 
       <DatePicker
-        selected={selectedDate && !isNaN(new Date(selectedDate).getTime()) ? new Date(selectedDate) : null}
+        selected={selected && !isNaN(new Date(selected).getTime()) ? new Date(selected) : null}
         onChange={(date) => {
-          setSelectedDate(date);
           if (onChange) {
             onChange(date);
           }
@@ -112,7 +109,7 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
         calendarClassName="bg-[var(--bg)] rounded-lg shadow-md font-sans"
         portalId="root-portal"
         dayClassName={(date) =>
-          selectedDate && new Date(selectedDate).toISOString() === date.toISOString()
+          selected && new Date(selected).toISOString() === date.toISOString()
             ? 'bg-[var(--secondary)] text-[var(--bg)] hover:text-[var(--bg)] hover:bg-[var(--primary)]'
             : 'hover:text-[#000000] text-[var(--font)]'
         }

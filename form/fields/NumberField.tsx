@@ -93,7 +93,7 @@ export const NumberField = <T extends FieldValues>({
 
       {error && (
         <span className={`text-[var(--error)] text-xs ${errorClassName}`}>
-          <FontAwesomeIcon icon={faExclamationCircle} className="mr-1" />
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
           {error.message}
         </span>
       )}

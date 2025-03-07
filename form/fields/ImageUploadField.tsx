@@ -1,3 +1,5 @@
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Cropper from 'react-easy-crop';
@@ -141,7 +143,12 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
           </div>
         )}
       </div>
-      {fileError && <span className="text-[var(--error)] text-sm">{fileError}</span>}
+      {fileError && (
+        <span className="text-[var(--error)] text-sm">
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
+          {fileError}
+        </span>
+      )}
 
       <SimpleDialog isOpen={isCropping} onClose={() => setIsCropping(false)}>
         <h2 className="text-[var(--font)] font-semibold mb-2 text-center">{cropLabel}</h2>

@@ -1,3 +1,5 @@
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
 
@@ -36,7 +38,12 @@ export const RadioGroupField = <T extends FieldValues>({
           />
         ))}
       </div>
-      {error && <span className={`text-[var(--error)] text-xs mt-2 ${errorClassName}`}>{error.message}</span>}
+      {error && (
+        <span className={`text-[var(--error)] text-xs mt-2 ${errorClassName}`}>
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
+          {error.message}
+        </span>
+      )}
     </div>
   );
 };

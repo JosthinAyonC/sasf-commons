@@ -1,3 +1,5 @@
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
 
@@ -31,7 +33,12 @@ export const CheckboxField = <T extends FieldValues>({
       <label htmlFor={name} className={`text-[var(--font)] cursor-pointer ${labelClassName}`}>
         {label}
       </label>
-      {error && <span className={`text-[var(--error)] text-xs ${errorClassName}`}>{error.message}</span>}
+      {error && (
+        <span className={`text-[var(--error)] text-xs ${errorClassName}`}>
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
+          {error.message}
+        </span>
+      )}
     </div>
   );
 };
