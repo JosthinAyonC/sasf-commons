@@ -84,7 +84,7 @@ export const StepForm = <T extends FieldValues>({
           <form onSubmit={finalMethods.handleSubmit(onSubmit)} className={steps[currentStep].stepClassName || ''}>
             {steps[currentStep].component}
 
-            <div className="bg-white p-4 flex justify-end mt-4 space-x-2">
+            <div className="bg-[var(--bg)] p-4 flex justify-end mt-4 space-x-2">
               {/* Botón Previous */}
               {currentStep > 0 && (
                 <Button

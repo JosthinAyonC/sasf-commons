@@ -21,7 +21,7 @@ export const DatePickerField = <T extends FieldValues>({
   return (
     <div className="relative w-full">
       {label && (
-        <label htmlFor={name as string} className={`block mb-1 text-[var(--font)] font-semibold ${labelClassName}`}>
+        <label htmlFor={name as string} className={`block mb-1 text-[var(--font)] ${labelClassName}`}>
           {label}
           {isRequired && <span className="text-[var(--error)] ml-1">*</span>}
         </label>
