@@ -54,6 +54,7 @@ interface TableProps<T extends object> {
   rowExpand?: (_row: T) => JSX.Element;
   disableRowExpand?: (_row: T) => boolean;
   notFoundLabel?: string;
+  refreshEvent?: string;
 }
 
 /**
@@ -95,6 +96,7 @@ export const QueryTable = <T extends object>({
   rowExpand,
   disableRowExpand,
   notFoundLabel = 'No se encontraron resultados',
+  refreshEvent,
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
@@ -138,13 +140,14 @@ export const QueryTable = <T extends object>({
   const totalPages = data ? Math.ceil((data[responseTotalCount] as number) / pagination.pageSize) : 0;
 
   useEffect(() => {
+    const eventName = refreshEvent || 'refreshTable';
     const listener = () => refetch('', true);
-    tableEventEmitter.on('refreshTable', listener);
+    tableEventEmitter.on(eventName, listener);
 
     return () => {
-      tableEventEmitter.off('refreshTable', listener);
+      tableEventEmitter.off(eventName, listener);
     };
-  }, [refetch]);
+  }, [refetch, refreshEvent]);
 
   useEffect(() => {
     setExpandedRows({});
