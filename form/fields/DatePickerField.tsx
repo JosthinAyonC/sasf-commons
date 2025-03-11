@@ -17,6 +17,7 @@ export const DatePickerField = <T extends FieldValues>({
   maxDate,
   defaultValue,
   requiredMsg,
+  placeholderText,
 }: DatePickerFieldProps<T>) => {
   return (
     <div className="relative w-full">
@@ -47,6 +48,7 @@ export const DatePickerField = <T extends FieldValues>({
               maxDate={maxDate}
               error={error?.message}
               inputClassName={inputClassName}
+              placeholderText={placeholderText}
             />
             {error && (
               <p className={`text-[var(--error)] text-xs mt-1 ${errorClassName}`}>
