@@ -1,8 +1,9 @@
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
+import { Controller, FieldError, FieldValues, useFormContext } from 'react-hook-form';
 
+import { TextFieldUI } from '../ui/TextFieldUi';
 import { TextFieldProps } from './types';
 
 export const TextField = <T extends FieldValues>({
@@ -27,7 +28,6 @@ export const TextField = <T extends FieldValues>({
   requiredMsg,
 }: Omit<TextFieldProps<T>, 'register' | 'error'>) => {
   const {
-    register,
     formState: { errors },
   } = useFormContext();
 
@@ -40,19 +40,22 @@ export const TextField = <T extends FieldValues>({
           {label} {isRequired && <span className="text-[var(--error)]">*</span>}
         </label>
       )}
-      <input
-        key={name}
-        type={type}
-        id={name as string}
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-        {...register(name, {
-          onChange(e) {
-            const value = e.target.value;
-            if (onChange) {
-              onChange(value);
-            }
-          },
+      <Controller
+        name={name}
+        defaultValue={defaultValue ? (defaultValue as unknown as T[keyof T]) : undefined}
+        render={({ field: { onChange: fieldOnChange } }) => (
+          <TextFieldUI
+            inputClassName={inputClassName}
+            placeholder={placeholder}
+            defaultValue={defaultValue}
+            disabled={disabled}
+            onChange={(value: string) => {
+              fieldOnChange(value);
+              if (onChange) onChange(value);
+            }}
+          />
+        )}
+        rules={{
           required: isRequired ? requiredMsg || 'Este campo es obligatorio' : undefined,
           minLength: minLength ? { value: minLength, message: `El valor mínimo es ${minLength} caracteres` } : undefined,
           maxLength: maxLength ? { value: maxLength, message: `El valor máximo es ${maxLength} caracteres` } : undefined,
@@ -66,13 +69,7 @@ export const TextField = <T extends FieldValues>({
                     message: 'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número',
                   }
                 : undefined,
-        })}
-        className={`border border-[var(--border)] rounded-md p-2 w-full 
-          focus:outline-none focus:border-[var(--focus)] placeholder:text-[var(--placeholder)] 
-          bg-[var(--bg)] text-[var(--font)] ${disabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''}
-          ${inputClassName}`}
-        autoComplete="off"
-        disabled={disabled}
+        }}
       />
       {error && (
         <span className={`text-[var(--error)] text-xs ${errorClassName}`}>

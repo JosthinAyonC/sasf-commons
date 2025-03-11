@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Cropper from 'react-easy-crop';
-import { useFormContext } from 'react-hook-form';
+import { FieldError, useFormContext } from 'react-hook-form';
 import { FaPen } from 'react-icons/fa';
 import { SimpleDialog } from '~/components/ui/SimpleDialog';
 
@@ -27,8 +27,15 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   draggText = 'Suelta la imagen',
   fileNotSupportedText = 'Solo se permiten imágenes en formato PNG o JPEG',
   imageUrl,
+  requiredMsg,
 }) => {
-  const { setValue, watch } = useFormContext();
+  const {
+    setValue,
+    watch,
+    register,
+    formState: { errors },
+  } = useFormContext();
+  const error = errors[name] as FieldError | undefined;
   const [preview, setPreview] = useState<string | null>(imageUrl || null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(defaultZoom);
@@ -38,6 +45,10 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [isCropping, setIsCropping] = useState(false);
   const [isDragActive, setIsDragActive] = useState(false);
+
+  useEffect(() => {
+    register(name, { required: isRequired ? requiredMsg || 'La imagen es obligatoria' : false });
+  }, [register, name, isRequired]);
 
   useEffect(() => {
     const imageUrl = watch(name);
@@ -113,8 +124,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     <div className={`flex flex-col ${className}`} key={name}>
       {label && (
         <label className={`text-[var(--font)] ${labelClassName}`} htmlFor={name}>
-          {label}
-          {isRequired && ' *'}
+          {label} {isRequired && <span className="text-[var(--error)]">*</span>}
         </label>
       )}
 
@@ -147,6 +157,12 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
         <span className="text-[var(--error)] text-sm">
           <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
           {fileError}
+        </span>
+      )}
+      {error && (
+        <span className="text-[var(--error)] text-xs">
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2 mt-1" />
+          {error.message}
         </span>
       )}
 

@@ -73,6 +73,7 @@ export interface ImageUploadFieldProps {
   sizeX?: number;
   sizeY?: number;
   isRequired?: boolean;
+  requiredMsg?: string;
   defaultZoom?: number;
   maxZoom?: number;
   cropLabel?: string;
@@ -230,4 +231,16 @@ export interface DropdownFieldProps<T extends FieldValues, V = string | number |
   onChangeSelection?: (_value: V | V[]) => void;
   noOptionsMessage?: string;
   requiredMsg?: string;
+}
+
+export interface ColorPickerFieldProps<T extends FieldValues> {
+  label?: string;
+  name: Path<T>;
+  labelClassName?: string;
+  inputClassName?: string;
+  errorClassName?: string;
+  isRequired?: boolean;
+  defaultValue?: string;
+  requiredMsg?: string;
+  onChange?: (_value: string) => void;
 }

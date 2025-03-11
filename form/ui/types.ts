@@ -11,6 +11,15 @@ export interface CheckBoxUiProps {
   disabled?: boolean;
 }
 
+export interface TextFieldUIProps {
+  placeholder?: string;
+  defaultValue?: string;
+  inputClassName?: string;
+  disabled?: boolean;
+  onChange: (value: string) => void;
+  value?: string;
+}
+
 export interface DatePickerUIProps {
   selected?: Date | null;
   onChange?: (_date: Date | null) => void;
