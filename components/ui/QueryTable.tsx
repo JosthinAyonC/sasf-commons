@@ -534,7 +534,7 @@ export const QueryTable = <T extends object>({
       {/* Overlay eliminacion individual */}
       {overlayData && (
         <motion.div
-          className="absolute z-50 bg-[var(--bg)] border border-[var(--border)] rounded shadow-lg p-4"
+          className="fixed z-50 bg-[var(--bg)] border border-[var(--border)] rounded shadow-lg p-4"
           style={{
             top: overlayData.buttonRect.bottom + window.scrollY + 10,
             left: overlayData.buttonRect.left + overlayData.buttonRect.width / 2,

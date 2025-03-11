@@ -48,7 +48,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
 
   useEffect(() => {
     register(name, { required: isRequired ? requiredMsg || 'La imagen es obligatoria' : false });
-  }, [register, name, isRequired]);
+  }, [register, name, isRequired, requiredMsg]);
 
   useEffect(() => {
     const imageUrl = watch(name);

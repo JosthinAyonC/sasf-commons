@@ -16,7 +16,7 @@ export interface TextFieldUIProps {
   defaultValue?: string;
   inputClassName?: string;
   disabled?: boolean;
-  onChange: (value: string) => void;
+  onChange: (_value: string) => void;
   value?: string;
 }
 
