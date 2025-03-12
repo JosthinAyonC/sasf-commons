@@ -48,6 +48,7 @@ export const ColorPickerField = <T extends FieldValues>({
                 placement="right"
               />
               <TextFieldUI
+                type="text"
                 value={color}
                 onChange={(value) => {
                   onChangeForm(value);

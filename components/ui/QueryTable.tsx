@@ -463,7 +463,7 @@ export const QueryTable = <T extends object>({
           {/* Información de registros */}
           <div className="flex items-center space-x-2 py-2">
             <span className="text-[var(--font)] text-sm text-center md:text-left align-middle">
-              Mostrando del registro {pagination.pageIndex * pagination.pageSize + 1} al{' '}
+              Mostrando del registro {data?.[responseTotalCount] === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1} al{' '}
               {Math.min((pagination.pageIndex + 1) * pagination.pageSize, typeof data?.[responseTotalCount] === 'number' ? data[responseTotalCount] : 0)} de{' '}
               {String(data?.[responseTotalCount] ?? 0)}
             </span>

@@ -217,7 +217,7 @@ export const Table = <T extends object>({
               <div className="mt-4 px-4 py-2 border-t border-[var(--border)] rounded-b-lg flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
                 {/* Información de registros */}
                 <span className="text-[var(--font)] text-sm text-center md:text-left">
-                  Mostrando del registro {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} al{' '}
+                  Mostrando del registro {data.length === 0 ? 0 : table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} al{' '}
                   {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, data.length)} de {data.length} registros
                 </span>
 
