@@ -47,6 +47,8 @@ export const SimpleDialog: React.FC<SimpleDialogProps> = ({ isOpen, onClose, chi
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
+        // Este zIndex es asumiendo que un Dialog normal no pueden haber al menos 10 abiertos al mismo tiempo
+        style={{ zIndex: 1060 }}
       >
         <motion.div
           className="bg-[var(--bg)] rounded-lg border border-[var(--border)] shadow-lg p-6 w-full max-w-md relative"

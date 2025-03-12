@@ -2,12 +2,11 @@ import React from 'react';
 
 import { TextFieldUIProps } from './types';
 
-export const TextFieldUI: React.FC<TextFieldUIProps> = ({ placeholder, defaultValue, inputClassName = '', disabled = false, onChange, value }) => (
+export const TextFieldUI: React.FC<TextFieldUIProps> = ({ placeholder, inputClassName = '', disabled = false, onChange, value, type }) => (
   <div>
     <input
-      type="text"
+      type={type}
       placeholder={placeholder}
-      defaultValue={defaultValue}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className={`border border-[var(--border)] rounded-md p-2 w-full 

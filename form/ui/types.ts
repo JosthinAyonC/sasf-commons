@@ -12,8 +12,8 @@ export interface CheckBoxUiProps {
 }
 
 export interface TextFieldUIProps {
+  type: string;
   placeholder?: string;
-  defaultValue?: string;
   inputClassName?: string;
   disabled?: boolean;
   onChange: (_value: string) => void;

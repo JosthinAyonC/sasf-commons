@@ -43,12 +43,13 @@ export const TextField = <T extends FieldValues>({
       <Controller
         name={name}
         defaultValue={defaultValue ? (defaultValue as unknown as T[keyof T]) : undefined}
-        render={({ field: { onChange: fieldOnChange } }) => (
+        render={({ field: { onChange: fieldOnChange, value } }) => (
           <TextFieldUI
             inputClassName={inputClassName}
             placeholder={placeholder}
-            defaultValue={defaultValue}
+            value={value}
             disabled={disabled}
+            type={type}
             onChange={(value: string) => {
               fieldOnChange(value);
               if (onChange) onChange(value);
