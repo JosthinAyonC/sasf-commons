@@ -520,10 +520,10 @@ export const QueryTable = <T extends object>({
             onChange={(e) => {
               table.setPageSize(Number(e.target.value));
             }}
-            className="ml-2 p-2 bg-[var(--disabled)] text-[var(--font)] rounded md:mt-0 mt-3"
+            className="ml-2 p-2 bg-[var(--secondaryalt)] text-[var(--font)] rounded md:mt-0 mt-3"
           >
             {[5, 10, 20].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
+              <option key={pageSize} value={pageSize} className="hover:bg-[var(--secondaryalthover)]">
                 Mostrar {pageSize}
               </option>
             ))}

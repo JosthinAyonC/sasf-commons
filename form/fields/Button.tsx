@@ -21,7 +21,7 @@ export const Button: React.FC<ButtonProps> = ({ variant = 'primary', className, 
       : variant === 'danger'
         ? 'bg-red-500 text-white hover:bg-red-600'
         : variant === 'primary'
-          ? 'bg-[var(--primary)] text-[var(--font)] hover:bg-[var(--secondaryalt)]'
+          ? 'bg-[var(--primary)] text-white hover:bg-[var(--secondaryalt)] hover:text-black'
           : '';
   const disabledClass = disabled ? 'opacity-60 cursor-not-allowed' : '';
 

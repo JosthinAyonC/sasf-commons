@@ -124,7 +124,7 @@ export const DropdownField = <T extends FieldValues>({
   return (
     <div className={`w-full ${containerClassName}`}>
       {label && (
-        <label htmlFor={name as string} className={`text-[var(--font)] ${labelClassName} block`}>
+        <label htmlFor={name as string} className={`text-neutral-700 ${labelClassName} block`}>
           {label}
           {isRequired && <span className="text-[var(--error)] ml-1">*</span>}
         </label>

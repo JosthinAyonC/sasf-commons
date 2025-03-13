@@ -66,7 +66,7 @@ export const NumberField = <T extends FieldValues>({
   return (
     <div className="relative">
       {label && (
-        <label htmlFor={name as string} className={`${labelClassName} block text-[var(--font)]`}>
+        <label htmlFor={name as string} className={`text-neutral-700 ${labelClassName} block`}>
           {label} {isRequired && <span className="text-[var(--error)]">*</span>}
         </label>
       )}

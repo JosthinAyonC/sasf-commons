@@ -33,7 +33,7 @@ export const ToggleField = ({
 
   return (
     <div className={`flex items-center gap-3 ${containerClassName}`}>
-      {label && <span className={`text-[var(--font)] ${labelClassName}`}>{label}</span>}
+      {label && <span className={`text-neutral-700 ${labelClassName}`}>{label}</span>}
 
       <input key={name} type="checkbox" id={name} {...register(name)} className="hidden" />
 

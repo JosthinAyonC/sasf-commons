@@ -123,7 +123,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   return (
     <div className={`flex flex-col ${className}`} key={name}>
       {label && (
-        <label className={`text-[var(--font)] ${labelClassName}`} htmlFor={name}>
+        <label className={`text-neutral-700 ${labelClassName}`} htmlFor={name}>
           {label} {isRequired && <span className="text-[var(--error)]">*</span>}
         </label>
       )}

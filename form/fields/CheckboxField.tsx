@@ -30,7 +30,7 @@ export const CheckboxField = <T extends FieldValues>({
         {...register(name)}
         disabled={isDisabled}
       />
-      <label htmlFor={name} className={`text-[var(--font)] cursor-pointer ${labelClassName}`}>
+      <label htmlFor={name} className={`text-neutral-700 cursor-pointer ${labelClassName}`}>
         {label}
       </label>
       {error && (

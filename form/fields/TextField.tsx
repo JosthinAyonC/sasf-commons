@@ -36,7 +36,7 @@ export const TextField = <T extends FieldValues>({
   return (
     <div className={className}>
       {label && (
-        <label htmlFor={name as string} className={`text-[var(--font)] ${labelClassName} block`}>
+        <label htmlFor={name as string} className={`text-neutral-700 ${labelClassName} block`}>
           {label} {isRequired && <span className="text-[var(--error)]">*</span>}
         </label>
       )}

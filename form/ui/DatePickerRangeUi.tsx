@@ -48,7 +48,7 @@ export const DatePickerRangeUi: React.FC<DatePickerUIProps> = ({
         }
 
         .react-datepicker__header {
-          background-color: var(--secondary);
+          background-color: var(--secondaryalt);
           color: var(--font);
           border-bottom: 1px solid var(--border);
           padding: 10px;

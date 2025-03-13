@@ -25,7 +25,7 @@ export const ColorPickerField = <T extends FieldValues>({
           }`}
       </style>
       {label && (
-        <label htmlFor={name} className={`block mb-1 text-[var(--font)] ${labelClassName}`}>
+        <label htmlFor={name} className={`block mb-1 text-neutral-700 ${labelClassName}`}>
           {label}
           {isRequired && <span className="text-[var(--error)] ml-1">*</span>}
         </label>
