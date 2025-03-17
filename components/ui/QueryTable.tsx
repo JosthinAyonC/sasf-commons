@@ -55,7 +55,7 @@ interface TableProps<T extends object> {
   disableRowExpand?: (_row: T) => boolean;
   notFoundLabel?: string;
   refreshEvent?: string;
-  searhPlaceholder?: string;
+  searchPlaceholder?: string;
 }
 
 /**
@@ -98,7 +98,7 @@ export const QueryTable = <T extends object>({
   disableRowExpand,
   notFoundLabel = 'No se encontraron resultados',
   refreshEvent,
-  searhPlaceholder = 'Buscar...',
+  searchPlaceholder = 'Buscar...',
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
@@ -319,7 +319,7 @@ export const QueryTable = <T extends object>({
                   setGlobalFilter(e.target.value);
                   setPagination({ ...pagination, pageIndex: 0 });
                 }}
-                placeholder={searhPlaceholder}
+                placeholder={searchPlaceholder}
                 className="flex-1 p-2 bg-transparent text-[var(--font)] placeholder-[var(--placeholder)] focus:outline-none w-[25%]"
               />
               {globalFilter && (
@@ -413,9 +413,10 @@ export const QueryTable = <T extends object>({
                           type="button"
                           onClick={() => toggleRowExpansion(row.id, row.original)}
                           className={`focus:outline-none transition-transform duration-300 flex items-center justify-center
-                            ${typeof disableRowExpand === 'function' && disableRowExpand(row.original)
-                              ? 'cursor-not-allowed text-[var(--disabled)] opacity-50'
-                              : 'cursor-pointer hover:text-[var(--hover)]'
+                            ${
+                              typeof disableRowExpand === 'function' && disableRowExpand(row.original)
+                                ? 'cursor-not-allowed text-[var(--disabled)] opacity-50'
+                                : 'cursor-pointer hover:text-[var(--hover)]'
                             }`}
                           disabled={typeof disableRowExpand === 'function' && disableRowExpand(row.original)}
                         >
