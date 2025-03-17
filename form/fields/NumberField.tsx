@@ -40,7 +40,9 @@ export const NumberField = <T extends FieldValues>({
 
     if (!regex.test(value)) {
       setTooltipMessage('En este campo solo se pueden ingresar números, "." o ","');
-      event.currentTarget.value = value.slice(0, -1);
+      const cursorPosition = event.currentTarget.selectionStart || 0;
+      event.currentTarget.value = value.slice(0, cursorPosition - 1) + value.slice(cursorPosition);
+      event.currentTarget.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
       event.preventDefault();
       return;
     }

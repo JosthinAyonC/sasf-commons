@@ -18,6 +18,7 @@ interface TableProps<T extends object> {
   onDeleteAction?: (_row: T) => void;
   rowExpand?: (_row: T) => JSX.Element;
   disableRowExpand?: (_row: T) => boolean;
+  searchPlaceholder?: string;
 }
 
 export const Table = <T extends object>({
@@ -33,6 +34,7 @@ export const Table = <T extends object>({
   onDeleteAction,
   rowExpand,
   disableRowExpand,
+  searchPlaceholder = 'Buscar...',
 }: TableProps<T>) => {
   const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
   const [overlayData, setOverlayData] = useState<{ row: T; buttonRect: DOMRect } | null>(null);
@@ -123,8 +125,10 @@ export const Table = <T extends object>({
         <input
           type="text"
           value={globalFilter ?? ''}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Buscar..."
+          onChange={(e) => {
+            setGlobalFilter(e.target.value);
+          }}
+          placeholder={searchPlaceholder}
           className="mb-4 p-2 border-[var(--border)] rounded-md w-full bg-[var(--bg)] text-[var(--font)] placeholder-[var(--placeholder)]
               focus:outline-none focus:ring focus:border-[var(--highlight)]"
         />
@@ -287,7 +291,7 @@ export const Table = <T extends object>({
 
       {overlayData && (
         <motion.div
-          className="absolute z-50 bg-[var(--bg)] border border-[var(--border)] rounded shadow-lg p-4"
+          className="fixed z-50 bg-[var(--bg)] border border-[var(--border)] rounded shadow-lg p-4"
           style={{
             top: overlayData.buttonRect.bottom + window.scrollY + 10,
             left: overlayData.buttonRect.left + overlayData.buttonRect.width / 2,

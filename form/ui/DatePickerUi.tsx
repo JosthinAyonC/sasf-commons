@@ -1,8 +1,9 @@
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Tooltip } from '~/components/ui';
 
 import { DatePickerUIProps } from './types';
 
@@ -20,6 +21,12 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
   const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: yearUpRange + yearDownRange + 1 }, (_, i) => currentYear - yearDownRange + i);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [tooltipMessage, setTooltipMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSelectedDate(selected ?? null);
+  }, [selected]);
 
   return (
     <div className="relative w-full z-50">
@@ -57,8 +64,8 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
 
         .react-datepicker__day--selected,
         .react-datepicker__day--keyboard-selected {
-          background-color: var(--secondary);
-          color: var(--bg);
+          background-color: var(--secondaryalt);
+          color: var(--font);
           font-weight: bold;
           border-radius: 6px;
         }
@@ -97,10 +104,23 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
       `}</style>
 
       <DatePicker
-        selected={selected && !isNaN(new Date(selected).getTime()) ? new Date(selected) : null}
+        selected={selectedDate && !isNaN(new Date(selectedDate).getTime()) ? new Date(selectedDate) : null}
         onChange={(date) => {
-          if (onChange) {
-            onChange(date);
+          if (date) {
+            const year = date.getFullYear();
+            if (year >= currentYear - yearDownRange && year <= currentYear + yearUpRange) {
+              setSelectedDate(date);
+              setTooltipMessage(null); // Oculta el tooltip si la fecha es válida
+              if (onChange) {
+                onChange(date);
+              }
+            } else {
+              setSelectedDate(null);
+              setTooltipMessage(`El año debe estar entre ${currentYear - yearDownRange} y ${currentYear + yearUpRange}`);
+              if (onChange) {
+                onChange(null);
+              }
+            }
           }
         }}
         dateFormat="dd/MM/yyyy"
@@ -136,7 +156,7 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
             <select
               value={date.getMonth()}
               onChange={(e) => changeMonth(parseInt(e.target.value))}
-              className="bg-[var(--hover2)] text-[var(--font)] rounded-md px-2 py-1 focus:outline-none"
+              className="bg-[var(--secondaryalthover)] text-[var(--font)] rounded-md px-2 py-1 focus:outline-none"
             >
               {months.map((month, index) => (
                 <option key={month} value={index}>
@@ -149,7 +169,7 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
             <select
               value={date.getFullYear()}
               onChange={(e) => changeYear(parseInt(e.target.value))}
-              className="bg-[var(--hover2)] text-[var(--font)] rounded-md px-2 py-1 focus:outline-none ml-2"
+              className="bg-[var(--secondaryalthover)] text-[var(--font)] rounded-md px-2 py-1 focus:outline-none ml-2"
             >
               {years.map((year) => (
                 <option key={year} value={year}>
@@ -170,6 +190,11 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
           </div>
         )}
       />
+      {tooltipMessage && (
+        <div className="  left-0 mt-1 text-xs text-[var(--error)] flex items-center gap-1">
+          <Tooltip message={tooltipMessage} variant="danger" />
+        </div>
+      )}
     </div>
   );
 };
