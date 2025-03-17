@@ -59,13 +59,44 @@ interface TableProps<T extends object> {
 }
 
 /**
- * Este componente es una tabla que se conecta a un endpoint para obtener los datos a mostrar.
- * funciona para cruds sencillos, para tablas más complejas que mapeen relaciones
- * Lo recomendado es instalar prime react y usar sus componentes
- * Mapeando su lógica dentro del mismo componente.
+ * Componente de tabla que se conecta a un endpoint para obtener y mostrar datos.
+ * Diseñado para funcionar con `Pageable` de Spring Boot, pero puede ser extendido
+ * para soportar cualquier API.
  *
- * El componente esta demasiado adaptado a la esctrutura de Pageable de Spring Boot,
- * TODO: Hacerlo más genérico para que pueda ser usado con cualquier API
+ * @template T Tipo genérico de los datos que maneja la tabla.
+ *
+ * @param {Array<{ header: string, accessor: keyof T }>} columns - Columnas de la tabla,
+ *        donde `header` es el nombre visible y `accessor` la clave del objeto de datos.
+ * @param {string} fetchUrl - URL del endpoint para obtener los datos de la tabla.
+ * @param {string} searchUrl - URL del endpoint para realizar búsquedas en la tabla.
+ * @param {Record<string, unknown>} [queryParams={}] - Parámetros adicionales para las consultas a la API.
+ * @param {string} [title] - Título de la tabla.
+ * @param {string} [filterKey='filter'] - Clave del parámetro de búsqueda en la API.
+ * @param {string} [pageKey='page'] - Clave del parámetro de paginación en la API.
+ * @param {string} [sizeKey='size'] - Clave del parámetro que define el tamaño de la página.
+ * @param {string} [sortKey='sort'] - Clave del parámetro que define el ordenamiento.
+ * @param {number} [debounceDelay=300] - Tiempo de espera en milisegundos para la búsqueda con debounce.
+ * @param {string} [responseDataKey='content'] - Clave dentro de la respuesta de la API que contiene los datos.
+ * @param {string} [responseTotalCount='totalElements'] - Clave dentro de la respuesta de la API que contiene la cantidad total de elementos.
+ * @param {boolean} [showOptions=true] - Indica si se deben mostrar opciones en la tabla (nextPage, totalPages, etc.).
+ * @param {boolean} [searchable=true] - Indica si la tabla permite búsqueda.
+ * @param {(item: T) => void} [onSelectAction] - Función que se ejecuta cuando se selecciona un elemento de la tabla, si no se envía no aparece el botón de editar.
+ * @param {(id: string | number) => void} [onDeleteAction] - Función que se ejecuta al eliminar un elemento.
+ * @param {(item: T) => boolean} [statusAccessor] - Función que accede al estado de un elemento de la tabla.
+ * @param {(id: string | number, newStatus: boolean) => void} [onStatusChange] - Función que se ejecuta cuando cambia el estado de un elemento.
+ * @param {() => void} [onNewAction] - Función que se ejecuta al presionar el botón de "Nuevo".
+ * @param {(ids: Array<string | number>) => void} [onDeleteMassiveAction] - Función para eliminar múltiples elementos a la vez.
+ * @param {number} [defaultPage=0] - Página inicial por defecto.
+ * @param {number} [defaultSize=5] - Cantidad de elementos por página por defecto.
+ * @param {string} [defaultSortQuery=''] - Query de ordenamiento por defecto.
+ * @param {boolean} [sorteable=true] - Indica si la tabla permite ordenar columnas.
+ * @param {number} [pagesToShow=5] - Número de páginas visibles en la paginación.
+ * @param {string} [tableClassName] - Clases CSS adicionales para la tabla.
+ * @param {(rowData: T) => React.ReactNode} [rowExpand] - Función que define el contenido expandible de una fila.
+ * @param {(rowData: T) => boolean} [disableRowExpand] - Función que indica si se debe deshabilitar la expansión de una fila.
+ * @param {string} [notFoundLabel='No se encontraron resultados'] - Texto a mostrar cuando no hay datos en la tabla.
+ * @param {any} [refreshEvent] - Evento que, cuando cambia, refresca la tabla.
+ * @param {string} [searchPlaceholder='Buscar...'] - Texto del placeholder en la barra de búsqueda.
  */
 export const QueryTable = <T extends object>({
   columns,
