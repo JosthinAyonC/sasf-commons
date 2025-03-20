@@ -77,7 +77,7 @@ export const Dialog: React.FC<DialogProps> = ({
       >
         <motion.div
           className={`
-            ${isDesktop ? `bg-[var(--bg)] rounded-lg border border-[var(--border)] shadow-lg p-6 w-full relative ${desktopClassName ?? 'max-w-md'}` : `bg-[var(--bg)] w-full h-full p-6 relative ${mobileClassName}`}
+            ${isDesktop ? `bg-[var(--bg)] rounded-lg border border-[var(--border)] shadow-lg p-6 relative ${desktopClassName ?? 'max-w-md'}` : `bg-[var(--bg)] w-full h-full p-6 relative ${mobileClassName}`} 
             ${contentClassName || ''}
           `}
           initial={{ scale: 0.9, opacity: 0 }}

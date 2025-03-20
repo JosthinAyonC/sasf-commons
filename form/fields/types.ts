@@ -80,7 +80,7 @@ export interface ImageUploadFieldProps {
   cancelLabel?: string;
   saveLabel?: string;
   placeholder?: string;
-  imageUrl?: string;
+  defaultSrc?: string;
   draggText?: string;
   fileNotSupportedText?: string;
 }

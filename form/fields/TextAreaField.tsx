@@ -28,7 +28,7 @@ export const TextAreaField = <T extends FieldValues>({
     <div className="w-full">
       {label && (
         <label htmlFor={name as string} className={`text-neutral-700 ${labelClassName} block`}>
-          {label}
+          {label} {isRequired && <span className="text-[var(--error)]">*</span>}
         </label>
       )}
       <textarea

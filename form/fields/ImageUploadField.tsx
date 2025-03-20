@@ -6,6 +6,7 @@ import Cropper from 'react-easy-crop';
 import { FieldError, useFormContext } from 'react-hook-form';
 import { FaPen } from 'react-icons/fa';
 import { SimpleDialog } from '~/components/ui/SimpleDialog';
+import { base64ToBlob } from '~/utils/Functions';
 
 import { Button } from './Button';
 import { ImageUploadFieldProps } from './types';
@@ -26,7 +27,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   placeholder = 'Arrastra o haz clic para subir',
   draggText = 'Suelta la imagen',
   fileNotSupportedText = 'Solo se permiten imágenes en formato PNG o JPEG',
-  imageUrl,
+  defaultSrc,
   requiredMsg,
 }) => {
   const {
@@ -36,12 +37,12 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     formState: { errors },
   } = useFormContext();
   const error = errors[name] as FieldError | undefined;
-  const [preview, setPreview] = useState<string | null>(imageUrl || null);
+  const [preview, setPreview] = useState<string | null>(defaultSrc || null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(defaultZoom);
   const [fileError, setFileError] = useState<string | null>(null);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
-  const [imageSrc, setImageSrc] = useState<string | null>(imageUrl || null);
+  const [imageSrc, setImageSrc] = useState<string | null>(defaultSrc || null);
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [isCropping, setIsCropping] = useState(false);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -51,19 +52,28 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   }, [register, name, isRequired, requiredMsg]);
 
   useEffect(() => {
-    const imageUrl = watch(name);
-    if (imageUrl) {
-      setPreview(imageUrl);
-      setImageSrc(imageUrl);
+    const defaultSrc = watch(name);
+    if (defaultSrc) {
+      setPreview(defaultSrc);
+      setImageSrc(defaultSrc);
     }
   }, [watch, name]);
+
+  useEffect(() => {
+    if (defaultSrc?.startsWith('data:image/')) {
+      const blob = base64ToBlob(defaultSrc);
+      const file = new File([blob], 'imagen-cargada.png', { type: blob.type });
+      setPreview(URL.createObjectURL(file));
+      setValue(name, file, { shouldValidate: isRequired });
+    }
+  }, [defaultSrc, setValue, name]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
       setOriginalFile(file);
-      const imageURL = URL.createObjectURL(file);
-      setImageSrc(imageURL);
+      const defaultSrc = URL.createObjectURL(file);
+      setImageSrc(defaultSrc);
       setIsCropping(true);
     }
   }, []);
