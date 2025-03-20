@@ -73,7 +73,7 @@ export const CardSelectableGroup = ({
                 style={{ width: `${cardSizeX}px`, height: `${cardSizeY}px` }}
               >
                 <label
-                  className={`border-2 rounded-lg transition-all flex flex-col hover:border-[var(--primary)] peer-checked:border-[var(--primary)] ${commonClasses}`}
+                  className={`rounded-lg transition-all flex flex-col ${commonClasses}`}
                 >
                   <div className="flex items-center gap-2 mb-4">
                     <input
@@ -82,7 +82,7 @@ export const CardSelectableGroup = ({
                       {...register(name, { required: required ? requiredMsg : undefined })}
                       disabled={isDisabled}
                       className={`border border-[var(--border)] appearance-none w-4 h-4 rounded-full 
-                                            checked:bg-[var(--primary)] checked:border-[var(--primary)] 
+                                            checked:bg-[var(--primary)] 
                                             focus:ring-[var(--focus)] ${commonClasses} ${optionClassName}`}
                     />
                     {option.label && <span className={`text-sm text-[var(--font)] ${commonClasses}`}>{option.label}</span>}
