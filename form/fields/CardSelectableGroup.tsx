@@ -72,9 +72,7 @@ export const CardSelectableGroup = ({
                 className={`border rounded-lg p-2 flex justify-center ${cardClassName} ${commonClasses}`}
                 style={{ width: `${cardSizeX}px`, height: `${cardSizeY}px` }}
               >
-                <label
-                  className={`rounded-lg transition-all flex flex-col ${commonClasses}`}
-                >
+                <label className={`rounded-lg transition-all flex flex-col ${commonClasses}`}>
                   <div className="flex items-center gap-2 mb-4">
                     <input
                       type="radio"

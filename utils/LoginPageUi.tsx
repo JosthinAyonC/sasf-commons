@@ -2,7 +2,6 @@ import { faEye, faEyeSlash, faLock, faUser } from '@fortawesome/free-solid-svg-i
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Loader } from '~/components/ui/Loader';
 import { Form } from '~/form/Form';
 import { Button, FormState, TextField } from '~/form/fields';
 import { useMediaQuery } from '~/hooks/useMediaQuery';
@@ -90,8 +89,8 @@ const LoginPageUi = ({
           </div>
 
           {/* Botón de login */}
-          <Button variant="primary" type="submit" className="w-full font-bold py-3" disabled={isLoading}>
-            {isLoading ? <Loader className="text-[var(--primary)]" /> : 'INGRESAR'}
+          <Button variant="primary" type="submit" className="w-full font-bold py-3" isLoading={isLoading}>
+            INGRESAR
           </Button>
         </Form>
       </div>
