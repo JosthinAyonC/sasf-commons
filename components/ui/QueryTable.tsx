@@ -168,9 +168,15 @@ export const QueryTable = <T extends object>({
   const { data, loading, error, refetch } = useQuery<(Record<string, unknown> & { content: T[]; totalElements: number }) | null>(
     fetchUrl,
     undefined,
-    queryParamsWithPagination
+    queryParamsWithPagination,
+    true,
+    'network-first'
   );
   const totalPages = data ? Math.ceil((data[responseTotalCount] as number) / pagination.pageSize) : 0;
+
+  useEffect(() => {
+    setSelectedRows([]);
+  }, [pagination]);
 
   useEffect(() => {
     const eventName = refreshEvent || 'refreshTable';
@@ -184,6 +190,8 @@ export const QueryTable = <T extends object>({
 
   useEffect(() => {
     setExpandedRows({});
+    setSelectedRows([]);
+
     if (searchUrl) {
       refetch(searchUrl);
     }
@@ -346,7 +354,6 @@ export const QueryTable = <T extends object>({
                 type="text"
                 value={globalFilter ?? ''}
                 onChange={(e) => {
-                  setSelectedRows([]);
                   setGlobalFilter(e.target.value);
                   setPagination({ ...pagination, pageIndex: 0 });
                 }}
@@ -458,10 +465,14 @@ export const QueryTable = <T extends object>({
                       </td>
                     )}
                     {row.getVisibleCells().map((cell) => {
+                      const meta = cell.column.columnDef.meta as Record<string, unknown> | undefined;
+                      const customClass = typeof meta?.className === 'string' ? meta.className : '';
+                      const whitespaceClass = customClass.includes('whitespace-normal') ? '' : 'whitespace-nowrap';
+
                       if (statusAccessor && cell.column.id === statusAccessor) {
                         const status = cell.getValue() as 'A' | 'I';
                         return (
-                          <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
+                          <td key={cell.id} className={`px-6 py-4 text-sm font-light border-[var(--border)] ${whitespaceClass} ${customClass}`}>
                             <div className="flex items-center justify-center">
                               <Toggle isActive={status === 'A'} onToggle={() => handleStatusToggle(row.original)} />
                             </div>
@@ -470,7 +481,7 @@ export const QueryTable = <T extends object>({
                       }
 
                       return (
-                        <td key={cell.id} className="whitespace-nowrap px-6 py-4 text-sm font-light border-[var(--border)]">
+                        <td key={cell.id} className={`px-6 py-4 text-sm font-light border-[var(--border)] ${whitespaceClass} ${customClass}`}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       );
