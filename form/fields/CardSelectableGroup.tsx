@@ -61,7 +61,7 @@ export const CardSelectableGroup = ({
         }
         `}</style>
       <div className="my-4 gap-4">
-        <div className={`flex flex-wrap gap-2 justify-center ${groupClassName}`}>
+        <div className={`flex flex-wrap gap-2 ${groupClassName}`}>
           {options.map((option) => {
             const isDisabled = option.isLoadingContent;
             const commonClasses = isDisabled ? 'cursor-not-allowed' : 'cursor-pointer';
