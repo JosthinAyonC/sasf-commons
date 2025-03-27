@@ -5,7 +5,7 @@ interface RotatingTextProps {
   interval?: number;
 }
 
-const RotatingText: React.FC<RotatingTextProps> = ({ texts, interval = 3000 }) => {
+export const RotatingText: React.FC<RotatingTextProps> = ({ texts, interval = 3000 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -18,5 +18,3 @@ const RotatingText: React.FC<RotatingTextProps> = ({ texts, interval = 3000 }) =
 
   return <span className="text-sm text-neutral-700">{texts[currentIndex]}</span>;
 };
-
-export default RotatingText;

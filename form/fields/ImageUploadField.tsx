@@ -66,7 +66,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
       setPreview(URL.createObjectURL(file));
       setValue(name, file, { shouldValidate: isRequired });
     }
-  }, [defaultSrc, setValue, name]);
+  }, [defaultSrc, setValue, name, isRequired]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {

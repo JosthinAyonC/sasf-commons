@@ -11,3 +11,4 @@ export * from './Toggle';
 export * from './Tooltip';
 export * from './Popover';
 export * from './Accordion';
+export * from './RoatingText';
