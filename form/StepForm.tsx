@@ -82,7 +82,11 @@ export const StepForm = <T extends FieldValues>({
         {/* Current Step Component */}
         {activeForm ? (
           <form onSubmit={finalMethods.handleSubmit(onSubmit)} className={steps[currentStep].stepClassName || ''}>
-            {steps[currentStep].component}
+            {steps.map((step, index) => (
+              <div key={index} hidden={index !== currentStep}>
+                {step.component}
+              </div>
+            ))}
 
             <div className="bg-[var(--bg)] p-4 flex justify-end mt-4 space-x-2">
               {/* Botón Previous */}
@@ -125,7 +129,11 @@ export const StepForm = <T extends FieldValues>({
           </form>
         ) : (
           <div className={steps[currentStep].stepClassName || ''}>
-            {steps[currentStep].component}
+            {steps.map((step, index) => (
+              <div key={index} hidden={index !== currentStep}>
+                {step.component}
+              </div>
+            ))}
 
             <div className="flex justify-end mt-4 space-x-2">
               {/* Botón Previous */}
