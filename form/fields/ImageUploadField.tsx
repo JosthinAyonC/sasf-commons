@@ -8,6 +8,7 @@ import { FaPen } from 'react-icons/fa';
 import { SimpleDialog } from '~/components/ui/SimpleDialog';
 import { base64ToBlob } from '~/utils/Functions';
 
+import { Image as ImageUi } from '../ui';
 import { Button } from './Button';
 import { ImageUploadFieldProps } from './types';
 
@@ -120,10 +121,11 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
       croppedAreaPixels.height
     );
 
-    canvas.toBlob((blob) => {
+    canvas.toBlob(async (blob) => {
       if (blob) {
         const croppedFile = new File([blob], originalFile.name, { type: originalFile.type });
         setPreview(URL.createObjectURL(croppedFile));
+        setImageSrc(URL.createObjectURL(croppedFile));
         setValue(name, croppedFile, { shouldValidate: isRequired });
         setIsCropping(false);
       }
@@ -147,9 +149,9 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
         {isDragActive ? (
           <span className="text-[var(--font)] text-sm">{draggText}</span>
         ) : preview ? (
-          <img src={preview} alt="preview" className="w-full h-full object-cover rounded-lg" />
+          <ImageUi src={preview} alt="preview" className="w-full h-full object-cover rounded-lg" />
         ) : watch(name) ? (
-          <img src={watch(name)} alt="preview" className="w-full h-full object-cover rounded-lg" />
+          <ImageUi src={watch(name)} alt="preview" className="w-full h-full object-cover rounded-lg" />
         ) : (
           <span className="text-[var(--font)] text-sm">{placeholder}</span>
         )}
