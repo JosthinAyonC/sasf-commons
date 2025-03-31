@@ -213,7 +213,7 @@ export interface RadioButtonProps {
   optionLabelClassName?: string;
 }
 export interface Option<T = string | number | object> {
-  label: string;
+  label: string | JSX.Element;
   value: T;
 }
 
