@@ -28,6 +28,7 @@ const customStyles: StylesConfig<Option> = {
   }),
   option: (styles, { isFocused, isSelected }) => ({
     ...styles,
+    display: 'flex',
     backgroundColor: isSelected ? 'var(--secondaryalt)' : isFocused ? 'var(--secondaryalt)' : 'var(--bg)',
     color: 'var(--font)',
     cursor: 'pointer',

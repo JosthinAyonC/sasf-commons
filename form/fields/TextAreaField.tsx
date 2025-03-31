@@ -16,7 +16,8 @@ export const TextAreaField = <T extends FieldValues>({
   labelClassName,
   errorClassName,
   requiredMsg,
-}: Omit<TextFieldProps<T>, 'register' | 'error'>) => {
+  rows = 3,
+}: Omit<TextFieldProps<T>, 'register' | 'error'> & { rows?: number }) => {
   const {
     register,
     formState: { errors },
@@ -41,12 +42,13 @@ export const TextAreaField = <T extends FieldValues>({
         defaultValue={defaultValue}
         autoComplete="off"
         disabled={disabled}
+        rows={rows}
         className={`border border-[var(--border)] rounded-md p-2 focus:outline-none focus:border-[var(--primary)] placeholder:text-[var(--placeholder)] bg-[var(--bg)] text-[var(--font)] w-full min-h-[40px] ${
           error ? 'border-[var(--error)]' : ''
         } ${disabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''} ${inputClassName}`}
       />
       {error && (
-        <span className={`text-[var(--error)] text-xs ${errorClassName}`}>
+        <span className={`text-[var(--error)] text-xs flex items-center ${errorClassName}`}>
           <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
           {error.message as string}
         </span>
