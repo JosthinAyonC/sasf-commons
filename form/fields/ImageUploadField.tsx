@@ -30,6 +30,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   fileNotSupportedText = 'Solo se permiten imágenes en formato PNG o JPEG',
   defaultSrc,
   requiredMsg,
+  maxFileSize = 1 * 1024 * 1024,
 }) => {
   const {
     setValue,
@@ -79,11 +80,21 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     }
   }, []);
 
+
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: { 'image/png': [], 'image/jpeg': [] },
-    onDropRejected: () => {
-      setFileError(fileNotSupportedText);
+    accept: { 'image/png': [], 'image/jpeg': [], 'image/svg+xml': [] },
+    maxSize: maxFileSize,
+    onDropRejected: (fileRejections) => {
+      const rejectedBySize = fileRejections.find(
+        (rejection) => rejection.file.size > maxFileSize
+      );
+  
+      if (rejectedBySize) {
+        setFileError(`El archivo es demasiado grande. Tamaño máximo permitido: ${(maxFileSize / (1024 * 1024)).toFixed(2)}MB`);
+      } else {
+        setFileError(fileNotSupportedText);
+      }
       setIsDragActive(false);
     },
     multiple: false,
@@ -91,9 +102,10 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     onDragLeave: () => setIsDragActive(false),
     onDropAccepted: () => {
       setIsDragActive(false);
-      setFileError(null);
+      setFileError(null); 
     },
   });
+  
 
   const getCroppedImg = async () => {
     if (!imageSrc || !croppedAreaPixels || !originalFile) return;
@@ -106,6 +118,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    
     canvas.width = croppedAreaPixels.width;
     canvas.height = croppedAreaPixels.height;
 
@@ -131,7 +144,9 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
       }
     }, originalFile.type);
   };
-
+  useEffect(() => {
+    console.log('fileError:', fileError); // Verificar si el error cambia
+  }, [fileError]);
   return (
     <div className={`flex flex-col ${className}`} key={name}>
       {label && (

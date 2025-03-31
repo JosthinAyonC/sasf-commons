@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 
 export interface DialogContextProps {
   openDialog: (_keyId: string, _value?: string, _modalProps?: Record<string, unknown>) => void;
@@ -23,7 +22,7 @@ export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
 
   const openDialog = (keyId: string, value?: string, props?: Record<string, unknown>) => {
-    const dialogValue = value || uuidv4();
+    const dialogValue = value || 'open';
     const params = new URLSearchParams(searchParams);
     params.set(keyId, dialogValue);
     setSearchParams(params);
