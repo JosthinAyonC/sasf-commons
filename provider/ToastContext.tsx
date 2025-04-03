@@ -18,10 +18,9 @@ export const ToastContext = createContext<ToastContextType | undefined>(undefine
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = (message: string, variant: ToastVariant, timeout = 5000) => {
+  const addToast = (message: string, variant: ToastVariant) => {
     const id = Date.now().toString();
     setToasts((prev) => [...prev, { id, message, variant }]);
-    setTimeout(() => removeToast(id), timeout);
   };
 
   const removeToast = (id: string) => {
