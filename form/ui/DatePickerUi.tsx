@@ -29,7 +29,7 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
   }, [selected]);
 
   return (
-    <div className="relative w-full z-50">
+    <div className="relative w-full z-10">
       <style>{`
         .react-datepicker {
           border-radius: 8px;
