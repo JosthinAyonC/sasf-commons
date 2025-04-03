@@ -83,7 +83,7 @@ export interface ImageUploadFieldProps {
   defaultSrc?: string;
   draggText?: string;
   fileNotSupportedText?: string;
-  maxFileSize?:number;
+  maxFileSize?: number;
 }
 
 /*

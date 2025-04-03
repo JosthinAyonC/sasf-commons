@@ -20,7 +20,7 @@ export const Image: React.FC<ImageProps> = ({
   }, [src, fallback]);
 
   return (
-    <div className={`relative border rounded-sm ${className || ''}`} style={{ width: `${width}px`, height: `${height}px` }}>
+    <div className={`relative rounded-sm ${className || ''}`} style={{ width: `${width}px`, height: `${height}px` }}>
       {isLoading && <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg"></div>}
       <img
         src={imgSrc}

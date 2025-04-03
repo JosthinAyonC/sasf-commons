@@ -80,16 +80,13 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     }
   }, []);
 
-
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: { 'image/png': [], 'image/jpeg': [], 'image/svg+xml': [] },
     maxSize: maxFileSize,
     onDropRejected: (fileRejections) => {
-      const rejectedBySize = fileRejections.find(
-        (rejection) => rejection.file.size > maxFileSize
-      );
-  
+      const rejectedBySize = fileRejections.find((rejection) => rejection.file.size > maxFileSize);
+
       if (rejectedBySize) {
         setFileError(`El archivo es demasiado grande. Tamaño máximo permitido: ${(maxFileSize / (1024 * 1024)).toFixed(2)}MB`);
       } else {
@@ -102,10 +99,9 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     onDragLeave: () => setIsDragActive(false),
     onDropAccepted: () => {
       setIsDragActive(false);
-      setFileError(null); 
+      setFileError(null);
     },
   });
-  
 
   const getCroppedImg = async () => {
     if (!imageSrc || !croppedAreaPixels || !originalFile) return;
@@ -118,7 +114,6 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    
     canvas.width = croppedAreaPixels.width;
     canvas.height = croppedAreaPixels.height;
 
@@ -144,9 +139,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
       }
     }, originalFile.type);
   };
-  useEffect(() => {
-    console.log('fileError:', fileError); // Verificar si el error cambia
-  }, [fileError]);
+
   return (
     <div className={`flex flex-col ${className}`} key={name}>
       {label && (
@@ -160,7 +153,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
         className="border border-[var(--border)] rounded-lg bg-[var(--background)] flex justify-center items-center cursor-pointer relative"
         style={{ width: sizeX, height: sizeY }}
       >
-        <input {...getInputProps()} required={isRequired} />
+        <input {...getInputProps()} />
         {isDragActive ? (
           <span className="text-[var(--font)] text-sm">{draggText}</span>
         ) : preview ? (
