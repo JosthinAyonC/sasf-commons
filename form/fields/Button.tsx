@@ -45,7 +45,10 @@ export const Button: React.FC<ButtonProps & { isLoading?: boolean }> = ({
       disabled={disabled || isLoading}
       {...props}
     >
-      {isLoading ? <span className="animate-spin h-5 w-5 border-4 border-[var(--bg)] border-t-transparent rounded-full"></span> : children}
+      <span className="flex items-center justify-center" style={{ visibility: isLoading ? 'hidden' : 'visible' }}>
+        {children}
+      </span>
+      {isLoading && <span className="absolute animate-spin h-5 w-5 border-4 border-[var(--bg)] border-t-transparent rounded-full"></span>}
     </button>
   );
 };

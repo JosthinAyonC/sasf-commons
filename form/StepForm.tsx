@@ -1,3 +1,5 @@
+import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { FieldValues, FormProvider as RHFProvider, UseFormReturn, useForm } from 'react-hook-form';
 
@@ -18,7 +20,6 @@ interface StepFormProps<T extends FieldValues> {
   nextStepLabel?: string;
   previousStepLabel?: string;
   submitLabel?: string;
-  cancelLabel?: string;
   activeForm?: boolean;
 }
 
@@ -34,15 +35,13 @@ export const StepForm = <T extends FieldValues>({
 }: StepFormProps<T>) => {
   const internalMethods = useForm<T>({ mode: 'onBlur' });
   const finalMethods = methods || internalMethods;
-  const { formState, trigger, watch } = finalMethods;
+  const { formState, trigger, watch, handleSubmit } = finalMethods;
   const watchedFields = watch();
   const [currentStep, setCurrentStep] = useState(0);
   const [invalidStep, setInvalidStep] = useState(false);
 
   useEffect(() => {
-    if (formState.isValid) {
-      setInvalidStep(false);
-    }
+    setInvalidStep(!formState.isValid);
   }, [formState.isValid, watchedFields]);
 
   const validateAndNext = async (index: number) => {
@@ -81,15 +80,15 @@ export const StepForm = <T extends FieldValues>({
 
         {/* Current Step Component */}
         {activeForm ? (
-          <form onSubmit={finalMethods.handleSubmit(onSubmit)} className={steps[currentStep].stepClassName || ''}>
+          <form onSubmit={handleSubmit(onSubmit)} className={steps[currentStep].stepClassName || ''}>
             {steps.map((step, index) => (
               <div key={index} hidden={index !== currentStep}>
                 {step.component}
               </div>
             ))}
 
-            <div className="bg-[var(--bg)] p-4 flex justify-end mt-4 space-x-2">
-              {/* Botón Previous */}
+            <div className={`flex mt-4 ${currentStep > 0 ? 'justify-between' : 'justify-end'}`}>
+              {/* Botón Previous en la izquierda */}
               {currentStep > 0 && (
                 <Button
                   type="button"
@@ -101,30 +100,30 @@ export const StepForm = <T extends FieldValues>({
                 </Button>
               )}
 
-              {/* Botón Next */}
-              {currentStep < steps.length - 1 && (
-                <Button
-                  type="button"
-                  variant="primary"
-                  onClick={() => {
-                    if (steps[currentStep].nextStepAction) {
-                      steps[currentStep].nextStepAction();
-                    }
-                    validateAndNext(currentStep + 1);
-                  }}
-                  disabled={invalidStep}
-                  className="transition-shadow duration-200 hover:ring-2 hover:ring-gray-400"
-                >
-                  {nextStepLabel}
-                </Button>
-              )}
+              <div className="flex space-x-2">
+                {/* Botón Guardar (solo si el formulario es válido) */}
+                {!invalidStep && (
+                  <Button onClick={() => handleSubmit(onSubmit)()} variant="primary">
+                    {submitLabel} <FontAwesomeIcon icon={faSave} className="ml-2" />
+                  </Button>
+                )}
 
-              {/* Botón Submit */}
-              {currentStep === steps.length - 1 && (
-                <Button type="submit" className="transition-shadow duration-200 hover:ring-2 hover:ring-gray-400">
-                  {submitLabel}
-                </Button>
-              )}
+                {/* Botón Next en la derecha */}
+                {currentStep < steps.length - 1 && (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => {
+                      if (steps[currentStep].nextStepAction) {
+                        steps[currentStep].nextStepAction();
+                      }
+                      validateAndNext(currentStep + 1);
+                    }}
+                  >
+                    {nextStepLabel}
+                  </Button>
+                )}
+              </div>
             </div>
           </form>
         ) : (
@@ -135,33 +134,38 @@ export const StepForm = <T extends FieldValues>({
               </div>
             ))}
 
-            <div className="flex justify-end mt-4 space-x-2">
-              {/* Botón Previous */}
+            <div className="flex justify-between mt-4">
+              {/* Botón Previous en la izquierda */}
               {currentStep > 0 && (
                 <Button type="button" variant="outline" onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}>
                   {previousStepLabel}
                 </Button>
               )}
 
-              {/* Botón Next */}
-              {currentStep < steps.length - 1 && (
-                <Button
-                  type="button"
-                  variant="primary"
-                  onClick={() => {
-                    if (steps[currentStep].nextStepAction) {
-                      steps[currentStep].nextStepAction();
-                    }
-                    validateAndNext(currentStep + 1);
-                  }}
-                  disabled={invalidStep}
-                >
-                  {nextStepLabel}
-                </Button>
-              )}
+              <div className="flex space-x-2">
+                {/* Botón Guardar (solo si el formulario es válido) */}
+                {!invalidStep && (
+                  <Button onClick={() => handleSubmit(onSubmit)()} variant="primary">
+                    {submitLabel} <FontAwesomeIcon icon={faSave} className="ml-2" />
+                  </Button>
+                )}
 
-              {/* Botón Submit */}
-              {currentStep === steps.length - 1 && <Button onClick={() => finalMethods.handleSubmit(onSubmit)()}>{submitLabel}</Button>}
+                {/* Botón Next en la derecha */}
+                {currentStep < steps.length - 1 && (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => {
+                      if (steps[currentStep].nextStepAction) {
+                        steps[currentStep].nextStepAction();
+                      }
+                      validateAndNext(currentStep + 1);
+                    }}
+                  >
+                    {nextStepLabel}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         )}

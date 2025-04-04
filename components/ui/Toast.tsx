@@ -19,7 +19,7 @@ const ToastMessage = ({ id, message, variant, onRemove }: Toast & { onRemove: (_
   const [progress, setProgress] = useState(100);
   const [isHovered, setIsHovered] = useState(false);
 
-  const duration = 1000; // 3.5 seconds
+  const duration = 1800; // 5.5 seconds
 
   useEffect(() => {
     const enterTimeout = setTimeout(() => setIsVisible(true), 10);
