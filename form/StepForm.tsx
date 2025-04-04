@@ -103,7 +103,7 @@ export const StepForm = <T extends FieldValues>({
               <div className="flex space-x-2">
                 {/* Botón Guardar (solo si el formulario es válido) */}
                 {!invalidStep && (
-                  <Button onClick={() => handleSubmit(onSubmit)()} variant="primary">
+                  <Button onClick={() => handleSubmit(onSubmit)()} variant="outline">
                     {submitLabel} <FontAwesomeIcon icon={faSave} className="ml-2" />
                   </Button>
                 )}
@@ -145,7 +145,7 @@ export const StepForm = <T extends FieldValues>({
               <div className="flex space-x-2">
                 {/* Botón Guardar (solo si el formulario es válido) */}
                 {!invalidStep && (
-                  <Button onClick={() => handleSubmit(onSubmit)()} variant="primary">
+                  <Button onClick={() => handleSubmit(onSubmit)()} variant="outline">
                     {submitLabel} <FontAwesomeIcon icon={faSave} className="ml-2" />
                   </Button>
                 )}
