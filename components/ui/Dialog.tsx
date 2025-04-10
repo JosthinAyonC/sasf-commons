@@ -47,12 +47,12 @@ export const Dialog: React.FC<DialogProps> = ({
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && closeable) {
         closeDialog(keyId);
         if (onCloseAction) onCloseAction();
       }
     },
-    [keyId, closeDialog, onCloseAction]
+    [keyId, closeDialog, onCloseAction, closeable]
   );
 
   useEffect(() => {

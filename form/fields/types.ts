@@ -33,6 +33,7 @@ export interface TextFieldProps<T extends FieldValues> {
   validateEmail?: boolean;
   onChange?: (_value: string) => void;
   requiredMsg?: string;
+  showCharacterIndicator?: boolean;
 }
 
 export interface ToggleFieldProps {
