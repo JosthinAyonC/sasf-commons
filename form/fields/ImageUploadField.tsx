@@ -8,7 +8,7 @@ import { FaPen } from 'react-icons/fa';
 import { SimpleDialog } from '~/components/ui/SimpleDialog';
 import { base64ToBlob } from '~/utils/Functions';
 
-import { Image as ImageUi } from '../ui';
+import { Image as ImageUi } from '../../components/ui';
 import { Button } from './Button';
 import { ImageUploadFieldProps } from './types';
 

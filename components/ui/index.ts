@@ -12,3 +12,5 @@ export * from './Tooltip';
 export * from './Popover';
 export * from './Accordion';
 export * from './RoatingText';
+export * from './Image';
+export * from './Video';
