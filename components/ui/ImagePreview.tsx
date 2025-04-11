@@ -27,7 +27,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({ isOpen, imageUrl, onClose, 
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Image height={height} width={width} src={imageUrl} alt="preview" className="max-w-[90vw] max-h-[90vh]" />
+            <Image height={height} width={width} src={imageUrl} alt="preview" className="max-w-[90vw] max-h-[90vh]" hasPreview={false} />
           </motion.div>
         </div>
       )}

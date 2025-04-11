@@ -40,4 +40,8 @@ export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   alt: string;
   width?: number;
   height?: number;
+  widthPreview?: number;
+  heightPreview?: number;
+  hasPreview?: boolean;
+  previewLabel?: string;
 }
