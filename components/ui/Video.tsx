@@ -13,7 +13,7 @@ interface VideoProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
   widthPreview?: number;
   heightPreview?: number;
   hasPreview?: boolean;
-  className?: string;
+  previewProps?: React.VideoHTMLAttributes<HTMLVideoElement>;
 }
 
 export const Video: React.FC<VideoProps> = ({
@@ -25,7 +25,7 @@ export const Video: React.FC<VideoProps> = ({
   heightPreview = 300,
   previewLabel = 'Previsualización',
   hasPreview = false,
-  className,
+  previewProps,
   ...props
 }) => {
   const [videoSrc, setVideoSrc] = useState<string>(src || fallback);
@@ -38,8 +38,15 @@ export const Video: React.FC<VideoProps> = ({
   }, [src, fallback]);
 
   return (
-    <div className={`relative rounded-sm group overflow-hidden ${className || ''}`} style={{ width: `${width}px`, height: `${height}px` }}>
-      <VideoPreview isOpen={isOpenPreview} onClose={() => setIsOpenPreview(false)} videoUrl={videoSrc} width={widthPreview} height={heightPreview} />
+    <div className={`relative rounded-sm group overflow-hidden ${props.className || ''}`} style={{ width: `${width}px`, height: `${height}px` }}>
+      <VideoPreview
+        isOpen={isOpenPreview}
+        onClose={() => setIsOpenPreview(false)}
+        videoUrl={videoSrc}
+        width={widthPreview}
+        height={heightPreview}
+        previewProps={previewProps}
+      />
 
       {isLoading && <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg"></div>}
 
@@ -53,8 +60,6 @@ export const Video: React.FC<VideoProps> = ({
         className={`w-full h-full object-cover rounded-lg ${isLoading ? 'invisible' : 'visible'}`}
         width={width}
         height={height}
-        muted
-        playsInline
         {...props}
       />
 
@@ -77,9 +82,10 @@ interface VideoPreviewProps {
   onClose: () => void;
   width?: number;
   height?: number;
+  previewProps?: React.VideoHTMLAttributes<HTMLVideoElement>;
 }
 
-const VideoPreview: React.FC<VideoPreviewProps> = ({ isOpen, videoUrl, onClose, width = 600, height = 400 }) => {
+const VideoPreview: React.FC<VideoPreviewProps> = ({ isOpen, videoUrl, previewProps, onClose, width = 600, height = 400 }) => {
   return (
     <AnimatePresence>
       {isOpen && videoUrl && (
@@ -95,7 +101,7 @@ const VideoPreview: React.FC<VideoPreviewProps> = ({ isOpen, videoUrl, onClose, 
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <video src={videoUrl} controls autoPlay width={width} height={height} className="rounded-lg max-w-[90vw] max-h-[90vh]" />
+            <video src={videoUrl} width={width} height={height} className="rounded-lg max-w-[90vw] max-h-[90vh]" {...previewProps} />
           </motion.div>
         </div>
       )}

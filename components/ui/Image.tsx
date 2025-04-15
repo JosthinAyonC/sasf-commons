@@ -84,7 +84,11 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({ isOpen, imageUrl, onClose, 
     <AnimatePresence>
       {isOpen && imageUrl && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-25 z-50" onClick={onClose}>
-          <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-gray-800 text-white rounded-full flex items-center justify-center z-50">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-4 right-4 w-10 h-10 bg-gray-800 text-white rounded-full flex items-center justify-center z-50"
+          >
             <FontAwesomeIcon icon={faClose} className="text-xl" />
           </button>
           <motion.div

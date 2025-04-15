@@ -14,3 +14,4 @@ export * from './Accordion';
 export * from './RoatingText';
 export * from './Image';
 export * from './Video';
+export * from './Tab';
