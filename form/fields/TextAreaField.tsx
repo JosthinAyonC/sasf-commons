@@ -74,7 +74,7 @@ export const TextAreaField = <T extends FieldValues>({
         autoComplete="off"
         disabled={disabled}
         rows={rows}
-        className={`border border-[var(--border)] rounded-md p-2 focus:outline-none focus:border-[var(--primary)] placeholder:text-[var(--placeholder)] bg-[var(--bg)] text-[var(--font)] w-full min-h-[40px] ${
+        className={`border border-[var(--border)] rounded-md p-2 focus:outline-none focus:border-[var(--focus)] placeholder:text-[var(--placeholder)] bg-[var(--bg)] text-[var(--font)] w-full min-h-[40px] ${
           error ? 'border-[var(--error)]' : ''
         } ${disabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''} ${inputClassName}`}
       />
