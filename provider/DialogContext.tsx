@@ -6,6 +6,7 @@ export interface DialogContextProps {
   closeDialog: (_keyId: string) => void;
   getDialogOrder: (_keyId: string) => number;
   getDialogProps: (_keyId: string) => Record<string, unknown> | undefined;
+  getTopDialogId: () => string | undefined;
 }
 
 export const DialogContext = createContext<DialogContextProps | undefined>(undefined);
@@ -53,6 +54,9 @@ export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const getDialogOrder = (keyId: string) => dialogOrder.indexOf(keyId);
   const getDialogProps = (keyId: string) => modalProps[keyId];
+  const getTopDialogId = () => {
+    return dialogOrder[dialogOrder.length - 1];
+  };
 
-  return <DialogContext.Provider value={{ openDialog, closeDialog, getDialogOrder, getDialogProps }}>{children}</DialogContext.Provider>;
+  return <DialogContext.Provider value={{ openDialog, closeDialog, getDialogOrder, getDialogProps, getTopDialogId }}>{children}</DialogContext.Provider>;
 };
