@@ -41,18 +41,20 @@ export const Dialog: React.FC<DialogProps> = ({
   title,
   titleClassName,
 }) => {
-  const { closeDialog, getDialogOrder } = useDialog();
+  const { closeDialog, getDialogOrder, getTopDialogId } = useDialog();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const zIndex = 1000 + getDialogOrder(keyId);
 
+  const isTopDialog = getTopDialogId() === keyId;
+
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && closeable) {
+      if (event.key === 'Escape' && closeable && isTopDialog) {
         closeDialog(keyId);
         if (onCloseAction) onCloseAction();
       }
     },
-    [keyId, closeDialog, onCloseAction, closeable]
+    [keyId, closeDialog, onCloseAction, closeable, isTopDialog]
   );
 
   useEffect(() => {
