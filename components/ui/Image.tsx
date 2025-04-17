@@ -38,6 +38,21 @@ export const Image: React.FC<ImageProps> = ({
     setIsLoading(true);
   }, [src, fallback]);
 
+  useEffect(() => {
+    const img = new window.Image();
+    img.src = src || fallback;
+
+    img.onload = () => {
+      setImgSrc(img.src);
+      setIsLoading(false);
+    };
+
+    img.onerror = () => {
+      setImgSrc(fallback);
+      setIsLoading(false);
+    };
+  }, [src, fallback]);
+
   return (
     <div className={`relative rounded-sm group overflow-hidden ${className || ''}`} style={{ width: `${width}px`, height: `${height}px` }}>
       <ImagePreview isOpen={isOpenPreview} onClose={() => setIsOpenPreview(false)} imageUrl={imgSrc} width={widthPreview} height={heightPreview} />
