@@ -70,17 +70,17 @@ export const Tab: React.FC<TabProps> = ({ tabs, className = '', tabContainerClas
 
   return (
     <div className={`w-full ${className}`}>
-      <div className={`sticky top-0 z-10 flex items-center border-b border-[var(--border)] bg-white shadow-sm py-3 ${tabContainerClassName}`}>
+      <div className={`sticky top-0 z-10 flex items-center border-b border-[var(--border)] bg-[var(--bg)] shadow-sm py-3 ${tabContainerClassName}`}>
         <div className="relative flex items-center justify-center mr-4 md:hidden">
           <FaBars className="text-[var(--font)] text-lg cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)} />
           {isMenuOpen && (
-            <div ref={menuRef} className="absolute top-full left-0 mt-2 w-48 bg-white border border-[var(--border)] rounded-md shadow-lg z-20">
+            <div ref={menuRef} className="absolute top-full left-0 mt-2 w-48 bg-[var(--bg)] border border-[var(--border)] rounded-md shadow-lg z-20">
               {tabs.map((tab, index) => {
                 const tabHasErrors = hasTabErrors(tab.fields);
                 return (
                   <div
                     key={index}
-                    className={`px-4 py-2 cursor-pointer hover:bg-[var(--hover)] ${activeTab === index ? 'bg-[var(--primary)] text-white' : ''} ${tabHasErrors ? 'text-red-500' : ''}`}
+                    className={`px-4 py-2 cursor-pointer hover:bg-[var(--hover)] ${activeTab === index ? 'bg-[var(--primary)]' : ''} ${tabHasErrors ? 'text-red-500' : ''}`}
                     onClick={() => {
                       setActiveTab(index);
                       setIsMenuOpen(false);
