@@ -65,10 +65,36 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     if (defaultSrc?.startsWith('data:image/')) {
       const blob = base64ToBlob(defaultSrc);
       const file = new File([blob], 'imagen-cargada.png', { type: blob.type });
-      setPreview(URL.createObjectURL(file));
-      setValue(name, file, { shouldValidate: isRequired });
+
+      const loadImage = async () => {
+        const image = new Image();
+        const imageURL = URL.createObjectURL(file);
+        image.src = imageURL;
+
+        await new Promise((resolve) => (image.onload = resolve));
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        canvas.width = sizeX;
+        canvas.height = sizeY;
+
+        ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, sizeX, sizeY);
+
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const newFile = new File([blob], file.name, { type: file.type });
+            const previewURL = URL.createObjectURL(newFile);
+            setPreview(previewURL);
+            setValue(name, newFile, { shouldValidate: isRequired });
+          }
+        }, file.type);
+      };
+
+      loadImage();
     }
-  }, [defaultSrc, setValue, name, isRequired]);
+  }, [defaultSrc, setValue, name, isRequired, sizeX, sizeY]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -156,10 +182,14 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
         <input {...getInputProps()} />
         {isDragActive ? (
           <span className="text-[var(--font)] text-sm">{draggText}</span>
-        ) : preview ? (
-          <ImageUi src={preview} alt="preview" className="w-full h-full object-cover rounded-lg" />
-        ) : watch(name) ? (
-          <ImageUi src={watch(name)} alt="preview" className="w-full h-full object-cover rounded-lg" />
+        ) : (preview || watch(name)) ? (
+          <ImageUi
+            src={preview || watch(name)}
+            alt="preview"
+            width={sizeX}
+            height={sizeY}
+            className="w-full h-full rounded-lg"
+          />
         ) : (
           <span className="text-[var(--font)] text-sm">{placeholder}</span>
         )}
