@@ -38,6 +38,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     register,
     formState: { errors },
   } = useFormContext();
+  const watchedValue = watch(name);
   const error = errors[name] as FieldError | undefined;
   const [preview, setPreview] = useState<string | null>(defaultSrc || null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -54,12 +55,11 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   }, [register, name, isRequired, requiredMsg]);
 
   useEffect(() => {
-    const defaultSrc = watch(name);
-    if (defaultSrc) {
-      setPreview(defaultSrc);
-      setImageSrc(defaultSrc);
+    if (watchedValue && typeof watchedValue === 'string') {
+      setPreview(watchedValue);
+      setImageSrc(watchedValue);
     }
-  }, [watch, name]);
+  }, [watchedValue]);
 
   useEffect(() => {
     if (defaultSrc?.startsWith('data:image/')) {
@@ -182,14 +182,8 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
         <input {...getInputProps()} />
         {isDragActive ? (
           <span className="text-[var(--font)] text-sm">{draggText}</span>
-        ) : (preview || watch(name)) ? (
-          <ImageUi
-            src={preview || watch(name)}
-            alt="preview"
-            width={sizeX}
-            height={sizeY}
-            className="w-full h-full rounded-lg"
-          />
+        ) : preview || watch(name) ? (
+          <ImageUi src={preview || watch(name)} alt="preview" width={sizeX} height={sizeY} className="w-full h-full rounded-lg" />
         ) : (
           <span className="text-[var(--font)] text-sm">{placeholder}</span>
         )}

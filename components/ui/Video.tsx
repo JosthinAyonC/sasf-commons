@@ -90,7 +90,11 @@ const VideoPreview: React.FC<VideoPreviewProps> = ({ isOpen, videoUrl, previewPr
     <AnimatePresence>
       {isOpen && videoUrl && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-25 z-50" onClick={onClose}>
-          <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-gray-800 text-white rounded-full flex items-center justify-center z-50">
+          <button
+            onClick={onClose}
+            type="button"
+            className="absolute top-4 right-4 w-10 h-10 bg-gray-800 text-white rounded-full flex items-center justify-center z-50"
+          >
             <FontAwesomeIcon icon={faClose} className="text-xl" />
           </button>
 
