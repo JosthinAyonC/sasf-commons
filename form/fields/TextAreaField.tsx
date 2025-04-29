@@ -27,7 +27,9 @@ export const TextAreaField = <T extends FieldValues>({
     watch,
   } = useFormContext();
 
-  const error = errors[name] as FieldError | undefined;
+  const error = name
+    .split('.')
+    .reduce<Record<string, unknown> | undefined>((acc, part) => (acc ? (acc[part] as Record<string, unknown>) : undefined), errors) as FieldError | undefined;
   const currentValue = watch(name) || '';
   const characterCount = typeof currentValue === 'string' ? currentValue.length : 0;
   const isOverLimit = maxLength && characterCount > maxLength;

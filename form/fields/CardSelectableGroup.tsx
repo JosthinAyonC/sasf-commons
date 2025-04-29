@@ -40,7 +40,9 @@ export const CardSelectableGroup = ({
     formState: { errors },
   } = useFormContext();
 
-  const error = errors[name] as FieldError | undefined;
+  const error = name
+    .split('.')
+    .reduce<Record<string, unknown> | undefined>((acc, part) => (acc ? (acc[part] as Record<string, unknown>) : undefined), errors) as FieldError | undefined;
 
   return (
     <>

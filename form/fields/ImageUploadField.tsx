@@ -39,7 +39,9 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     formState: { errors },
   } = useFormContext();
   const watchedValue = watch(name);
-  const error = errors[name] as FieldError | undefined;
+  const error = name
+    .split('.')
+    .reduce<Record<string, unknown> | undefined>((acc, part) => (acc ? (acc[part] as Record<string, unknown>) : undefined), errors) as FieldError | undefined;
   const [preview, setPreview] = useState<string | null>(defaultSrc || null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(defaultZoom);
