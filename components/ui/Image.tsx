@@ -8,6 +8,7 @@ export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src?: string;
   fallback?: string;
   alt: string;
+  containerClassName?: string;
   width?: number;
   height?: number;
   widthPreview?: number;
@@ -27,6 +28,7 @@ export const Image: React.FC<ImageProps> = ({
   previewLabel = 'Previsualización',
   hasPreview = false,
   className,
+  containerClassName,
   ...props
 }) => {
   const [imgSrc, setImgSrc] = useState<string>(src || fallback);
@@ -54,7 +56,7 @@ export const Image: React.FC<ImageProps> = ({
   }, [src, fallback]);
 
   return (
-    <div className={`relative rounded-sm group overflow-hidden ${className || ''}`} style={{ width: `${width}px`, height: `${height}px` }}>
+    <div className={`relative group ${containerClassName || ''}`}>
       <ImagePreview isOpen={isOpenPreview} onClose={() => setIsOpenPreview(false)} imageUrl={imgSrc} width={widthPreview} height={heightPreview} />
 
       {isLoading && <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg"></div>}
@@ -67,7 +69,7 @@ export const Image: React.FC<ImageProps> = ({
           setImgSrc(fallback);
           setIsLoading(false);
         }}
-        className={`w-full h-full object-cover rounded-lg ${isLoading ? 'invisible' : 'visible'}`}
+        className={`w-[${width}px] h-[${height}px] ${isLoading ? 'invisible' : 'visible'} object-cover rounded-lg ${className || ''}`}
         width={width}
         height={height}
         {...props}
