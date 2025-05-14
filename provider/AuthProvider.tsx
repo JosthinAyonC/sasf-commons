@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (exp <= currentTime) {
       console.warn('El token ya ha expirado, evitando refresh.');
       dispatch(logout());
-      navigate('/auth/login');
+      navigate(`/auth/login?redirectUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`, { replace: true });
       return;
     }
 
@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [isAuthenticated, token, exp, refetch, dispatch, navigate]);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !token || !exp) return;
 
     if (data) {
       const decodedToken = jwtDecode<{ sub: string; roles: string[] } & JwtPayload>(data.access_token);
@@ -60,9 +60,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error && isAuthenticated) {
       console.error('Error al refrescar el token:', error);
       dispatch(logout());
-      navigate('/auth/login');
+      navigate(`/auth/login?redirectUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`, { replace: true });
+      return;
     }
-  }, [isAuthenticated, navigate, data, error, dispatch]);
+  }, [isAuthenticated, navigate, data, error, dispatch, token, exp]);
 
   useEffect(() => {
     if (!isAuthenticated || !exp) return;
