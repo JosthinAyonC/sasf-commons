@@ -97,13 +97,14 @@ export const NumberField = <T extends FieldValues>({
         autoComplete="off"
       />
       {showTootip && tooltipMessage && <Tooltip message={tooltipMessage} variant="info" />}
-
-      {error && (
-        <span className={`text-[var(--error)] text-xs ${errorClassName}`}>
-          <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
-          {error.message}
-        </span>
-      )}
+      <div className="flex justify-between items-center mt-1">
+        {error && (
+          <span className={`text-[var(--error)] text-xs flex items-center ${errorClassName}`}>
+            <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
+            {error.message}
+          </span>
+        )}
+      </div>
     </div>
   );
 };
