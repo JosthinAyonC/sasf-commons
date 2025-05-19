@@ -40,7 +40,7 @@ const tooltipVariants = {
   },
 };
 
-export const Tooltip: FC<TooltipProps> = ({ text, textClassName, bgColor, icon, toolTipClassName, variant = 'info' }) => {
+export const CustomTooltip: FC<TooltipProps> = ({ text, textClassName, bgColor, icon, toolTipClassName, variant = 'info' }) => {
   const [isTooltipVisible, setTooltipVisible] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 

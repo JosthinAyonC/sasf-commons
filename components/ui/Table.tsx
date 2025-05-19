@@ -182,7 +182,7 @@ export const Table = <T extends object>({
                               ${
                                 typeof disableRowExpand === 'function' && disableRowExpand(row.original)
                                   ? 'cursor-not-allowed text-[var(--disabled)] opacity-50'
-                                  : 'cursor-pointer hover:text-[var(--hover)]'
+                                  : 'cursor-pointer hover:text-[var(--secondaryalt)]'
                               }`}
                               disabled={typeof disableRowExpand === 'function' && disableRowExpand(row.original)}
                             >
@@ -231,7 +231,7 @@ export const Table = <T extends object>({
                     type="button"
                     onClick={() => table.setPageIndex(0)}
                     disabled={!table.getCanPreviousPage()}
-                    className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded-md disabled:opacity-50"
+                    className="px-3 py-1 bg-[var(--secondaryalt)] text-[var(--font)] rounded-md disabled:opacity-50"
                   >
                     <FaAngleDoubleLeft />
                   </button>
@@ -239,7 +239,7 @@ export const Table = <T extends object>({
                     type="button"
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
-                    className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded-md disabled:opacity-50"
+                    className="px-3 py-1 bg-[var(--secondaryalt)] text-[var(--font)] rounded-md disabled:opacity-50"
                   >
                     <FaAngleLeft />
                   </button>
@@ -255,7 +255,7 @@ export const Table = <T extends object>({
                     type="button"
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
-                    className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded-md disabled:opacity-50"
+                    className="px-3 py-1 bg-[var(--secondaryalt)] text-[var(--font)] rounded-md disabled:opacity-50"
                   >
                     <FaAngleRight />
                   </button>
@@ -263,7 +263,7 @@ export const Table = <T extends object>({
                     type="button"
                     onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                     disabled={!table.getCanNextPage()}
-                    className="px-3 py-1 bg-[var(--hover)] text-[var(--font)] rounded-md disabled:opacity-50"
+                    className="px-3 py-1 bg-[var(--secondaryalt)] text-[var(--font)] rounded-md disabled:opacity-50"
                   >
                     <FaAngleDoubleRight />
                   </button>
@@ -274,7 +274,7 @@ export const Table = <T extends object>({
                     onChange={(e) => {
                       table.setPageSize(Number(e.target.value));
                     }}
-                    className="ml-2 p-2 bg-[var(--hover)] text-[var(--font)] rounded-md transition focus:outline-none focus:ring focus:ring-[var(--highlight)]"
+                    className="ml-2 p-2 bg-[var(--secondaryalt)] text-[var(--font)] rounded-md transition focus:outline-none focus:ring focus:ring-[var(--highlight)]"
                   >
                     {[5, 10, 20].map((pageSize) => (
                       <option key={pageSize} value={pageSize}>

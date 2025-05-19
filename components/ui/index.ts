@@ -15,3 +15,5 @@ export * from './RoatingText';
 export * from './Image';
 export * from './Video';
 export * from './Tab';
+export * from './Checkout';
+export * from './CustomToolTip';
