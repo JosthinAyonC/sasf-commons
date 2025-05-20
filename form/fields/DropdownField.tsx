@@ -156,7 +156,7 @@ export const DropdownField = <T extends FieldValues>({
             onChange={handleChange}
             classNamePrefix="react-select"
             styles={{
-              ...customStyles,
+              ...customStyles(!!additionalInformation),
               menuPortal: (base) => ({
                 ...base,
                 zIndex: 1050,
