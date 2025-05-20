@@ -13,4 +13,5 @@ export * from './DropdownField';
 export * from './ToggleField';
 export * from './ImageUploadField';
 export * from './DatePickerField';
+export * from './CreatableTagField';
 // export * from './AsyncDropdownField';

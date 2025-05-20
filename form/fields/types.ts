@@ -249,3 +249,19 @@ export interface ColorPickerFieldProps<T extends FieldValues> {
   requiredMsg?: string;
   onChange?: (_value: string) => void;
 }
+
+export type Tag = {
+  label: string;
+  value: string;
+};
+
+export interface CreatableTagFieldProps<T extends FieldValues> {
+  name: Path<T>;
+  label?: string;
+  placeholder?: string;
+  isRequired?: boolean;
+  requiredMsg?: string;
+  disabled?: boolean;
+  className?: string;
+  additionalInformation?: React.ReactNode;
+}
