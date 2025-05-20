@@ -18,6 +18,7 @@ export interface TextFieldUIProps {
   disabled?: boolean;
   onChange: (_value: string) => void;
   value?: string;
+  additionalInformation?: React.ReactNode;
 }
 
 export interface DatePickerUIProps {

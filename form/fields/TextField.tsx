@@ -27,6 +27,7 @@ export const TextField = <T extends FieldValues>({
   onChange,
   requiredMsg,
   showCharacterIndicator = false,
+  additionalInformation,
 }: Omit<TextFieldProps<T>, 'register' | 'error'>) => {
   const {
     formState: { errors },
@@ -36,15 +37,14 @@ export const TextField = <T extends FieldValues>({
   const error = name
     .split('.')
     .reduce<Record<string, unknown> | undefined>((acc, part) => (acc ? (acc[part] as Record<string, unknown>) : undefined), errors) as FieldError | undefined;
+
   const currentValue = useWatch({ name, control }) || '';
   const characterCount = typeof currentValue === 'string' ? currentValue.length : 0;
-  const isOverLimit = maxLength && characterCount > maxLength;
+  const isOverLimit = maxLength ? characterCount > maxLength : false;
   const [triggerVibration, setTriggerVibration] = useState(false);
 
   useEffect(() => {
-    if (isOverLimit) {
-      setTriggerVibration(true);
-    }
+    if (isOverLimit) setTriggerVibration(true);
   }, [characterCount, isOverLimit]);
 
   return (
@@ -69,6 +69,7 @@ export const TextField = <T extends FieldValues>({
           {label} {isRequired && <span className="text-[var(--error)]">*</span>}
         </label>
       )}
+
       <Controller
         name={name}
         defaultValue={defaultValue ? (defaultValue as unknown as T[keyof T]) : undefined}
@@ -79,6 +80,7 @@ export const TextField = <T extends FieldValues>({
             value={value}
             disabled={disabled}
             type={type}
+            additionalInformation={additionalInformation}
             onChange={(value: string) => {
               fieldOnChange(value);
               if (onChange) onChange(value);

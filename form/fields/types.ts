@@ -34,6 +34,7 @@ export interface TextFieldProps<T extends FieldValues> {
   onChange?: (_value: string) => void;
   requiredMsg?: string;
   showCharacterIndicator?: boolean;
+  additionalInformation?: React.ReactNode;
 }
 
 export interface ToggleFieldProps {
@@ -109,6 +110,7 @@ export interface NumberFieldProps<T extends FieldValues> {
   requiredMsg?: string;
   minValueMsg?: (_min: number) => string;
   maxValueMsg?: (_max: number) => string;
+  additionalInformation?: React.ReactNode;
 }
 
 /*
@@ -233,6 +235,7 @@ export interface DropdownFieldProps<T extends FieldValues, V = string | number |
   onChangeSelection?: (_value: V | V[]) => void;
   noOptionsMessage?: string;
   requiredMsg?: string;
+  additionalInformation?: React.ReactNode;
 }
 
 export interface ColorPickerFieldProps<T extends FieldValues> {

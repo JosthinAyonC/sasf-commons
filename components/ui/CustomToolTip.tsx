@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react';
 import { useMediaQuery } from '../../hooks';
 
 export interface TooltipProps {
-  text: string;
+  text: React.ReactNode;
   textClassName?: string;
   bgColor?: string;
   icon?: IconDefinition;

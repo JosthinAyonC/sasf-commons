@@ -1,12 +1,13 @@
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { FieldValues, useController } from 'react-hook-form';
 import Select, { MultiValue, SingleValue, StylesConfig } from 'react-select';
+import { PortalTooltip } from '~/components/ui/PortalTooltip';
 
 import { DropdownFieldProps, Option } from './types';
 
-const customStyles: StylesConfig<Option> = {
+const customStyles = (hasAdditionalInfo: boolean): StylesConfig<Option> => ({
   control: (styles, { isDisabled }) => ({
     ...styles,
     backgroundColor: isDisabled ? 'var(--disabled)' : 'var(--bg)',
@@ -15,6 +16,10 @@ const customStyles: StylesConfig<Option> = {
     color: isDisabled ? 'var(--disabled)' : 'var(--font)',
     boxShadow: 'none',
     borderRadius: '8px',
+    ...(hasAdditionalInfo && {
+      borderTopLeftRadius: 0,
+      borderBottomLeftRadius: 0,
+    }),
     '&:hover': {
       borderColor: isDisabled ? 'var(--disabled)' : 'var(--focus)',
       cursor: 'text',
@@ -74,7 +79,7 @@ const customStyles: StylesConfig<Option> = {
     borderRadius: '8px',
     padding: '0',
   }),
-};
+});
 
 export const DropdownField = <T extends FieldValues>({
   label,
@@ -93,6 +98,7 @@ export const DropdownField = <T extends FieldValues>({
   onChangeSelection,
   noOptionsMessage,
   requiredMsg,
+  additionalInformation,
 }: DropdownFieldProps<T>) => {
   const {
     field: { value, onChange, ref },
@@ -130,28 +136,41 @@ export const DropdownField = <T extends FieldValues>({
           {isRequired && <span className="text-[var(--error)] ml-1">*</span>}
         </label>
       )}
-      <Select
-        key={name}
-        options={options}
-        isMulti={isMulti}
-        placeholder={placeholder}
-        isClearable={isClearable}
-        value={isMulti ? options.filter((opt) => value?.includes(opt.value)) : options.find((opt) => opt.value === value)}
-        onChange={handleChange}
-        classNamePrefix="react-select"
-        styles={{
-          ...customStyles,
-          menuPortal: (base) => ({
-            ...base,
-            zIndex: 1050,
-          }),
-        }}
-        ref={ref}
-        isDisabled={disabled}
-        noOptionsMessage={() => noOptionsMessage || 'No hay opciones disponibles'}
-        menuPortalTarget={document.body}
-        menuPosition="absolute"
-      />
+
+      <div className="flex w-full">
+        {additionalInformation && (
+          <div className="relative flex items-center justify-center w-[10%] bg-[var(--bg)] border border-r-0 border-[var(--border)] rounded-l-md">
+            <PortalTooltip content={additionalInformation}>
+              <FontAwesomeIcon icon={faInfoCircle} className="text-[var(--info)] cursor-pointer" />
+            </PortalTooltip>
+          </div>
+        )}
+        <div className={`${additionalInformation ? 'w-[90%]' : 'w-full'}`}>
+          <Select
+            key={name}
+            options={options}
+            isMulti={isMulti}
+            placeholder={placeholder}
+            isClearable={isClearable}
+            value={isMulti ? options.filter((opt) => value?.includes(opt.value)) : options.find((opt) => opt.value === value)}
+            onChange={handleChange}
+            classNamePrefix="react-select"
+            styles={{
+              ...customStyles,
+              menuPortal: (base) => ({
+                ...base,
+                zIndex: 1050,
+              }),
+            }}
+            ref={ref}
+            isDisabled={disabled}
+            noOptionsMessage={() => noOptionsMessage || 'No hay opciones disponibles'}
+            menuPortalTarget={document.body}
+            menuPosition="absolute"
+          />
+        </div>
+      </div>
+
       {error && (
         <span className={`text-[var(--error)] text-xs mt-1 ${errorClassName}`}>
           <FontAwesomeIcon icon={faExclamationCircle} className="mr-2" />
