@@ -39,8 +39,8 @@ interface TableProps<T extends object> {
   debounceDelay?: number;
   showOptions?: boolean;
   searchable?: boolean;
-  onSelectAction?: (_row: T) => void;
-  onDeleteAction?: (_row: T) => void;
+  onSelectAction?: (_row: T, _index: number) => void;
+  onDeleteAction?: (_row: T, _index: number) => void;
   statusAccessor?: string;
   onStatusChange?: (_row: T, _newStatus: 'A' | 'I') => void;
   onNewAction?: () => void;
@@ -209,7 +209,9 @@ export const QueryTable = <T extends object>({
 
   const confirmDelete = async () => {
     if (overlayData && onDeleteAction) {
-      await onDeleteAction(overlayData.row);
+      const currentData = Array.isArray(data?.[responseDataKey]) ? (data?.[responseDataKey] as T[]) : [];
+      const rowIndex = currentData.indexOf(overlayData.row);
+      await onDeleteAction(overlayData.row, rowIndex);
       refetch('', true);
     }
     setOverlayData(null);
@@ -301,7 +303,7 @@ export const QueryTable = <T extends object>({
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2 relative">
         {onSelectAction && (
-          <button type="button" onClick={() => onSelectAction(row.original)} className="text-blue-500 hover:text-[var(--info)]" title="Editar">
+          <button type="button" onClick={() => onSelectAction(row.original, row.index)} className="text-blue-500 hover:text-[var(--info)]" title="Editar">
             <FaEdit className="text-lg" />
           </button>
         )}

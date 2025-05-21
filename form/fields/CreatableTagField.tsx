@@ -15,7 +15,8 @@ const customStyles: StylesConfig<Option, true> = {
     ...base,
     borderRadius: '8px',
     minHeight: '38px',
-    borderColor: '#ccc',
+    borderColor: 'var(--border)',
+    backgroundColor: 'var(--bg)',
     boxShadow: 'none',
     '&:hover': {
       borderColor: isDisabled ? 'var(--disabled)' : 'var(--focus)',
@@ -25,28 +26,66 @@ const customStyles: StylesConfig<Option, true> = {
   input: (styles) => ({
     ...styles,
     color: 'var(--font)',
-    padding: '0.4rem',
-    margin: '0 -4px',
+    padding: '0.2rem',
+    margin: '0 -2px',
+    backgroundColor: 'transparent',
   }),
   multiValue: (base) => ({
     ...base,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'var(--secondaryalt)',
   }),
   multiValueLabel: (base) => ({
     ...base,
-    color: '#333',
+    color: 'var(--font)',
   }),
   multiValueRemove: (base) => ({
     ...base,
-    color: '#888',
+    color: 'var(--placeholder)',
     ':hover': {
-      backgroundColor: '#ddd',
-      color: '#000',
+      backgroundColor: 'var(--secondaryalthover)',
+      color: 'var(--font)',
     },
   }),
   placeholder: (base) => ({
     ...base,
-    color: '#999',
+    color: 'var(--placeholder)',
+  }),
+  menu: (base) => ({
+    ...base,
+    backgroundColor: 'var(--bg)',
+    border: '1px solid var(--border)',
+    zIndex: 5,
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isFocused ? 'var(--secondaryalthover)' : 'transparent',
+    color: 'var(--font)',
+    cursor: 'pointer',
+    ':active': {
+      backgroundColor: 'var(--secondaryalt)',
+    },
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: 'var(--font)',
+  }),
+  indicatorSeparator: (base) => ({
+    ...base,
+    backgroundColor: 'var(--border)',
+  }),
+  dropdownIndicator: (base, { isFocused }) => ({
+    ...base,
+    color: isFocused ? 'var(--focus)' : 'var(--placeholder)',
+    ':hover': {
+      color: 'var(--focus)',
+    },
+  }),
+  clearIndicator: (base) => ({
+    ...base,
+    color: 'var(--font)',
+    ':hover': {
+      color: 'var(--placeholder)',
+    },
   }),
 };
 

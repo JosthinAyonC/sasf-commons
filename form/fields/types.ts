@@ -65,6 +65,7 @@ export interface DatePickerFieldProps<T extends FieldValues> {
   yearDownRange?: number;
   requiredMsg?: string;
   placeholderText?: string;
+  className?: string;
 }
 
 export interface ImageUploadFieldProps {
@@ -111,6 +112,7 @@ export interface NumberFieldProps<T extends FieldValues> {
   minValueMsg?: (_min: number) => string;
   maxValueMsg?: (_max: number) => string;
   additionalInformation?: React.ReactNode;
+  className?: string;
 }
 
 /*
@@ -185,6 +187,7 @@ export interface ButtonProps {
   disabled?: boolean;
   children: React.ReactNode;
   className?: string;
+  disableFeedback?: React.ReactNode;
 }
 
 export interface GoBackButtonProps {

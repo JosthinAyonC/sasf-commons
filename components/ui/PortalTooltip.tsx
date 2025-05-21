@@ -1,5 +1,6 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useMediaQuery } from '~/hooks';
 
 interface PortalTooltipProps {
   children: React.ReactNode;
@@ -13,6 +14,8 @@ export const PortalTooltip: React.FC<PortalTooltipProps> = ({ children, content 
   const tooltipRef = useRef<HTMLDivElement>(null);
   const hideTimeoutRef = useRef<number | null>(null);
 
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   useLayoutEffect(() => {
     if (visible && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
@@ -23,6 +26,20 @@ export const PortalTooltip: React.FC<PortalTooltipProps> = ({ children, content 
     }
   }, [visible]);
 
+  useEffect(() => {
+    if (!isMobile || !visible) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (!triggerRef.current?.contains(target) && !tooltipRef.current?.contains(target)) {
+        setVisible(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isMobile, visible]);
+
   const clearHideTimeout = () => {
     if (hideTimeoutRef.current !== null) {
       clearTimeout(hideTimeoutRef.current);
@@ -31,22 +48,32 @@ export const PortalTooltip: React.FC<PortalTooltipProps> = ({ children, content 
   };
 
   const handleMouseEnter = () => {
-    clearHideTimeout();
-    setVisible(true);
+    if (!isMobile) {
+      clearHideTimeout();
+      setVisible(true);
+    }
   };
 
   const handleMouseLeave = (e: React.MouseEvent) => {
-    const relatedTarget = e.relatedTarget as Node;
-    if (!triggerRef.current?.contains(relatedTarget) && !tooltipRef.current?.contains(relatedTarget)) {
-      hideTimeoutRef.current = window.setTimeout(() => {
-        setVisible(false);
-      }, 50);
+    if (!isMobile) {
+      const relatedTarget = e.relatedTarget as Node;
+      if (!triggerRef.current?.contains(relatedTarget) && !tooltipRef.current?.contains(relatedTarget)) {
+        hideTimeoutRef.current = window.setTimeout(() => {
+          setVisible(false);
+        }, 50);
+      }
+    }
+  };
+
+  const handleClick = () => {
+    if (isMobile) {
+      setVisible((prev) => !prev);
     }
   };
 
   return (
     <>
-      <div ref={triggerRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} style={{ display: 'inline-block' }}>
+      <div ref={triggerRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleClick} style={{ display: 'inline-block' }}>
         {children}
       </div>
 

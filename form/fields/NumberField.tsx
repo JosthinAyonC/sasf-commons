@@ -12,6 +12,7 @@ export const NumberField = <T extends FieldValues>({
   name,
   min,
   max,
+  className,
   labelClassName,
   errorClassName,
   inputClassName,
@@ -44,7 +45,7 @@ export const NumberField = <T extends FieldValues>({
     const regex = numberType === 'integer' ? /^\d*$/ : /^[\d.,]*$/;
 
     if (!regex.test(value)) {
-      setTooltipMessage(`Solo se permiten ${numberType === 'integer' ? 'números enteros' : 'números decimales'}`);
+      setTooltipMessage(`Solo se permiten ${numberType === 'integer' ? 'números enteros' : 'números'}.`);
       const cursorPosition = event.currentTarget.selectionStart || 0;
       event.currentTarget.value = value.slice(0, cursorPosition - 1) + value.slice(cursorPosition);
       event.currentTarget.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
@@ -73,7 +74,7 @@ export const NumberField = <T extends FieldValues>({
   };
 
   return (
-    <div className="relative">
+    <div className={`relative ${className || ''}`}>
       {label && (
         <label htmlFor={name as string} className={`text-neutral-700 ${labelClassName} block`}>
           {label} {isRequired && <span className="text-[var(--error)]">*</span>}

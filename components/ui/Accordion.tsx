@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
+import { hexToRGBA } from '~/utils/Functions';
 
 interface AccordionProps {
   title: string;
@@ -17,6 +18,7 @@ export const Accordion: React.FC<AccordionProps> = ({ title, children, disabled 
       setIsOpen((prev) => !prev);
     }
   };
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div className={`w-full border rounded-lg overflow-hidden transition-all ${disabled ? 'opacity-50 cursor-not-allowed' : 'border-[var(--border)]'}`}>
@@ -25,6 +27,13 @@ export const Accordion: React.FC<AccordionProps> = ({ title, children, disabled 
         onClick={toggleAccordion}
         disabled={disabled}
         className="w-full flex justify-between items-center px-4 py-3 bg-[var(--bg)] text-[var(--font)] font-medium focus:outline-none hover:bg-[var(--hover2)] transition"
+        style={{
+          backgroundColor: isHovered
+            ? 'var(--secondaryalt)'
+            : hexToRGBA(getComputedStyle(document.documentElement).getPropertyValue('--secondaryalt').trim(), 0.5),
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <span>{title}</span>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>

@@ -31,7 +31,7 @@ const tooltipVariants = {
 };
 
 interface TooltipProps {
-  message: string;
+  message: React.ReactNode;
   variant?: keyof typeof tooltipVariants;
   duration?: number;
 }

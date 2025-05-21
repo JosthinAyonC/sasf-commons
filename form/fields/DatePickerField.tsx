@@ -9,6 +9,7 @@ import { DatePickerFieldProps } from './types';
 export const DatePickerField = <T extends FieldValues>({
   label,
   name,
+  className,
   labelClassName,
   inputClassName,
   errorClassName,
@@ -20,7 +21,7 @@ export const DatePickerField = <T extends FieldValues>({
   placeholderText,
 }: DatePickerFieldProps<T>) => {
   return (
-    <div className="relative w-full">
+    <div className={`relative w-full ${className || ''}`}>
       {label && (
         <label htmlFor={name as string} className={`block mb-1 text-neutral-700 ${labelClassName}`}>
           {label}

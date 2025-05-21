@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '~/form/fields';
 
 interface CheckoutItem {
   clave: string;
@@ -13,10 +12,9 @@ interface CheckoutProps {
   children?: React.ReactNode;
   resoome: CheckoutItem[];
   NextButtonSlot?: React.ReactNode;
-  nextButtonAction?: () => void;
 }
 
-export const Checkout: React.FC<CheckoutProps> = ({ title, children, resoome, NextButtonSlot, nextButtonAction }) => {
+export const Checkout: React.FC<CheckoutProps> = ({ title, children, resoome, NextButtonSlot }) => {
   return (
     <div className="w-full border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--bg)] text-[var(--font)] shadow-md">
       {/* Título */}
@@ -41,11 +39,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ title, children, resoome, Ne
       </div>
 
       {/* Botón Siguiente */}
-      <div className="px-4 py-4 border-t border-[var(--border)] bg-[var(--secondaryalthover)]">
-        <Button onClick={nextButtonAction} className="w-full flex items-center justify-center gap-2">
-          {NextButtonSlot ?? <span>Siguiente</span>}
-        </Button>
-      </div>
+      <div className="px-4 py-4 border-t border-[var(--border)] bg-[var(--secondaryalthover)]">{NextButtonSlot ?? <span>Siguiente</span>}</div>
     </div>
   );
 };

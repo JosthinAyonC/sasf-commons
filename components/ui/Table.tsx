@@ -1,7 +1,19 @@
 import { ColumnDef, filterFns, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
-import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight, FaChevronRight, FaEdit, FaExclamationTriangle, FaTrashAlt } from 'react-icons/fa';
+import {
+  FaAngleDoubleLeft,
+  FaAngleDoubleRight,
+  FaAngleLeft,
+  FaAngleRight,
+  FaChevronRight,
+  FaEdit,
+  FaExclamationTriangle,
+  FaFilter,
+  FaPlus,
+  FaTimes,
+  FaTrashAlt,
+} from 'react-icons/fa';
 
 import { Loader } from './Loader';
 
@@ -14,11 +26,14 @@ interface TableProps<T extends object> {
   defaultPage?: number;
   defaultSize?: number;
   tableClassName?: string;
-  onSelectAction?: (_row: T) => void;
-  onDeleteAction?: (_row: T) => void;
+  onSelectAction?: (_row: T, _index: number) => void;
+  onDeleteAction?: (_row: T, _index: number) => void;
   rowExpand?: (_row: T) => JSX.Element;
   disableRowExpand?: (_row: T) => boolean;
   searchPlaceholder?: string;
+  onNewAction?: () => void;
+  title?: string;
+  noRegistersText?: string;
 }
 
 export const Table = <T extends object>({
@@ -35,6 +50,9 @@ export const Table = <T extends object>({
   rowExpand,
   disableRowExpand,
   searchPlaceholder = 'Buscar...',
+  onNewAction,
+  title = '',
+  noRegistersText = 'No se encontraron registros disponibles.',
 }: TableProps<T>) => {
   const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
   const [overlayData, setOverlayData] = useState<{ row: T; buttonRect: DOMRect } | null>(null);
@@ -54,7 +72,10 @@ export const Table = <T extends object>({
 
   const confirmDelete = async () => {
     if (overlayData && onDeleteAction) {
-      await onDeleteAction(overlayData.row);
+      await onDeleteAction(
+        overlayData.row,
+        data.findIndex((item) => item === overlayData.row)
+      );
     }
     setOverlayData(null);
   };
@@ -70,7 +91,7 @@ export const Table = <T extends object>({
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2 relative">
         {onSelectAction && (
-          <button type="button" onClick={() => onSelectAction(row.original)} className="text-blue-500 hover:text-[var(--info)]" title="Editar">
+          <button type="button" onClick={() => onSelectAction(row.original, row.index)} className="text-blue-500 hover:text-[var(--info)]" title="Editar">
             <FaEdit className="text-lg" />
           </button>
         )}
@@ -121,19 +142,44 @@ export const Table = <T extends object>({
   return (
     <div className={`flex flex-col rounded-lg shadow-md border border-[var(--border)] ${tableClassName ?? ''}`}>
       {/* Campo de búsqueda */}
-      {searchable && (
-        <input
-          type="text"
-          value={globalFilter ?? ''}
-          onChange={(e) => {
-            setGlobalFilter(e.target.value);
-          }}
-          placeholder={searchPlaceholder}
-          className="mb-4 p-2 border-[var(--border)] rounded-md w-full bg-[var(--bg)] text-[var(--font)] placeholder-[var(--placeholder)]
-              focus:outline-none focus:ring focus:border-[var(--highlight)]"
-        />
-      )}
+      <div className="flex flex-wrap justify-between items-center mb-4 px-4 py-2 bg-[var(--bg)] border-b border-[var(--border)] rounded-t-lg">
+        <p className="text-lg font-bold text-[var(--font)] break-words">{title}</p>
 
+        <div className="flex items-center space-x-2 w-full sm:w-auto mt-2 sm:mt-0">
+          {searchable && (
+            <div className="relative flex items-center border border-[var(--border)] rounded bg-[var(--bg)] focus-within:ring focus-within:border-[var(--highlight)]">
+              <span className="px-3 text-[var(--placeholder)]">
+                <FaFilter />
+              </span>
+              <input
+                type="text"
+                value={globalFilter ?? ''}
+                onChange={(e) => {
+                  setGlobalFilter(e.target.value);
+                  setPagination({ ...pagination, pageIndex: 0 });
+                }}
+                placeholder={searchPlaceholder}
+                className="flex-1 p-2 bg-transparent text-[var(--font)] placeholder-[var(--placeholder)] focus:outline-none w-[25%]"
+              />
+              {globalFilter && (
+                <button
+                  type="button"
+                  onClick={() => setGlobalFilter('')}
+                  className="absolute right-2 text-[var(--placeholder)] hover:text-[var(--font)] focus:outline-none"
+                >
+                  <FaTimes />
+                </button>
+              )}
+            </div>
+          )}
+
+          {onNewAction && (
+            <button type="button" onClick={onNewAction} className="p-3 bg-[var(--info)] text-white rounded hover:bg-blue-400">
+              <FaPlus />
+            </button>
+          )}
+        </div>
+      </div>
       <div className="overflow-x-auto rounded-lg">
         <div className="inline-block min-w-full">
           <div className="overflow-hidden rounded-lg">
@@ -166,7 +212,7 @@ export const Table = <T extends object>({
                       colSpan={columns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)}
                       className="text-center py-4 text-[var(--font)] font-medium"
                     >
-                      No se encontraron registros disponibles.
+                      {noRegistersText}
                     </td>
                   </tr>
                 ) : (
