@@ -142,10 +142,12 @@ export const Table = <T extends object>({
   return (
     <div className={`flex flex-col rounded-lg shadow-md border border-[var(--border)] ${tableClassName ?? ''}`}>
       {/* Campo de búsqueda */}
-      <div className="flex flex-wrap justify-between items-center mb-4 px-4 py-2 bg-[var(--bg)] border-b border-[var(--border)] rounded-t-lg">
+      <div
+        className={`flex flex-wrap ${title ? 'justify-between' : 'justify-end'} items-center mb-4 px-4 py-2 bg-[var(--bg)] border-b border-[var(--border)] rounded-t-lg`}
+      >
         <p className="text-lg font-bold text-[var(--font)] break-words">{title}</p>
 
-        <div className="flex items-center space-x-2 w-full sm:w-auto mt-2 sm:mt-0">
+        <div className="flex items-center space-x-2 flex-wrap justify-end w-full sm:w-auto mt-2 sm:mt-0">
           {searchable && (
             <div className="relative flex items-center border border-[var(--border)] rounded bg-[var(--bg)] focus-within:ring focus-within:border-[var(--highlight)]">
               <span className="px-3 text-[var(--placeholder)]">

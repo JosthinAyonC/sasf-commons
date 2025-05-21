@@ -39,7 +39,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ title, children, resoome, Ne
       </div>
 
       {/* Botón Siguiente */}
-      <div className="px-4 py-4 border-t border-[var(--border)] bg-[var(--secondaryalthover)]">{NextButtonSlot ?? <span>Siguiente</span>}</div>
+      <div className="px-4 py-4 border-t border-[var(--border)] bg-[var(--secondaryalthover)]">{NextButtonSlot}</div>
     </div>
   );
 };
