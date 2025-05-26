@@ -31,7 +31,7 @@ export const RadioGroupField = <T extends FieldValues>({
           <RadioButton
             key={option.value}
             name={name}
-            value={option.value}
+            value={String(option.value)}
             label={option.label}
             defaultChecked={defaultCheckedValue === option.value}
             isRequired={required}

@@ -213,12 +213,13 @@ export interface TableProps {
 
 export interface RadioButtonProps {
   name: string;
-  value: string | number;
-  label: string;
+  value: string;
+  label?: string;
   defaultChecked?: boolean;
   isRequired?: boolean;
   optionClassName?: string;
   optionLabelClassName?: string;
+  disabled?: boolean;
 }
 export interface Option<T = string | number | object> {
   label: string | JSX.Element;

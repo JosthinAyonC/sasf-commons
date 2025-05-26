@@ -35,3 +35,16 @@ export interface DatePickerUIProps {
   placeholderText?: string;
   defaultRange?: { startDate: Date | null; endDate: Date | null };
 }
+
+export interface RadioButtonUIProps {
+  id?: string;
+  name?: string;
+  value?: string;
+  label?: string;
+  checked?: boolean;
+  isRequired?: boolean;
+  onChange?: (value: string) => void;
+  className?: string;
+  labelClassName?: string;
+  disabled?: boolean;
+}
