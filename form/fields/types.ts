@@ -66,6 +66,7 @@ export interface DatePickerFieldProps<T extends FieldValues> {
   requiredMsg?: string;
   placeholderText?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export interface ImageUploadFieldProps {

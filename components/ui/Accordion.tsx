@@ -22,7 +22,7 @@ export const Accordion: React.FC<AccordionProps> = ({ title, children, disabled 
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className={`w-full border rounded-lg overflow-hidden transition-all ${disabled ? 'opacity-50' : 'border-[var(--border)]'}`}>
+    <div className={`w-full border rounded-lg overflow-hidden transition-all ${disabled ? 'opacity-50 cursor-not-allowed' : 'border-[var(--border)]'}`}>
       <button
         type="button"
         onClick={toggleAccordion}
@@ -42,7 +42,7 @@ export const Accordion: React.FC<AccordionProps> = ({ title, children, disabled 
           <FaChevronDown className="text-[var(--font)]" />
         </motion.div>
       </button>
-      <motion.div initial={false} animate={{ height: isOpen ? 'auto' : 0 }} className="overflow-hidden">
+      <motion.div initial={false} animate={{ height: isOpen ? 'auto' : 0 }} className={`overflow-hidden ${disabled ? 'pointer-events-none' : ''}`}>
         <div className="px-4 py-3 text-[var(--font)] bg-[var(--bg)] border-t border-[var(--border)]">{children}</div>
       </motion.div>
     </div>

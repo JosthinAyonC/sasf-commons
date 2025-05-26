@@ -19,6 +19,7 @@ export const DatePickerField = <T extends FieldValues>({
   defaultValue,
   requiredMsg,
   placeholderText,
+  disabled = false,
 }: DatePickerFieldProps<T>) => {
   return (
     <div className={`relative w-full ${className || ''}`}>
@@ -42,6 +43,7 @@ export const DatePickerField = <T extends FieldValues>({
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <>
             <DatePickerUI
+              disabled={disabled}
               key={name}
               selected={value && !isNaN(new Date(value).getTime()) ? new Date(value) : null}
               onChange={onChange}

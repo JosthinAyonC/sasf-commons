@@ -17,6 +17,7 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
   yearUpRange = 5,
   yearDownRange = 5,
   placeholderText = 'Seleccione una fecha',
+  disabled = false,
 }) => {
   const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const currentYear = new Date().getFullYear();
@@ -101,10 +102,23 @@ export const DatePickerUI: React.FC<DatePickerUIProps> = ({
           color: var(--disabled);
           cursor: not-allowed;
         }
+
+        ${
+          disabled
+            ? `
+        .react-datepicker__input-container input {
+          background-color: var(--disabled);
+          cursor: not-allowed;
+        }
+        `
+            : ''
+        }
+        }
       `}</style>
 
       <DatePicker
         selected={selectedDate && !isNaN(new Date(selectedDate).getTime()) ? new Date(selectedDate) : null}
+        disabled={disabled}
         onChange={(date) => {
           if (date) {
             const year = date.getFullYear();

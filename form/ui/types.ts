@@ -27,6 +27,7 @@ export interface DatePickerUIProps {
   onChangeRange?: (_dates: [Date | null, Date | null]) => void;
   minDate?: Date;
   maxDate?: Date;
+  disabled?: boolean;
   error?: string;
   inputClassName?: string;
   yearUpRange?: number;
