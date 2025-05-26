@@ -31,6 +31,8 @@ export const NumberField = <T extends FieldValues>({
   const {
     register,
     formState: { errors },
+    setValue,
+    watch,
   } = useFormContext();
 
   const error = name
@@ -39,15 +41,26 @@ export const NumberField = <T extends FieldValues>({
   const [tooltipMessage, setTooltipMessage] = useState<string | null>(null);
 
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    const value = watch(name);
 
     // Definir la regex según el tipo de número
     const regex = numberType === 'integer' ? /^\d*$/ : /^[\d.,]*$/;
 
-    if (!regex.test(value)) {
+    // Normalizar comas a puntos si se detecta una coma
+    let normalizedValue = value.replace(',', '.');
+
+    // Eliminar ceros a la izquierda (excepto si es "0" o empieza con "0.")
+    if (numberType === 'integer') {
+      normalizedValue = normalizedValue.replace(/^0+(?=\d)/, '');
+    } else {
+      normalizedValue = normalizedValue.replace(/^0+(?=\d)/, '');
+    }
+    setValue(name, normalizedValue);
+
+    if (!regex.test(normalizedValue)) {
       setTooltipMessage(`Solo se permiten ${numberType === 'integer' ? 'números enteros' : 'números'}.`);
       const cursorPosition = event.currentTarget.selectionStart || 0;
-      event.currentTarget.value = value.slice(0, cursorPosition - 1) + value.slice(cursorPosition);
+      setValue(name, normalizedValue.slice(0, cursorPosition - 1) + normalizedValue.slice(cursorPosition));
       event.currentTarget.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
       event.preventDefault();
       return;
@@ -55,11 +68,11 @@ export const NumberField = <T extends FieldValues>({
 
     // Normalizar la coma a punto si es número flotante
     if (numberType === 'float') {
-      value = value.replace(',', '.');
+      normalizedValue = normalizedValue.replace(',', '.');
     }
 
     // Validar si es un número válido
-    if (isNaN(Number(value))) {
+    if (isNaN(Number(normalizedValue))) {
       setTooltipMessage('Por favor ingrese un número válido');
       event.preventDefault();
       return;
@@ -69,7 +82,7 @@ export const NumberField = <T extends FieldValues>({
 
     // Llamar al callback `onChange` si existe.
     if (onChange) {
-      onChange(Number(value));
+      onChange(Number(normalizedValue));
     }
   };
 

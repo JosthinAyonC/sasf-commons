@@ -7,10 +7,11 @@ interface AccordionProps {
   title: string;
   children: React.ReactNode;
   disabled?: boolean;
+  disabledText?: string;
   defaultOpen?: boolean;
 }
 
-export const Accordion: React.FC<AccordionProps> = ({ title, children, disabled = false, defaultOpen = false }) => {
+export const Accordion: React.FC<AccordionProps> = ({ title, children, disabled = false, defaultOpen = false, disabledText = 'Deshabilitado' }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const toggleAccordion = () => {
@@ -21,12 +22,13 @@ export const Accordion: React.FC<AccordionProps> = ({ title, children, disabled 
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className={`w-full border rounded-lg overflow-hidden transition-all ${disabled ? 'opacity-50 cursor-not-allowed' : 'border-[var(--border)]'}`}>
+    <div className={`w-full border rounded-lg overflow-hidden transition-all ${disabled ? 'opacity-50' : 'border-[var(--border)]'}`}>
       <button
         type="button"
         onClick={toggleAccordion}
         disabled={disabled}
-        className="w-full flex justify-between items-center px-4 py-3 bg-[var(--bg)] text-[var(--font)] font-medium focus:outline-none hover:bg-[var(--hover2)] transition"
+        title={disabled ? disabledText : 'Abrir/Cerrar'}
+        className={`w-full flex justify-between items-center px-4 py-3 bg-[var(--bg)] text-[var(--font)] font-medium focus:outline-none hover:bg-[var(--hover2)] transition ${disabled ? 'cursor-not-allowed' : ''}`}
         style={{
           backgroundColor: isHovered
             ? 'var(--secondaryalt)'

@@ -17,3 +17,4 @@ export * from './Video';
 export * from './Tab';
 export * from './Checkout';
 export * from './CustomToolTip';
+export * from './SectionBox';
