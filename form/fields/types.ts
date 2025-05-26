@@ -180,7 +180,7 @@ export interface ComboboxFieldProps<T extends FieldValues> {
   labelNotFound: string;
 }
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'outline' | 'primary' | 'danger';
   type?: 'button' | 'submit' | 'reset';
   href?: string;

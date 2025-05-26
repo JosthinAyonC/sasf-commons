@@ -10,6 +10,8 @@ export interface Step {
   stepClassName?: string;
   component: React.ReactNode;
   nextStepAction?: () => void;
+  canNext?: () => boolean;
+  canNextMsg?: string;
 }
 
 interface StepFormProps<T extends FieldValues> {
@@ -55,13 +57,20 @@ export const StepForm = <T extends FieldValues>({
   const [invalidStep, setInvalidStep] = useState(false);
 
   useEffect(() => {
-    setInvalidStep(!formState.isValid);
-  }, [formState.isValid, watchedFields]);
+    const canProceed = steps[currentStep]?.canNext?.() ?? true;
+    setInvalidStep(!formState.isValid || !canProceed);
+  }, [formState.isValid, watchedFields, currentStep, steps]);
 
   const validateAndNext = async (index: number) => {
+    const current = steps[currentStep];
+
+    // Validar con react-hook-form
     const isValid = await trigger();
-    setInvalidStep(!isValid);
-    if (isValid) {
+    const canProceed = current.canNext?.() ?? true;
+
+    setInvalidStep(!isValid || !canProceed);
+
+    if (isValid && canProceed) {
       setCurrentStep(index);
     }
   };
@@ -192,6 +201,8 @@ const StepFormContent = <T extends FieldValues>({
             <Button
               type="button"
               variant="primary"
+              disabled={invalidStep}
+              title={steps[currentStep].canNextMsg || ''}
               onClick={() => {
                 if (steps[currentStep].nextStepAction) {
                   steps[currentStep].nextStepAction();

@@ -15,18 +15,22 @@ export const Button: React.FC<ButtonProps & { isLoading?: boolean }> = ({
   ...props
 }) => {
   const navigate = useNavigate();
+  const isActuallyDisabled = disabled || isLoading;
 
-  const handleClick = () => {
-    if (!isLoading) {
-      if (href) {
-        navigate(href);
-      } else if (onClick) {
-        onClick();
-      }
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (isActuallyDisabled) {
+      e.preventDefault();
+      return;
+    }
+
+    if (href) {
+      navigate(href);
+    } else if (onClick) {
+      onClick();
     }
   };
 
-  const baseClass = `px-6 py-2 font-bold rounded-lg transition duration-300 focus:outline-none focus:ring-2 flex items-center justify-center`;
+  const baseClass = `px-6 py-2 font-bold rounded-lg transition duration-300 focus:outline-none focus:ring-2 flex items-center justify-center relative`;
   const variantClass =
     variant === 'outline'
       ? 'border border-[var(--border)] text-[var(--font)] hover:bg-[var(--secondaryalthover)]'
@@ -35,14 +39,15 @@ export const Button: React.FC<ButtonProps & { isLoading?: boolean }> = ({
         : variant === 'primary'
           ? 'bg-[var(--primary)] text-white hover:bg-[var(--focus)]'
           : '';
-  const disabledClass = disabled || isLoading ? 'opacity-60 cursor-not-allowed' : '';
+  const disabledClass = isActuallyDisabled ? 'opacity-60 cursor-not-allowed' : '';
 
   return (
     <button
       type={type}
       className={`${baseClass} ${variantClass} ${disabledClass} ${className}`}
       onClick={handleClick}
-      disabled={disabled || isLoading}
+      aria-disabled={isActuallyDisabled}
+      title={props.title}
       {...props}
     >
       <span className="flex items-center justify-center" style={{ visibility: isLoading ? 'hidden' : 'visible' }}>
