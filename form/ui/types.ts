@@ -47,4 +47,5 @@ export interface RadioButtonUIProps {
   className?: string;
   labelClassName?: string;
   disabled?: boolean;
+  title?: string;
 }

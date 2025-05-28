@@ -83,3 +83,7 @@ export const startOfToday = () => {
   date.setHours(0, 0, 0, 0);
   return date;
 };
+
+export const validateStringNotEmpty = (value: string | undefined | null): boolean => {
+  return value !== undefined && value !== null && value.trim() !== '';
+};
