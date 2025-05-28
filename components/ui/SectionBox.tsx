@@ -3,14 +3,15 @@ import React, { ReactNode, useState } from 'react';
 interface SectionBoxProps {
   label: string;
   children: ReactNode;
+  className?: string;
 }
 
-export const SectionBox: React.FC<SectionBoxProps> = ({ label, children }) => {
+export const SectionBox: React.FC<SectionBoxProps> = ({ label, children, className }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
-      className="relative p-6 rounded-lg border transition-colors duration-300"
+      className={`relative p-6 rounded-lg border transition-colors duration-300 bg-[var(--bg)] ${className || ''}`}
       style={{
         borderColor: hovered ? 'var(--info)' : 'var(--border)',
       }}
