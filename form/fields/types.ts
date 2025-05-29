@@ -114,6 +114,7 @@ export interface NumberFieldProps<T extends FieldValues> {
   maxValueMsg?: (_max: number) => string;
   additionalInformation?: React.ReactNode;
   className?: string;
+  currency?: Currency;
 }
 
 /*
@@ -270,3 +271,14 @@ export interface CreatableTagFieldProps<T extends FieldValues> {
   className?: string;
   additionalInformation?: React.ReactNode;
 }
+
+export const currencySymbols = {
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+  JPY: '¥',
+  MXN: '$',
+  ARS: '$',
+  BRL: 'R$',
+} as const;
+export type Currency = keyof typeof currencySymbols;
