@@ -65,7 +65,7 @@ Este submódulo requiere las siguientes dependencias para funcionar correctament
 Ejecuta el siguiente comando para instalar las dependencias necesarias:
 ### Dependencias de Producción
 ```bash
-npm install react react-dom react-hook-form @emotion/is-prop-valid framer-motion @fortawesome/react-fontawesome react-redux tailwindcss react-router-dom @fortawesome/free-solid-svg-icons react-datepicker jwt-decode @tanstack/react-table react-icons uuid react-easy-crop eventemitter3 react-input-color
+npm install react react-dom react-hook-form @emotion/is-prop-valid framer-motion @fortawesome/react-fontawesome react-redux tailwindcss react-router-dom @fortawesome/free-solid-svg-icons react-datepicker jwt-decode @tanstack/react-table react-icons uuid react-easy-crop eventemitter3 react-input-color @hello-pangea/dnd
 
 *Nota:* debemos instalar una librería de esta forma: 
 ```bash

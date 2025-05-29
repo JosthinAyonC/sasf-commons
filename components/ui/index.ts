@@ -18,3 +18,4 @@ export * from './Tab';
 export * from './Checkout';
 export * from './CustomToolTip';
 export * from './SectionBox';
+export * from './DnDBoard';
