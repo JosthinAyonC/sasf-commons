@@ -5,7 +5,7 @@ import { FieldError, FieldValues, useFormContext } from 'react-hook-form';
 import { Tooltip } from '~/components/ui';
 import { PortalTooltip } from '~/components/ui/PortalTooltip';
 
-import { NumberFieldProps } from './types';
+import { NumberFieldProps, currencySymbols } from './types';
 
 export const NumberField = <T extends FieldValues>({
   label,
@@ -27,6 +27,7 @@ export const NumberField = <T extends FieldValues>({
   maxValueMsg,
   numberType = 'float',
   additionalInformation,
+  currency,
 }: Omit<NumberFieldProps<T>, 'register' | 'error'> & { numberType?: 'integer' | 'float' }) => {
   const {
     register,
@@ -102,6 +103,9 @@ export const NumberField = <T extends FieldValues>({
             </PortalTooltip>
           </div>
         )}
+        {currency && (
+          <span className="flex items-center px-2 border border-r-0 border-[var(--border)] bg-[var(--bg)] rounded-l-md">{currencySymbols[currency]}</span>
+        )}
         <input
           key={name}
           type="text"
@@ -118,7 +122,7 @@ export const NumberField = <T extends FieldValues>({
           className={`border border-[var(--border)] rounded-md p-2 w-full 
             focus:outline-none focus:border-[var(--focus)] placeholder:text-[var(--placeholder)] 
             bg-[var(--bg)] text-[var(--font)] ${disabled ? 'cursor-not-allowed bg-[var(--disabled)]' : ''}
-            ${additionalInformation ? 'rounded-l-none' : ''} ${inputClassName}`}
+            ${additionalInformation || currency ? 'rounded-l-none' : ''} ${inputClassName}`}
           autoComplete="off"
         />
       </div>
