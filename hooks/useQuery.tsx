@@ -5,6 +5,45 @@ import { RootState } from '~/store';
 
 import { ApiError } from './useMutation';
 
+type UseQueryOptions = {
+  url: string;
+  options?: RequestInit;
+  queryParams?: Record<string, string | number | boolean>;
+  autoFetch?: boolean;
+  cachePolicy?: 'cache-first' | 'network-first';
+};
+
+/**
+ * Custom hook to perform fetch requests with Redux integration for authorization and flexible query params.
+ *
+ * Puede usarse de dos formas:
+ *
+ * - Clásica (parámetros posicionales):
+ *   useQuery(url, options?, queryParams?, autoFetch?, cachePolicy?)
+ *
+ * - Con objeto de opciones:
+ *   useQuery({ url, options?, queryParams?, autoFetch?, cachePolicy? })
+ */
+export function useQuery<T>(
+  url: string,
+  options?: RequestInit,
+  queryParams?: Record<string, string | number | boolean>,
+  autoFetch?: boolean,
+  cachePolicy?: 'cache-first' | 'network-first'
+): {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+  refetch: (newUrl?: string, forceNetwork?: boolean) => void;
+};
+
+export function useQuery<T>(opts: UseQueryOptions): {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+  refetch: (newUrl?: string, forceNetwork?: boolean) => void;
+};
+
 /**
  * Custom hook to perform fetch requests with Redux integration for authorization and flexible query params.
  *
@@ -15,21 +54,44 @@ import { ApiError } from './useMutation';
  * @returns An object containing loading, error, data, and a refetch function.
  */
 export function useQuery<T>(
-  url: string,
+  urlOrOpts: string | UseQueryOptions,
   options?: RequestInit,
   queryParams?: Record<string, string | number | boolean>,
   autoFetch: boolean = true,
   cachePolicy: 'cache-first' | 'network-first' = 'cache-first'
 ) {
+  // Variables internas para usar en el hook
+  let url: string;
+  let opts: RequestInit | undefined;
+  let qParams: Record<string, string | number | boolean> | undefined;
+  let autoFetchLocal: boolean = true;
+  let cachePolicyLocal: 'cache-first' | 'network-first' = 'cache-first';
+
+  if (typeof urlOrOpts === 'string') {
+    // Firma clásica
+    url = urlOrOpts;
+    opts = options;
+    qParams = queryParams;
+    autoFetchLocal = autoFetch ?? true;
+    cachePolicyLocal = cachePolicy ?? 'cache-first';
+  } else {
+    // Firma con objeto de opciones
+    url = urlOrOpts.url;
+    opts = urlOrOpts.options;
+    qParams = urlOrOpts.queryParams;
+    autoFetchLocal = urlOrOpts.autoFetch ?? true;
+    cachePolicyLocal = urlOrOpts.cachePolicy ?? 'cache-first';
+  }
+
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(autoFetch);
+  const [loading, setLoading] = useState<boolean>(autoFetchLocal);
   const [error, setError] = useState<string | null>(null);
   const [initialUrl, setInitialUrl] = useState<string>(url);
 
-  // Retrieve the token from the Redux store
+  // Token desde Redux
   const token = useSelector((state: RootState) => state.auth.token);
 
-  // Construct the URL with query parameters
+  // Construir URL con query params
   const buildUrlWithParams = (baseUrl: string, params?: Record<string, string | number | boolean>): string => {
     if (!params) return baseUrl;
     const queryString = new URLSearchParams(
@@ -44,14 +106,15 @@ export function useQuery<T>(
     return `${baseUrl}?${queryString}`;
   };
 
-  const fullUrl = buildUrlWithParams(initialUrl, queryParams);
+  // Como initialUrl es estado, sincronizamos fullUrl según initialUrl y qParams
+  const fullUrl = buildUrlWithParams(initialUrl, qParams);
 
-  const fetchDataFromApi = async () => {
+  const fetchDataFromApi = useCallback(async (): Promise<T | null> => {
     try {
       const response = await fetch(fullUrl, {
-        ...options,
+        ...opts,
         headers: {
-          ...options?.headers,
+          ...opts?.headers,
           Authorization: token ? `Bearer ${token}` : '',
         },
       });
@@ -75,39 +138,38 @@ export function useQuery<T>(
     } finally {
       setLoading(false);
     }
-  };
+  }, [fullUrl, opts, token]);
 
   const fetchData = useCallback(
     async (forceNetwork: boolean = false) => {
       setLoading(true);
       setError(null);
 
-      if (cachePolicy === 'network-first' || forceNetwork) {
-        // Intentamos obtener los datos desde la red primero
+      if (cachePolicyLocal === 'network-first' || forceNetwork) {
+        // Intentamos obtener datos desde la red primero
         const networkData = await fetchDataFromApi();
         if (networkData) {
-          // Actualizamos el caché con los datos obtenidos de la red
           cacheManager.set(fullUrl, networkData);
           setData(networkData);
         }
-      } else if (cachePolicy === 'cache-first') {
+      } else if (cachePolicyLocal === 'cache-first') {
         const cachedData = cacheManager.get(fullUrl);
         if (cachedData) {
-          setData(cachedData as T); // Usamos los datos en caché
+          setData(cachedData as T);
           setLoading(false);
         } else {
-          await fetchDataFromApi(); // Si no hay caché, hace la solicitud de red
+          await fetchDataFromApi();
         }
       }
     },
-    [fullUrl, token, cachePolicy]
+    [cachePolicyLocal, fullUrl]
   );
 
   useEffect(() => {
-    if (autoFetch) {
+    if (autoFetchLocal) {
       fetchData();
     }
-  }, [autoFetch, cachePolicy, fetchData]);
+  }, [autoFetchLocal, cachePolicyLocal, fetchData]);
 
   const refetch = (newUrl: string = '', forceNetwork: boolean = false) => {
     if (newUrl) {

@@ -51,17 +51,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (!isAuthenticated || !token || !exp) return;
 
-    if (data) {
-      const decodedToken = jwtDecode<{ sub: string; roles: string[] } & JwtPayload>(data.access_token);
-      dispatch(refreshToken({ token: data.access_token, exp: Number(decodedToken.exp) }));
-      console.log('Token refrescado exitosamente.');
-    }
-
     if (error && isAuthenticated) {
       console.error('Error al refrescar el token:', error);
       dispatch(logout());
       navigate(`/auth/login?redirectUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`, { replace: true });
       return;
+    }
+
+    if (data) {
+      const decodedToken = jwtDecode<{ sub: string; roles: string[] } & JwtPayload>(data.access_token);
+      dispatch(refreshToken({ token: data.access_token, exp: Number(decodedToken.exp) }));
+      console.log('Token refrescado exitosamente.');
     }
   }, [isAuthenticated, navigate, data, error, dispatch, token, exp]);
 
