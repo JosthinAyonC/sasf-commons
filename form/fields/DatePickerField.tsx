@@ -1,7 +1,7 @@
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
-import { Controller, FieldValues } from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { Controller, FieldValues, get, useFormContext } from 'react-hook-form';
 
 import { DatePickerUI } from '../ui/DatePickerUi';
 import { DatePickerFieldProps } from './types';
@@ -21,6 +21,15 @@ export const DatePickerField = <T extends FieldValues>({
   placeholderText,
   disabled = false,
 }: DatePickerFieldProps<T>) => {
+  const { setValue, getValues } = useFormContext();
+
+  useEffect(() => {
+    const currentValue = get(getValues(), name as string);
+    if ((currentValue === undefined || currentValue === null) && defaultValue) {
+      setValue(name as string, defaultValue);
+    }
+  }, [defaultValue, name, setValue, getValues]);
+
   return (
     <div className={`relative w-full ${className || ''}`}>
       {label && (
@@ -32,7 +41,6 @@ export const DatePickerField = <T extends FieldValues>({
 
       <Controller
         name={name}
-        defaultValue={defaultValue ? (defaultValue as unknown as T[keyof T]) : undefined}
         rules={{
           required: isRequired ? requiredMsg || 'Este campo es obligatorio' : undefined,
           validate: {

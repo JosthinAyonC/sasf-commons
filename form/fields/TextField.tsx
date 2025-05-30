@@ -22,12 +22,12 @@ export const TextField = <T extends FieldValues>({
   regexpErrorLabel,
   type = 'text',
   placeholder,
-  defaultValue,
   disabled = false,
   onChange,
   requiredMsg,
   showCharacterIndicator = false,
   additionalInformation,
+  defaultValue = '',
 }: Omit<TextFieldProps<T>, 'register' | 'error'>) => {
   const {
     formState: { errors },
@@ -72,7 +72,7 @@ export const TextField = <T extends FieldValues>({
 
       <Controller
         name={name}
-        defaultValue={defaultValue ? (defaultValue as unknown as T[keyof T]) : undefined}
+        defaultValue={defaultValue as T[keyof T]}
         render={({ field: { onChange: fieldOnChange, value } }) => (
           <TextFieldUI
             inputClassName={inputClassName}

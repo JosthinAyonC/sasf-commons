@@ -12,11 +12,11 @@ export interface CheckBoxUiProps {
 }
 
 export interface TextFieldUIProps {
-  type: string;
+  type?: string;
   placeholder?: string;
   inputClassName?: string;
   disabled?: boolean;
-  onChange: (_value: string) => void;
+  onChange?: (_value: string) => void;
   value?: string;
   additionalInformation?: React.ReactNode;
 }

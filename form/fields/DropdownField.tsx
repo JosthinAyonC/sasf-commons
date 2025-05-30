@@ -34,7 +34,7 @@ const customStyles = (hasAdditionalInfo: boolean): StylesConfig<Option> => ({
   option: (styles, { isFocused, isSelected }) => ({
     ...styles,
     display: 'flex',
-    backgroundColor: isSelected ? 'var(--secondaryalt)' : isFocused ? 'var(--secondaryalt)' : 'var(--bg)',
+    backgroundColor: isSelected || isFocused ? 'var(--secondaryalt)' : 'var(--bg)',
     color: 'var(--font)',
     cursor: 'pointer',
     '&:active': {
@@ -48,22 +48,6 @@ const customStyles = (hasAdditionalInfo: boolean): StylesConfig<Option> => ({
   singleValue: (styles) => ({
     ...styles,
     color: 'var(--font)',
-  }),
-  multiValue: (styles) => ({
-    ...styles,
-    backgroundColor: 'var(--highlight)',
-  }),
-  multiValueLabel: (styles) => ({
-    ...styles,
-    color: 'var(--font)',
-  }),
-  multiValueRemove: (styles) => ({
-    ...styles,
-    color: 'var(--error)',
-    ':hover': {
-      backgroundColor: 'var(--hover)',
-      color: 'var(--font)',
-    },
   }),
   menu: (styles) => ({
     ...styles,
@@ -86,7 +70,6 @@ export const DropdownField = <T extends FieldValues>({
   name,
   control,
   options,
-  isMulti = false,
   placeholder = 'Seleccione...',
   isClearable = false,
   labelClassName,
@@ -112,20 +95,13 @@ export const DropdownField = <T extends FieldValues>({
     },
   });
 
-  const handleChange = (selected: SingleValue<Option> | MultiValue<Option>) => {
-    let selectedValues;
-
-    if (isMulti) {
-      selectedValues = (selected as MultiValue<Option>)?.map((option) => option.value);
-    } else {
-      selectedValues = (selected as SingleValue<Option>)?.value || '';
+  const handleChange = (newValue: SingleValue<Option> | MultiValue<Option>) => {
+    let selectedValue: Option['value'] | '' = '';
+    if (newValue && !Array.isArray(newValue)) {
+      selectedValue = (newValue as Option).value;
     }
-
-    onChange(selectedValues);
-
-    if (onChangeSelection) {
-      onChangeSelection(selectedValues);
-    }
+    onChange(selectedValue);
+    if (onChangeSelection) onChangeSelection(selectedValue);
   };
 
   return (
@@ -136,7 +112,6 @@ export const DropdownField = <T extends FieldValues>({
           {isRequired && <span className="text-[var(--error)] ml-1">*</span>}
         </label>
       )}
-
       <div className="flex w-full">
         {additionalInformation && (
           <div className="relative flex items-center justify-center w-[10%] bg-[var(--bg)] border border-r-0 border-[var(--border)] rounded-l-md">
@@ -149,18 +124,14 @@ export const DropdownField = <T extends FieldValues>({
           <Select
             key={name}
             options={options}
-            isMulti={isMulti}
             placeholder={placeholder}
             isClearable={isClearable}
-            value={isMulti ? options.filter((opt) => value?.includes(opt.value)) : options.find((opt) => opt.value === value)}
+            value={options.find((opt) => opt.value === value) || null}
             onChange={handleChange}
             classNamePrefix="react-select"
             styles={{
               ...customStyles(!!additionalInformation),
-              menuPortal: (base) => ({
-                ...base,
-                zIndex: 1050,
-              }),
+              menuPortal: (base) => ({ ...base, zIndex: 1050 }),
             }}
             ref={ref}
             isDisabled={disabled}
