@@ -43,7 +43,7 @@ export interface RadioButtonUIProps {
   label?: string;
   checked?: boolean;
   isRequired?: boolean;
-  onChange?: (value: string) => void;
+  onChange?: (_value: string) => void;
   className?: string;
   labelClassName?: string;
   disabled?: boolean;

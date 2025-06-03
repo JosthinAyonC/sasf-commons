@@ -18,14 +18,14 @@ export const toDnDItem = <T,>(item: T): DnDItem<T> => ({
 });
 
 export type DnDBoardHandle<T> = {
-  moveToSection: (item: T, toSectionId: string) => void;
+  moveToSection: (_item: T, _toSectionId: string) => void;
 };
 
 export type DnDBoardProps<T> = {
   sections: DnDSection<T>[];
-  onReOrder: (sections: DnDSection<T>[]) => void;
-  renderItem: (item: DnDItem<T>) => React.ReactNode;
-  getId: (item: T) => string;
+  onReOrder: (_sections: DnDSection<T>[]) => void;
+  renderItem: (_item: DnDItem<T>) => React.ReactNode;
+  getId: (_item: T) => string;
   canMoveSections?: boolean;
   sectionClassName?: string;
   containerClassName?: string;
@@ -180,4 +180,4 @@ function DnDBoardInner<T>(
   );
 }
 
-export const DnDBoard = forwardRef(DnDBoardInner) as <T>(props: DnDBoardProps<T> & { ref?: Ref<DnDBoardHandle<T>> }) => ReturnType<typeof DnDBoardInner>;
+export const DnDBoard = forwardRef(DnDBoardInner) as <T>(_props: DnDBoardProps<T> & { ref?: Ref<DnDBoardHandle<T>> }) => ReturnType<typeof DnDBoardInner>;

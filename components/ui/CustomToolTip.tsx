@@ -6,7 +6,7 @@ import { useMediaQuery } from '../../hooks';
 
 export interface TooltipProps {
   text: React.ReactNode;
-  textClassName?: string;
+  iconClassName?: string;
   bgColor?: string;
   icon?: IconDefinition;
   toolTipClassName?: string;
@@ -40,7 +40,7 @@ const tooltipVariants = {
   },
 };
 
-export const CustomTooltip: FC<TooltipProps> = ({ text, textClassName, bgColor, icon, toolTipClassName, variant = 'info' }) => {
+export const CustomTooltip: FC<TooltipProps> = ({ text, iconClassName, bgColor, icon, toolTipClassName, variant = 'info' }) => {
   const [isTooltipVisible, setTooltipVisible] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -57,12 +57,12 @@ export const CustomTooltip: FC<TooltipProps> = ({ text, textClassName, bgColor, 
       onMouseEnter={!isMobile ? () => setTooltipVisible(true) : undefined}
       onMouseLeave={!isMobile ? () => setTooltipVisible(false) : undefined}
     >
-      {icon && <FontAwesomeIcon icon={icon} className={`text-[var(--secondaryalt)] cursor-pointer ${textClassName}`} />}
+      <FontAwesomeIcon icon={icon || faInfoCircle} className={`text-[var(--secondaryalt)] cursor-pointer ${iconClassName}`} />
 
       {/* Tooltip visual */}
       {(isTooltipVisible || !isMobile) && (
         <div
-          className={`absolute ${isTooltipVisible ? 'block' : 'hidden'} group-hover:block ${bgColor ? bgColor : background} text-white text-xs rounded-md p-2 right-0 mt-1 w-48 shadow-lg z-tooltip ${borderColor} ${toolTipClassName}`}
+          className={`absolute ${isTooltipVisible ? 'block' : 'hidden'} group-hover:block ${bgColor ? `bg-${bgColor}` : background} text-white text-xs rounded-md p-2 shadow-lg z-10 w-64 left-1/2 -translate-x-1/2 bottom-full ${borderColor} ${toolTipClassName}`}
         >
           <div className="flex flex-row items-center">
             <FontAwesomeIcon icon={variantIcon} className={`mr-2 ${textcolor}`} />

@@ -25,23 +25,23 @@ type UseQueryOptions = {
  *   useQuery({ url, options?, queryParams?, autoFetch?, cachePolicy? })
  */
 export function useQuery<T>(
-  url: string,
-  options?: RequestInit,
-  queryParams?: Record<string, string | number | boolean>,
-  autoFetch?: boolean,
-  cachePolicy?: 'cache-first' | 'network-first'
+  _url: string,
+  _options?: RequestInit,
+  _queryParams?: Record<string, string | number | boolean>,
+  _autoFetch?: boolean,
+  _cachePolicy?: 'cache-first' | 'network-first'
 ): {
   data: T | null;
   loading: boolean;
   error: string | null;
-  refetch: (newUrl?: string, forceNetwork?: boolean) => void;
+  refetch: (_newUrl?: string, _forceNetwork?: boolean) => void;
 };
 
-export function useQuery<T>(opts: UseQueryOptions): {
+export function useQuery<T>(_opts: UseQueryOptions): {
   data: T | null;
   loading: boolean;
   error: string | null;
-  refetch: (newUrl?: string, forceNetwork?: boolean) => void;
+  refetch: (_newUrl?: string, _forceNetwork?: boolean) => void;
 };
 
 /**
