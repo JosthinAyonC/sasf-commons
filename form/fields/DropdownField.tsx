@@ -7,7 +7,7 @@ import { PortalTooltip } from '~/components/ui/PortalTooltip';
 
 import { DropdownFieldProps, Option } from './types';
 
-const customStyles = (hasAdditionalInfo: boolean): StylesConfig<Option> => ({
+export const customStyles = (hasAdditionalInfo: boolean): StylesConfig<Option> => ({
   control: (styles, { isDisabled }) => ({
     ...styles,
     backgroundColor: isDisabled ? 'var(--disabled)' : 'var(--bg)',
@@ -79,7 +79,7 @@ export const DropdownField = <T extends FieldValues>({
   rules,
   disabled = false,
   onChangeSelection,
-  noOptionsMessage,
+  noOptionMessage = ({ inputValue }: { inputValue: string }) => `No hay resultados para "${inputValue}"`,
   requiredMsg,
   additionalInformation,
 }: DropdownFieldProps<T>) => {
@@ -135,7 +135,7 @@ export const DropdownField = <T extends FieldValues>({
             }}
             ref={ref}
             isDisabled={disabled}
-            noOptionsMessage={() => noOptionsMessage || 'No hay opciones disponibles'}
+            noOptionsMessage={noOptionMessage}
             menuPortalTarget={document.body}
             menuPosition="absolute"
           />

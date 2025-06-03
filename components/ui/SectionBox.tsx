@@ -1,7 +1,7 @@
 import React, { ReactNode, useState } from 'react';
 
 interface SectionBoxProps {
-  label: string;
+  label: React.ReactNode;
   children: ReactNode;
   className?: string;
 }

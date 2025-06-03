@@ -229,6 +229,7 @@ export interface Option<T = string | number | object> {
 
 export interface DropdownFieldProps<T extends FieldValues, V = string | number | object> extends UseControllerProps<T> {
   options: Option<V>[];
+  noOptionMessage?: (obj: { inputValue: string }) => React.ReactNode;
   isMulti?: boolean;
   placeholder?: string;
   isClearable?: boolean;
@@ -242,6 +243,26 @@ export interface DropdownFieldProps<T extends FieldValues, V = string | number |
   noOptionsMessage?: string;
   requiredMsg?: string;
   additionalInformation?: React.ReactNode;
+}
+
+export interface AsyncDropdownProps<T extends FieldValues> {
+  name: string;
+  label?: string;
+  isRequired?: boolean;
+  placeholder?: string;
+  fetchUrl: string;
+  labelClassName?: string;
+  containerClassName?: string;
+  selectClassName?: string;
+  errorClassName?: string;
+  queryParamName?: string;
+  transformOption: (item: T) => Option;
+  noOptionMessage?: (obj: { inputValue: string }) => React.ReactNode;
+  requiredMsg?: string;
+  additionalInformation?: React.ReactNode;
+  disabled?: boolean;
+  isClearable?: boolean;
+  fetchByIdUrl?: string;
 }
 
 export interface ColorPickerFieldProps<T extends FieldValues> {

@@ -32,7 +32,7 @@ interface TableProps<T extends object> {
   disableRowExpand?: (_row: T) => boolean;
   searchPlaceholder?: string;
   onNewAction?: () => void;
-  title?: string;
+  title?: React.ReactNode;
   noRegistersText?: string;
 }
 

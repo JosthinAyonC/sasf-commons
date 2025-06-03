@@ -28,7 +28,7 @@ interface TableProps<T extends object> {
   columns: ColumnDef<T>[];
   fetchUrl: string;
   searchUrl?: string;
-  title: string;
+  title: React.ReactNode;
   queryParams?: Record<string, string | number | boolean>;
   filterKey?: string;
   pageKey?: string;
@@ -97,6 +97,15 @@ interface TableProps<T extends object> {
  * @param {string} [notFoundLabel='No se encontraron resultados'] - Texto a mostrar cuando no hay datos en la tabla.
  * @param {any} [refreshEvent] - Evento que, cuando cambia, refresca la tabla.
  * @param {string} [searchPlaceholder='Buscar...'] - Texto del placeholder en la barra de búsqueda.
+ *
+ * @example
+ * <QueryTable<UnidadMedida>
+ *  title="Unidad de medida"
+ *  columns={colums}
+ *  fetchUrl={`api/${currenCodigoLicenciatario}`}
+ *  filterKey="filtro"
+ *  searchPlaceholder='Buscar por item o referencia.'
+ * />
  */
 export const QueryTable = <T extends object>({
   columns,
