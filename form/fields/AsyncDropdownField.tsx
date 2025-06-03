@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { FieldValues, useController } from 'react-hook-form';
 import Select from 'react-select';
-import type { SingleValue } from 'react-select';
+import type { MultiValue, SingleValue } from 'react-select';
 import { PortalTooltip } from '~/components/ui/PortalTooltip';
 import { useDebounce } from '~/hooks';
 import { useQuery } from '~/hooks/useQuery';
@@ -18,6 +18,7 @@ import { AsyncDropdownProps, Option } from './types';
  *
  * Este componente también puede pre-cargar una opción si se proporciona `fetchByIdUrl`.
  *
+ * @template FieldValues - Tipo genérico que representa el formulario que representa..
  * @template T - Tipo genérico que representa el objeto que retorna el endpoint.
  *
  * @param {string} name - Nombre del campo en el formulario (clave que usa `react-hook-form`).
@@ -26,7 +27,7 @@ import { AsyncDropdownProps, Option } from './types';
  * @param {string} [placeholder='Seleccione...'] - Texto a mostrar cuando no hay selección.
  * @param {string} fetchUrl - URL del endpoint para obtener las opciones del dropdown.
  * @param {string} [fetchByIdUrl] - URL opcional para cargar una opción por ID al montar el componente.
- * @param {string} [queryParamName='filtro'] - Nombre del parámetro de búsqueda para el backend.
+ * @param {string} [queryParamFilter='filtro'] - Nombre del parámetro de búsqueda para el backend.
  * @param {(item: T) => Option} transformOption - Función que transforma cada ítem recibido del backend en una opción para el dropdown.
  * @param {(context: { inputValue: string }) => string} [noOptionMessage] - Mensaje mostrado cuando no hay opciones para un input dado.
  * @param {string} [requiredMsg='Este campo es obligatorio'] - Mensaje de error mostrado si el campo es requerido y está vacío.
@@ -37,20 +38,22 @@ import { AsyncDropdownProps, Option } from './types';
  * @param {string} [selectClassName] - Clases CSS adicionales para el componente Select.
  * @param {string} [errorClassName] - Clases CSS adicionales para el mensaje de error.
  * @param {string | React.ReactNode} [additionalInformation] - Información adicional mostrada con ícono de ayuda.
+ * @param {Record<string, string | number>} [queryParams] - Parámetros adicionales para la consulta al backend.
  *
  * @returns {JSX.Element} Componente de dropdown asíncrono con búsqueda y paginación.
  *
  * @example
- * <AsyncDropdown<Cliente>
+ * <AsyncDropdown<ClienteFormType, ClienteType>
  *   name="cliente"
  *   label="Cliente"
  *   fetchUrl="domain/api/clientes"
  *   fetchByIdUrl="domain/api/clientes/123"
  *   transformOption={(cliente) => ({ value: cliente.id, label: cliente.nombre })}
+ *   queryParams={{ estado: 'A' }}
  *   isRequired
  * />
  */
-export function AsyncDropdown<T extends FieldValues>({
+export function AsyncDropdown<FormValues extends FieldValues, T>({
   name,
   label,
   isRequired = false,
@@ -60,7 +63,7 @@ export function AsyncDropdown<T extends FieldValues>({
   containerClassName = '',
   selectClassName = '',
   errorClassName = '',
-  queryParamName = 'filtro',
+  queryParamFilter = 'filtro',
   transformOption,
   noOptionMessage = ({ inputValue }: { inputValue: string }) => `No hay resultados para "${inputValue}"`,
   requiredMsg = 'Este campo es obligatorio',
@@ -68,7 +71,9 @@ export function AsyncDropdown<T extends FieldValues>({
   isClearable = false,
   additionalInformation,
   fetchByIdUrl,
-}: AsyncDropdownProps<T>) {
+  queryParams,
+  onChangeSelection,
+}: AsyncDropdownProps<FormValues, T>) {
   const {
     field: { value, onChange, ref },
     fieldState: { error },
@@ -83,11 +88,21 @@ export function AsyncDropdown<T extends FieldValues>({
   const { data, loading } = useQuery<{ content: T[] }>({
     url: fetchUrl,
     queryParams: {
-      [queryParamName]: debouncedInput,
+      ...queryParams,
+      [queryParamFilter]: debouncedInput,
       page,
       size: 10,
     },
   });
+
+  const handleChange = (newValue: SingleValue<Option> | MultiValue<Option>) => {
+    let selectedValue: Option['value'] | '' = '';
+    if (newValue && !Array.isArray(newValue)) {
+      selectedValue = (newValue as Option).value;
+    }
+    onChange(selectedValue);
+    if (onChangeSelection) onChangeSelection(selectedValue);
+  };
 
   const { data: dataById } = useQuery<T>({ url: fetchByIdUrl ?? '', autoFetch: !!fetchByIdUrl });
 
@@ -126,10 +141,10 @@ export function AsyncDropdown<T extends FieldValues>({
           </div>
         )}
         <div className={`${additionalInformation ? 'w-[90%]' : 'w-full'}`}>
-          <Select
+          <Select<Option, false>
             placeholder={placeholder}
-            value={value}
-            onChange={(newValue) => onChange(newValue as SingleValue<Option>)}
+            value={options.find((opt) => opt.value === value) || null}
+            onChange={handleChange}
             onInputChange={(val) => setInputValue(val)}
             options={options}
             isLoading={loading}

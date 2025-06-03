@@ -245,26 +245,32 @@ export interface DropdownFieldProps<T extends FieldValues, V = string | number |
   additionalInformation?: React.ReactNode;
 }
 
-export interface AsyncDropdownProps<T extends FieldValues> {
-  name: string;
-  label?: string;
+export interface AsyncDropdownProps<FormValues extends FieldValues, FetchType> extends UseControllerProps<FormValues> {
+  label: string;
   isRequired?: boolean;
   placeholder?: string;
   fetchUrl: string;
+  fetchByIdUrl?: string;
+  queryParamFilter?: string;
+  transformOption: (item: FetchType) => Option;
+  noOptionMessage?: (context: { inputValue: string }) => string;
+  requiredMsg?: string;
+  disabled?: boolean;
+  isClearable?: boolean;
   labelClassName?: string;
   containerClassName?: string;
   selectClassName?: string;
   errorClassName?: string;
-  queryParamName?: string;
-  transformOption: (item: T) => Option;
-  noOptionMessage?: (obj: { inputValue: string }) => React.ReactNode;
-  requiredMsg?: string;
-  additionalInformation?: React.ReactNode;
-  disabled?: boolean;
-  isClearable?: boolean;
-  fetchByIdUrl?: string;
+  additionalInformation?: React.ReactNode | string;
+  queryParams?: Record<string, string | number>;
+  onChangeSelection?: (value: Option['value'] | '') => void;
 }
-
+/**
+ * Permite que AsyncDropdownProps acepte tanto Path<T> como string para la propiedad name.
+ */
+export interface AsyncDropdownPropsWithString<T extends FieldValues, V = string | number | object> extends Omit<AsyncDropdownProps<T, V>, 'name'> {
+  name: Path<T> | string;
+}
 export interface ColorPickerFieldProps<T extends FieldValues> {
   label?: string;
   name: Path<T>;
