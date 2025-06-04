@@ -174,7 +174,7 @@ export function useQuery<T>(
     if (autoFetchLocal) {
       fetchData();
     }
-  }, [autoFetchLocal, fetchData]);
+  }, [autoFetchLocal]);
 
   const refetch = useCallback(
     (newUrl = '', forceNetwork = false) => {
