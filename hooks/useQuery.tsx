@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { cacheManager } from '~/config/CacheManager';
 import { RootState } from '~/store';
@@ -91,8 +91,18 @@ export function useQuery<T>(
   // Token desde Redux
   const token = useSelector((state: RootState) => state.auth.token);
 
+  useEffect(() => {
+    // Si la URL cambia, reiniciamos el estado
+    if (url !== initialUrl) {
+      setInitialUrl(url);
+      setData(null);
+      setLoading(autoFetchLocal);
+      setError(null);
+    }
+  }, [url, initialUrl, autoFetchLocal]);
+
   // Construir URL con query params
-  const buildUrlWithParams = (baseUrl: string, params?: Record<string, string | number | boolean>): string => {
+  const buildUrlWithParams = useCallback((baseUrl: string, params?: Record<string, string | number | boolean>): string => {
     if (!params) return baseUrl;
     const queryString = new URLSearchParams(
       Object.entries(params).reduce(
@@ -104,18 +114,17 @@ export function useQuery<T>(
       )
     ).toString();
     return `${baseUrl}?${queryString}`;
-  };
+  }, []);
 
-  // Como initialUrl es estado, sincronizamos fullUrl según initialUrl y qParams
-  const fullUrl = buildUrlWithParams(initialUrl, qParams);
+  const fullUrl = useMemo(() => buildUrlWithParams(initialUrl, qParams), [initialUrl, qParams, buildUrlWithParams]);
 
   const fetchDataFromApi = useCallback(async (): Promise<T | null> => {
     try {
       const response = await fetch(fullUrl, {
         ...opts,
         headers: {
-          ...opts?.headers,
           Authorization: token ? `Bearer ${token}` : '',
+          ...opts?.headers,
         },
       });
 
@@ -129,11 +138,7 @@ export function useQuery<T>(
       cacheManager.set(fullUrl, result);
       return result;
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unknown error occurred.');
-      }
+      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
       return null;
     } finally {
       setLoading(false);
@@ -141,7 +146,7 @@ export function useQuery<T>(
   }, [fullUrl, opts, token]);
 
   const fetchData = useCallback(
-    async (forceNetwork: boolean = false) => {
+    async (forceNetwork = false) => {
       setLoading(true);
       setError(null);
 
@@ -152,7 +157,7 @@ export function useQuery<T>(
           cacheManager.set(fullUrl, networkData);
           setData(networkData);
         }
-      } else if (cachePolicyLocal === 'cache-first') {
+      } else {
         const cachedData = cacheManager.get(fullUrl);
         if (cachedData) {
           setData(cachedData as T);
@@ -162,23 +167,26 @@ export function useQuery<T>(
         }
       }
     },
-    [cachePolicyLocal, fullUrl]
+    [cachePolicyLocal, fullUrl, fetchDataFromApi]
   );
 
   useEffect(() => {
     if (autoFetchLocal) {
       fetchData();
     }
-  }, [autoFetchLocal, cachePolicyLocal, fetchData]);
+  }, [autoFetchLocal, fetchData]);
 
-  const refetch = (newUrl: string = '', forceNetwork: boolean = false) => {
-    if (newUrl) {
-      setInitialUrl(newUrl);
-    }
-    setLoading(true);
-    setError(null);
-    fetchData(forceNetwork);
-  };
+  const refetch = useCallback(
+    (newUrl = '', forceNetwork = false) => {
+      if (newUrl) {
+        setInitialUrl(newUrl);
+      }
+      setLoading(true);
+      setError(null);
+      fetchData(forceNetwork);
+    },
+    [fetchData]
+  );
 
   return { data, loading, error, refetch };
 }

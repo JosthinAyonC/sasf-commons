@@ -16,6 +16,12 @@ import { AsyncDropdownProps, Option } from './types';
  * Diseñado para integrarse con `react-hook-form` y utilizar un backend que soporte paginación
  * (por ejemplo, un endpoint con `page`, `size` y filtro por query param).
  *
+ * Nota muy importante: Para que el componente funcione correctamente debemos tener el endpoint que devuelve el
+ * registro por id especificamente.
+ *
+ * En ocasiones bastara setearle el codigo correspondiente y automaticamente se cargara el registro, pero esto
+ * solo sucederá cuando el registro seleccionado este entre los primero 10 registros que devuelve el endpoint.
+ *
  * Este componente también puede pre-cargar una opción si se proporciona `fetchByIdUrl`.
  *
  * @template FieldValues - Tipo genérico que representa el formulario que representa..
@@ -65,7 +71,9 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
   errorClassName = '',
   queryParamFilter = 'filtro',
   transformOption,
-  noOptionMessage = ({ inputValue }: { inputValue: string }) => `No hay resultados para "${inputValue}"`,
+  noOptionMessage = ({ inputValue }: { inputValue: string }) => {
+    return inputValue ? `No hay resultados para "${inputValue}"` : 'No hay opciones disponibles';
+  },
   requiredMsg = 'Este campo es obligatorio',
   disabled = false,
   isClearable = false,
@@ -109,7 +117,11 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
   useEffect(() => {
     if (dataById) {
       const transformedOption = transformOption(dataById);
-      onChange(transformedOption);
+      setOptions((prev) => {
+        const exists = prev.find((opt) => opt.value === transformedOption.value);
+        return exists ? prev : [transformedOption, ...prev];
+      });
+      onChange(transformedOption.value);
     }
   }, [dataById]);
 
@@ -124,6 +136,8 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
     setPage(0);
   }, [debouncedInput]);
 
+  const aditionalInformationValue = additionalInformation ? additionalInformation(options) : undefined;
+
   return (
     <div className={`w-full ${containerClassName}`}>
       {label && (
@@ -133,14 +147,14 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
         </label>
       )}
       <div className="flex w-full">
-        {additionalInformation && (
+        {aditionalInformationValue && (
           <div className="relative flex items-center justify-center w-[10%] bg-[var(--bg)] border border-r-0 border-[var(--border)] rounded-l-md">
-            <PortalTooltip content={additionalInformation}>
+            <PortalTooltip content={aditionalInformationValue}>
               <FontAwesomeIcon icon={faInfoCircle} className="text-[var(--info)] cursor-pointer" />
             </PortalTooltip>
           </div>
         )}
-        <div className={`${additionalInformation ? 'w-[90%]' : 'w-full'}`}>
+        <div className={`${aditionalInformationValue ? 'w-[90%]' : 'w-full'}`}>
           <Select<Option, false>
             placeholder={placeholder}
             value={options.find((opt) => opt.value === value) || null}
@@ -158,7 +172,7 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
             }}
             className={selectClassName}
             styles={{
-              ...customStyles(!!additionalInformation),
+              ...customStyles(!!aditionalInformationValue),
               menuPortal: (base) => ({ ...base, zIndex: 1050 }),
             }}
             ref={ref}

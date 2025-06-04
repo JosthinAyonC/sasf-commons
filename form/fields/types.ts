@@ -261,7 +261,7 @@ export interface AsyncDropdownProps<FormValues extends FieldValues, FetchType> e
   containerClassName?: string;
   selectClassName?: string;
   errorClassName?: string;
-  additionalInformation?: React.ReactNode | string;
+  additionalInformation?: (items: Option[]) => string | React.ReactNode;
   queryParams?: Record<string, string | number>;
   onChangeSelection?: (value: Option['value'] | '') => void;
 }
