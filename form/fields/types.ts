@@ -263,7 +263,7 @@ export interface AsyncDropdownProps<FormValues extends FieldValues, FetchType> e
   errorClassName?: string;
   additionalInformation?: (items: Option[]) => string | React.ReactNode;
   queryParams?: Record<string, string | number>;
-  onChangeSelection?: (value: Option['value'] | '') => void;
+  onChangeSelection?: (value: FetchType) => void;
 }
 /**
  * Permite que AsyncDropdownProps acepte tanto Path<T> como string para la propiedad name.

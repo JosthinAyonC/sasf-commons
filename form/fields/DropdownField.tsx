@@ -105,7 +105,7 @@ export const DropdownField = <T extends FieldValues>({
   };
 
   return (
-    <div className={`w-full ${containerClassName}`}>
+    <div className={`w-full ${containerClassName} ${disabled ? 'cursor-not-allowed' : ''}`}>
       {label && (
         <label htmlFor={name as string} className={`text-neutral-700 ${labelClassName} block`}>
           {label}

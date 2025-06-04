@@ -103,16 +103,16 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
     },
   });
 
+  const { data: dataById } = useQuery<T>({ url: fetchByIdUrl ?? '', autoFetch: !!fetchByIdUrl });
+
   const handleChange = (newValue: SingleValue<Option> | MultiValue<Option>) => {
     let selectedValue: Option['value'] | '' = '';
     if (newValue && !Array.isArray(newValue)) {
       selectedValue = (newValue as Option).value;
     }
     onChange(selectedValue);
-    if (onChangeSelection) onChangeSelection(selectedValue);
+    if (onChangeSelection) onChangeSelection(data?.content.find((item) => transformOption(item).value === selectedValue) as T);
   };
-
-  const { data: dataById } = useQuery<T>({ url: fetchByIdUrl ?? '', autoFetch: !!fetchByIdUrl });
 
   useEffect(() => {
     if (dataById) {
@@ -139,7 +139,7 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
   const aditionalInformationValue = additionalInformation ? additionalInformation(options) : undefined;
 
   return (
-    <div className={`w-full ${containerClassName}`}>
+    <div className={`w-full ${containerClassName} ${disabled ? 'cursor-not-allowed' : ''}`}>
       {label && (
         <label htmlFor={name as string} className={`text-neutral-700 ${labelClassName} block`}>
           {label}

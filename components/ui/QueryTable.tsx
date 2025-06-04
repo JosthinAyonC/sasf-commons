@@ -56,6 +56,7 @@ interface TableProps<T extends object> {
   notFoundLabel?: string;
   refreshEvent?: string;
   searchPlaceholder?: string;
+  autoFetch?: boolean;
 }
 
 /**
@@ -139,6 +140,7 @@ export const QueryTable = <T extends object>({
   notFoundLabel = 'No se encontraron resultados',
   refreshEvent,
   searchPlaceholder = 'Buscar...',
+  autoFetch = true,
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
@@ -178,7 +180,7 @@ export const QueryTable = <T extends object>({
     fetchUrl,
     undefined,
     queryParamsWithPagination,
-    true,
+    autoFetch,
     'network-first'
   );
   const totalPages = data ? Math.ceil((data[responseTotalCount] as number) / pagination.pageSize) : 0;
