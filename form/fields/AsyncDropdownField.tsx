@@ -128,9 +128,27 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
   useEffect(() => {
     if (!data) return;
     const newOptions = data.content.map(transformOption);
-    setOptions((prev) => (page === 0 ? newOptions : [...prev, ...newOptions]));
+
+    // Si lees este comentario, quiero que sepas que este cambio me causo un dolor de cabeza horrible
+    setOptions((prev) => {
+      const getKey = (value: Option['value']) => (typeof value === 'object' ? JSON.stringify(value) : String(value));
+
+      const uniqueOptions = new Map<string, Option>();
+
+      prev.forEach((opt) => uniqueOptions.set(getKey(opt.value), opt));
+
+      newOptions.forEach((opt) => {
+        const key = getKey(opt.value);
+        if (!uniqueOptions.has(key)) {
+          uniqueOptions.set(key, opt);
+        }
+      });
+
+      return Array.from(uniqueOptions.values());
+    });
+
     setHasMore(data.content.length === 10);
-  }, [data]);
+  }, [data, page, transformOption]);
 
   useEffect(() => {
     setPage(0);
