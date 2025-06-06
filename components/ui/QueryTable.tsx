@@ -57,6 +57,8 @@ interface TableProps<T extends object> {
   refreshEvent?: string;
   searchPlaceholder?: string;
   autoFetch?: boolean;
+  errorMessage?: string;
+  errorClassName?: string;
 }
 
 /**
@@ -141,6 +143,8 @@ export const QueryTable = <T extends object>({
   refreshEvent,
   searchPlaceholder = 'Buscar...',
   autoFetch = true,
+  errorMessage = 'Ocurrió un error al obtener los datos.',
+  errorClassName = 'text-red-500',
 }: TableProps<T>) => {
   const [pagination, setPagination] = useState({
     pageIndex: defaultPage,
@@ -434,9 +438,9 @@ export const QueryTable = <T extends object>({
               <tr className="border-b border-[var(--border)]">
                 <td
                   colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)}
-                  className="text-center py-4 text-[var(--error)] font-medium"
+                  className={`text-center py-4 text-[var(--error)] font-medium ${errorClassName}`}
                 >
-                  Ocurrió un error al obtener la data.
+                  {errorMessage}
                 </td>
               </tr>
             ) : loading ? (

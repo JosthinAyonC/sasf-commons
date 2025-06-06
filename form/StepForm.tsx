@@ -150,6 +150,7 @@ export const StepForm = <T extends FieldValues>({
                     onClick={() => validateSubmit(finalMethods.getValues())}
                     disabled={!finalMethods.formState.isValid}
                     title={!finalMethods.formState.isValid ? 'Por favor, completa todos los campos requeridos.' : 'Guardar cambios'}
+                    isLoading={finalMethods.formState.isSubmitting}
                   >
                     {submitComponent}
                   </Button>
