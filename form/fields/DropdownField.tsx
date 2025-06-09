@@ -25,6 +25,11 @@ export const customStyles = (hasAdditionalInfo: boolean): StylesConfig<Option> =
       cursor: 'text',
     },
   }),
+  clearIndicator: (styles) => ({
+    ...styles,
+    color: 'var(--font)',
+    cursor: 'pointer',
+  }),
   input: (styles) => ({
     ...styles,
     color: 'var(--font)',

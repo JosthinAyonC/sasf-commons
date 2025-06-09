@@ -40,6 +40,8 @@ export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const closeDialog = (keyId: string) => {
     const params = new URLSearchParams(searchParams);
     params.delete(keyId);
+    params.delete('step');
+    params.delete('tab');
     setSearchParams(params);
 
     setDialogOrder((prevOrder) => prevOrder.filter((key) => key !== keyId));
