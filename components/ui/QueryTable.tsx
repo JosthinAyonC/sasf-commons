@@ -13,6 +13,7 @@ import {
   FaExclamationTriangle,
   FaFilter,
   FaPlus,
+  FaSearch,
   FaTimes,
   FaTrashAlt,
 } from 'react-icons/fa';
@@ -40,6 +41,7 @@ interface TableProps<T extends object> {
   showOptions?: boolean;
   searchable?: boolean;
   onSelectAction?: (_row: T, _index: number) => void;
+  onVisualizeAction?: (_row: T, _index: number) => void;
   onDeleteAction?: (_row: T, _index: number) => void;
   statusAccessor?: string;
   onStatusChange?: (_row: T, _newStatus: 'A' | 'I') => void;
@@ -84,6 +86,7 @@ interface TableProps<T extends object> {
  * @param {boolean} [showOptions=true] - Indica si se deben mostrar opciones en la tabla (nextPage, totalPages, etc.).
  * @param {boolean} [searchable=true] - Indica si la tabla permite búsqueda.
  * @param {(item: T) => void} [onSelectAction] - Función que se ejecuta cuando se selecciona un elemento de la tabla, si no se envía no aparece el botón de editar.
+ * @param {(item: T) => void} [onVisualizeAction] - Función que se ejecuta cuando se selecciona un elemento de la tabla, si no se envía no aparece el botón de mostrar.
  * @param {(id: string | number) => void} [onDeleteAction] - Función que se ejecuta al eliminar un elemento.
  * @param {(item: T) => boolean} [statusAccessor] - Función que accede al estado de un elemento de la tabla.
  * @param {(id: string | number, newStatus: boolean) => void} [onStatusChange] - Función que se ejecuta cuando cambia el estado de un elemento.
@@ -126,6 +129,7 @@ export const QueryTable = <T extends object>({
   showOptions = true,
   searchable = true,
   onSelectAction,
+  onVisualizeAction,
   onDeleteAction,
   statusAccessor,
   onStatusChange,
@@ -317,6 +321,11 @@ export const QueryTable = <T extends object>({
     meta: { className: 'w-[10%]' },
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2 relative">
+        {onVisualizeAction && (
+          <button type="button" onClick={() => onVisualizeAction(row.original, row.index)} className="text-neutral-700 hover:text-neutral-900" title="Editar">
+            <FaSearch className="text-lg" />
+          </button>
+        )}
         {onSelectAction && (
           <button type="button" onClick={() => onSelectAction(row.original, row.index)} className="text-blue-500 hover:text-[var(--info)]" title="Editar">
             <FaEdit className="text-lg" />
@@ -339,9 +348,11 @@ export const QueryTable = <T extends object>({
     ),
   };
 
-  const tableColumns = [...(onDeleteMassiveAction ? [selectionColumn] : []), ...(onSelectAction || onDeleteAction ? [actionColumn] : []), ...columns].filter(
-    (column) => column.id !== 'selection' || onDeleteMassiveAction
-  );
+  const tableColumns = [
+    ...(onDeleteMassiveAction ? [selectionColumn] : []),
+    ...(onSelectAction || onVisualizeAction || onDeleteAction ? [actionColumn] : []),
+    ...columns,
+  ].filter((column) => column.id !== 'selection' || onDeleteMassiveAction);
 
   const table = useReactTable<T>({
     data: Array.isArray(data?.[responseDataKey]) ? (data?.[responseDataKey] as T[]) : [],
@@ -437,7 +448,7 @@ export const QueryTable = <T extends object>({
             {error ? (
               <tr className="border-b border-[var(--border)]">
                 <td
-                  colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)}
+                  colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction || onVisualizeAction ? 1 : 0)}
                   className={`text-center py-4 text-[var(--error)] font-medium ${errorClassName}`}
                 >
                   {errorMessage}
@@ -445,14 +456,17 @@ export const QueryTable = <T extends object>({
               </tr>
             ) : loading ? (
               <tr className="border-b border-[var(--border)]">
-                <td colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)} className="text-center py-4">
+                <td
+                  colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction || onVisualizeAction ? 1 : 0)}
+                  className="text-center py-4"
+                >
                   <Loader className="text-[var(--secondary)]" />
                 </td>
               </tr>
             ) : table.getRowModel().rows.length === 0 ? (
               <tr className="border-b border-[var(--border)]">
                 <td
-                  colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction ? 1 : 0)}
+                  colSpan={tableColumns.length + (rowExpand ? 1 : 0) + (onDeleteAction || onSelectAction || onVisualizeAction ? 1 : 0)}
                   className="text-center py-4 text-[var(--font)] font-medium"
                 >
                   {notFoundLabel}

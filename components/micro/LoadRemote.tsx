@@ -23,29 +23,43 @@ declare global {
   }
 }
 
-const LoadRemote: React.FC<LoadRemoteProps> = ({ remoteUrl, scope, module, loading, error }) => {
+const remoteComponentCache = new Map<string, React.ComponentType>();
+
+const getCacheKey = (remoteUrl: string, scope: string, module: string) => `${remoteUrl}|${scope}|${module}`;
+
+const LoadRemote: React.FC<LoadRemoteProps> = ({ remoteUrl, scope, module, loading, error, ...props }) => {
   const [RemoteComponent, setRemoteComponent] = useState<React.ComponentType | null>(null);
   const [hasError, setHasError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Se mantiene en true hasta que se complete la carga
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
+    const cacheKey = getCacheKey(remoteUrl, scope, module);
 
     async function load() {
       try {
         setIsLoading(true);
-        await loadRemote(remoteUrl, scope); // Cargar el contenedor remoto
-        const factory = await window[scope]?.get(module); // Obtener el módulo
+
+        // Si ya está en caché, usarlo
+        if (remoteComponentCache.has(cacheKey)) {
+          if (isMounted) setRemoteComponent(() => remoteComponentCache.get(cacheKey)!);
+          return;
+        }
+
+        await loadRemote(remoteUrl, scope);
+        const factory = await window[scope]?.get(module);
 
         if (isMounted && factory) {
           const Module = factory();
-          setRemoteComponent(() => Module.default || Module); // Establecer el componente remoto
+          const Comp = Module.default || Module;
+          remoteComponentCache.set(cacheKey, Comp);
+          setRemoteComponent(() => Comp);
         }
       } catch (err) {
         console.error('Error loading remote module:', err);
         if (isMounted) setHasError(true);
       } finally {
-        if (isMounted) setIsLoading(false); // Marcar como cargado cuando termine
+        if (isMounted) setIsLoading(false);
       }
     }
 
@@ -65,8 +79,7 @@ const LoadRemote: React.FC<LoadRemoteProps> = ({ remoteUrl, scope, module, loadi
     return <>{loading || <Loader className="text-[var(--secondary)]" />}</>;
   }
 
-  // Una vez cargado el componente remoto, lo renderizamos
-  return <RemoteComponent />;
+  return <RemoteComponent {...props} />;
 };
 
 export default LoadRemote;
