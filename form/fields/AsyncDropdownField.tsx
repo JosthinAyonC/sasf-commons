@@ -81,6 +81,7 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
   fetchByIdUrl,
   queryParams,
   onChangeSelection,
+  autoFetch = true,
 }: AsyncDropdownProps<FormValues, T>) {
   const {
     field: { value, onChange, ref },
@@ -93,7 +94,7 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
   const debouncedInput = useDebounce(inputValue, 300);
   const [hasMore, setHasMore] = useState(true);
 
-  const { data, loading } = useQuery<{ content: T[] }>({
+  const { data, loading, refetch } = useQuery<{ content: T[] }>({
     url: fetchUrl,
     queryParams: {
       ...queryParams,
@@ -101,9 +102,17 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
       page,
       size: 10,
     },
+    autoFetch: !!fetchUrl && autoFetch,
   });
 
-  const { data: dataById } = useQuery<T>({ url: fetchByIdUrl ?? '', autoFetch: !!fetchByIdUrl });
+  useEffect(() => {
+    if (autoFetch) {
+      refetch();
+      setPage(0);
+    }
+  }, [JSON.stringify(queryParams)]);
+
+  const { data: dataById } = useQuery<T>({ url: fetchByIdUrl ?? '', autoFetch: !!fetchByIdUrl && autoFetch });
 
   const handleChange = (newValue: SingleValue<Option> | MultiValue<Option>) => {
     let selectedValue: Option['value'] | '' = '';
