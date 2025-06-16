@@ -15,6 +15,7 @@ interface DialogProps {
   desktopClassName?: string;
   title?: string;
   titleClassName?: string;
+  containerClassName?: string;
 }
 
 /**
@@ -40,6 +41,7 @@ export const Dialog: React.FC<DialogProps> = ({
   mobileClassName,
   title,
   titleClassName,
+  containerClassName,
 }) => {
   const { closeDialog, getDialogOrder, getTopDialogId } = useDialog();
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -107,7 +109,7 @@ export const Dialog: React.FC<DialogProps> = ({
               <h2 className={`text-[var(--font)] text-lg font-semibold ${titleClassName}`}>{title}</h2>
             </div>
           )}
-          <div className={`${isDesktop ? 'mt-4' : 'mt-10'} text-[var(--font)] max-h-[80vh] overflow-y-auto`}>{children}</div>
+          <div className={`${isDesktop ? 'mt-4' : 'mt-10'} text-[var(--font)] max-h-[80vh] overflow-y-auto ${containerClassName}`}>{children}</div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
