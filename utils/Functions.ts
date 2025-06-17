@@ -87,3 +87,6 @@ export const startOfToday = () => {
 export const validateStringNotEmpty = (value: string | undefined | null): boolean => {
   return value !== undefined && value !== null && value.trim() !== '';
 };
+
+export const formatCurrency = (value: number, currencySymbol: string) =>
+  `${currencySymbol}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
