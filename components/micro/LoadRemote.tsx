@@ -33,6 +33,11 @@ const LoadRemote: React.FC<LoadRemoteProps> = ({ remoteUrl, scope, module, loadi
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setHasError(false);
+    setRemoteComponent(null);
+  }, [remoteUrl, scope, module]);
+
+  useEffect(() => {
     let isMounted = true;
     const cacheKey = getCacheKey(remoteUrl, scope, module);
 
