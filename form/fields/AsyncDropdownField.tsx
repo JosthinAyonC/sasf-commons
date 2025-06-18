@@ -100,7 +100,7 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
       ...queryParams,
       [queryParamFilter]: debouncedInput,
       page,
-      size: 2,
+      size: 10,
     },
     autoFetch: !!fetchUrl && autoFetch,
   });
