@@ -27,7 +27,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ title, children, resoome, Ne
       <div className="px-4 py-3 border-t border-[var(--border)]">
         {resoome.map(({ clave, valor, className = '', featured }, idx) => (
           <React.Fragment key={idx}>
-            <div className={`flex justify-end items-center gap-4 ${featured ? 'font-bold text-primary-light text-lg' : 'text-sm'} ${className}`}>
+            <div className={`flex justify-end items-center gap-4 ${featured ? 'font-bold text-primary-light' : 'text-sm'} ${className}`}>
               <div className="grid grid-cols-3 md:grid-cols-6 gap-4 w-full">
                 <span className="col-span-2 md:col-span-5 text-right">{clave}:</span>
                 <span className="text-right">{typeof valor === 'number' ? valor.toFixed(2) : valor}</span>

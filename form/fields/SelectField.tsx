@@ -29,7 +29,7 @@ export const SelectField = <T extends FieldValues>({
     <div>
       {label && (
         <label htmlFor={name as string} className={`text-neutral-600 ${labelClassName} block`}>
-          {label}
+          {label} {isRequired && <span className="text-[var(--error)]">*</span>}
         </label>
       )}
       <select

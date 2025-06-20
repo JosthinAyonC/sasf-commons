@@ -82,6 +82,7 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
   queryParams,
   onChangeSelection,
   autoFetch = true,
+  dropdownRef,
 }: AsyncDropdownProps<FormValues, T>) {
   const {
     field: { value, onChange, ref },
@@ -105,12 +106,22 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
     autoFetch: !!fetchUrl && autoFetch,
   });
 
+  const queryParamsHash = JSON.stringify(queryParams);
+
   useEffect(() => {
-    if (autoFetch) {
-      refetch();
-      setPage(0);
+    setOptions([]);
+    setPage(0);
+  }, [queryParamsHash]);
+
+  useEffect(() => {
+    if (dropdownRef) {
+      dropdownRef.current = {
+        refetch: () => {
+          refetch('', true);
+        },
+      };
     }
-  }, [JSON.stringify(queryParams)]);
+  }, [refetch]);
 
   const { data: dataById } = useQuery<T>({ url: fetchByIdUrl ?? '', autoFetch: !!fetchByIdUrl && autoFetch });
 
@@ -138,20 +149,13 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
     if (!data) return;
     const newOptions = data.content.map(transformOption);
 
-    // Si lees este comentario, quiero que sepas que este cambio me causo un dolor de cabeza horrible
     setOptions((prev) => {
+      if (page === 0) return newOptions;
       const getKey = (value: Option['value']) => (typeof value === 'object' ? JSON.stringify(value) : String(value));
 
       const uniqueOptions = new Map<string, Option>();
-
       prev.forEach((opt) => uniqueOptions.set(getKey(opt.value), opt));
-
-      newOptions.forEach((opt) => {
-        const key = getKey(opt.value);
-        if (!uniqueOptions.has(key)) {
-          uniqueOptions.set(key, opt);
-        }
-      });
+      newOptions.forEach((opt) => uniqueOptions.set(getKey(opt.value), opt));
 
       return Array.from(uniqueOptions.values());
     });
