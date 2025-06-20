@@ -16,6 +16,7 @@ export const DatePickerField = <T extends FieldValues>({
   isRequired = false,
   minDate,
   maxDate,
+  onChange,
   defaultValue,
   requiredMsg,
   placeholderText,
@@ -48,18 +49,22 @@ export const DatePickerField = <T extends FieldValues>({
             max: (value) => !maxDate || (value && new Date(value) <= maxDate) || 'La fecha debe ser anterior a la máxima.',
           },
         }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
+        render={({ field: { onChange: fieldOnChange, value }, fieldState: { error } }) => (
           <>
             <DatePickerUI
               disabled={disabled}
               key={name}
               selected={value && !isNaN(new Date(value).getTime()) ? new Date(value) : null}
-              onChange={onChange}
+              // onChange={onChange}
               minDate={minDate}
               maxDate={maxDate}
               error={error?.message}
               inputClassName={inputClassName}
               placeholderText={placeholderText}
+              onChange={(_date: Date | null ) => {
+                fieldOnChange(_date);
+                if (onChange && _date) onChange(_date);
+              }}
             />
             {error && (
               <p className={`text-[var(--error)] text-xs mt-1 ${errorClassName}`}>
