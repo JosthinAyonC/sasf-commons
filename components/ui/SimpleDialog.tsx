@@ -7,16 +7,12 @@ interface SimpleDialogProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
-}
-
-interface SimpleDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
   title?: string;
+  closeable?: boolean;
+  className?: string;
 }
 
-export const SimpleDialog: React.FC<SimpleDialogProps> = ({ isOpen, onClose, children, title }) => {
+export const SimpleDialog: React.FC<SimpleDialogProps> = ({ isOpen, onClose, children, title, closeable = true, className }) => {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -51,19 +47,21 @@ export const SimpleDialog: React.FC<SimpleDialogProps> = ({ isOpen, onClose, chi
         style={{ zIndex: 1060 }}
       >
         <motion.div
-          className="bg-[var(--bg)] rounded-lg border border-[var(--border)] shadow-lg p-6 w-full max-w-md relative"
+          className={`bg-[var(--bg)] rounded-lg border border-[var(--border)] shadow-lg p-6 w-full relative  ${className || 'max-w-md'}`}
           initial={{ scale: 1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <button
-            type="button"
-            className="absolute top-4 right-4 text-[var(--font)] text-xl hover:text-[var(--hover)] focus:outline-none focus:ring-2 focus:ring-[var(--focus)]"
-            onClick={onClose}
-          >
-            <FontAwesomeIcon icon={faClose} />
-          </button>
+          {closeable && (
+            <button
+              type="button"
+              className="absolute top-4 right-4 text-[var(--font)] text-xl hover:text-[var(--hover)] focus:outline-none focus:ring-2 focus:ring-[var(--focus)]"
+              onClick={onClose}
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
+          )}
 
           {title && (
             <div className="px-6 py-3 rounded-t-lg border-b flex items-center justify-between">

@@ -1,6 +1,6 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FaAngleDoubleLeft,
   FaAngleDoubleRight,
@@ -154,7 +154,7 @@ export const QueryTable = <T extends object>({
     pageIndex: defaultPage,
     pageSize: defaultSize,
   });
-
+  const prevQueryParamsRef = useRef(queryParams);
   const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
   const [globalFilter, setGlobalFilter] = useState('');
   const debouncedFilter = useDebounce(globalFilter, debounceDelay);
@@ -184,11 +184,13 @@ export const QueryTable = <T extends object>({
     [filterKey]: debouncedFilter,
     [sortKey]: sortQuery,
   };
+  const preventEarlyQuery = JSON.stringify(queryParams) !== JSON.stringify(prevQueryParamsRef.current) && pagination.pageIndex !== 0;
+
   const { data, loading, error, refetch } = useQuery<(Record<string, unknown> & { content: T[]; totalElements: number }) | null>(
     fetchUrl,
     undefined,
     queryParamsWithPagination,
-    autoFetch,
+    !preventEarlyQuery && autoFetch,
     'network-first'
   );
   const totalPages = data ? Math.ceil((data[responseTotalCount] as number) / pagination.pageSize) : 0;
@@ -196,6 +198,14 @@ export const QueryTable = <T extends object>({
   useEffect(() => {
     setSelectedRows([]);
   }, [pagination]);
+
+  useEffect(() => {
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0,
+    }));
+    prevQueryParamsRef.current = queryParams;
+  }, [JSON.stringify(queryParams)]);
 
   useEffect(() => {
     const eventName = refreshEvent || 'refreshTable';

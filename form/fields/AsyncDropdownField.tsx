@@ -11,54 +11,6 @@ import { useQuery } from '~/hooks/useQuery';
 import { customStyles } from './DropdownField';
 import { AsyncDropdownProps, Option } from './types';
 
-/**
- * Componente `AsyncDropdown` que proporciona un dropdown asincrónico con paginación y búsqueda.
- * Diseñado para integrarse con `react-hook-form` y utilizar un backend que soporte paginación
- * (por ejemplo, un endpoint con `page`, `size` y filtro por query param).
- *
- * Nota muy importante: Para que el componente funcione correctamente debemos tener el endpoint que devuelve el
- * registro por id especificamente.
- *
- * En ocasiones bastara setearle el codigo correspondiente y automaticamente se cargara el registro, pero esto
- * solo sucederá cuando el registro seleccionado este entre los primero 10 registros que devuelve el endpoint.
- *
- * Este componente también puede pre-cargar una opción si se proporciona `fetchByIdUrl`.
- *
- * @template FieldValues - Tipo genérico que representa el formulario que representa..
- * @template T - Tipo genérico que representa el objeto que retorna el endpoint.
- *
- * @param {string} name - Nombre del campo en el formulario (clave que usa `react-hook-form`).
- * @param {string} label - Etiqueta mostrada encima del campo.
- * @param {boolean} [isRequired=false] - Indica si el campo es obligatorio.
- * @param {string} [placeholder='Seleccione...'] - Texto a mostrar cuando no hay selección.
- * @param {string} fetchUrl - URL del endpoint para obtener las opciones del dropdown.
- * @param {string} [fetchByIdUrl] - URL opcional para cargar una opción por ID al montar el componente.
- * @param {string} [queryParamFilter='filtro'] - Nombre del parámetro de búsqueda para el backend.
- * @param {(item: T) => Option} transformOption - Función que transforma cada ítem recibido del backend en una opción para el dropdown.
- * @param {(context: { inputValue: string }) => string} [noOptionMessage] - Mensaje mostrado cuando no hay opciones para un input dado.
- * @param {string} [requiredMsg='Este campo es obligatorio'] - Mensaje de error mostrado si el campo es requerido y está vacío.
- * @param {boolean} [disabled=false] - Indica si el campo está deshabilitado.
- * @param {boolean} [isClearable=false] - Indica si se puede limpiar la selección.
- * @param {string} [labelClassName] - Clases CSS adicionales para el label.
- * @param {string} [containerClassName] - Clases CSS adicionales para el contenedor principal.
- * @param {string} [selectClassName] - Clases CSS adicionales para el componente Select.
- * @param {string} [errorClassName] - Clases CSS adicionales para el mensaje de error.
- * @param {string | React.ReactNode} [additionalInformation] - Información adicional mostrada con ícono de ayuda.
- * @param {Record<string, string | number>} [queryParams] - Parámetros adicionales para la consulta al backend.
- *
- * @returns {JSX.Element} Componente de dropdown asíncrono con búsqueda y paginación.
- *
- * @example
- * <AsyncDropdown<ClienteFormType, ClienteType>
- *   name="cliente"
- *   label="Cliente"
- *   fetchUrl="domain/api/clientes"
- *   fetchByIdUrl="domain/api/clientes/123"
- *   transformOption={(cliente) => ({ value: cliente.id, label: cliente.nombre })}
- *   queryParams={{ estado: 'A' }}
- *   isRequired
- * />
- */
 export function AsyncDropdown<FormValues extends FieldValues, T>({
   name,
   label,
@@ -71,9 +23,7 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
   errorClassName = '',
   queryParamFilter = 'filtro',
   transformOption,
-  noOptionMessage = ({ inputValue }: { inputValue: string }) => {
-    return inputValue ? `No hay resultados para "${inputValue}"` : 'No hay opciones disponibles';
-  },
+  noOptionMessage = ({ inputValue }: { inputValue: string }) => (inputValue ? `No hay resultados para "${inputValue}"` : 'No hay opciones disponibles'),
   requiredMsg = 'Este campo es obligatorio',
   disabled = false,
   isClearable = false,
@@ -106,6 +56,8 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
     autoFetch: !!fetchUrl && autoFetch,
   });
 
+  const { data: dataById } = useQuery<T>({ url: fetchByIdUrl ?? '', autoFetch: !!fetchByIdUrl && autoFetch });
+
   const queryParamsHash = JSON.stringify(queryParams);
 
   useEffect(() => {
@@ -123,35 +75,57 @@ export function AsyncDropdown<FormValues extends FieldValues, T>({
     }
   }, [refetch]);
 
-  const { data: dataById } = useQuery<T>({ url: fetchByIdUrl ?? '', autoFetch: !!fetchByIdUrl && autoFetch });
-
   const handleChange = (newValue: SingleValue<Option> | MultiValue<Option>) => {
     let selectedValue: Option['value'] | '' = '';
     if (newValue && !Array.isArray(newValue)) {
       selectedValue = (newValue as Option).value;
     }
     onChange(selectedValue);
-    if (onChangeSelection) onChangeSelection(data?.content.find((item) => transformOption(item).value === selectedValue) as T);
+    if (onChangeSelection) {
+      onChangeSelection(data?.content.find((item) => transformOption(item).value === selectedValue) as T);
+    }
   };
 
   useEffect(() => {
     if (dataById) {
-      const transformedOption = transformOption(dataById);
+      const transformedOption = {
+        ...transformOption(dataById),
+        __fromById: true, // Marca que este viene del fetchById
+      } as Option & { __fromById: true };
+
       setOptions((prev) => {
         const exists = prev.find((opt) => opt.value === transformedOption.value);
         return exists ? prev : [transformedOption, ...prev];
       });
+
       onChange(transformedOption.value);
     }
   }, [dataById]);
 
   useEffect(() => {
     if (!data) return;
+
     const newOptions = data.content.map(transformOption);
 
     setOptions((prev) => {
-      if (page === 0) return newOptions;
       const getKey = (value: Option['value']) => (typeof value === 'object' ? JSON.stringify(value) : String(value));
+
+      let combinedOptions = newOptions;
+
+      if (page === 0) {
+        const byIdOption = prev.find(
+          (opt) =>
+            '__fromById' in opt &&
+            (opt as Option & { __fromById?: boolean }).__fromById &&
+            !newOptions.some((newOpt) => getKey(newOpt.value) === getKey(opt.value))
+        );
+
+        if (byIdOption) {
+          combinedOptions = [byIdOption, ...newOptions];
+        }
+
+        return combinedOptions;
+      }
 
       const uniqueOptions = new Map<string, Option>();
       prev.forEach((opt) => uniqueOptions.set(getKey(opt.value), opt));
